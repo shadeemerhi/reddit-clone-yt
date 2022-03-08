@@ -4,14 +4,27 @@ import {
   Container,
   Flex,
   Icon,
+  IconButton,
   Image,
   Input,
   InputGroup,
   InputLeftElement,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
 } from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
+import {
+  AddIcon,
+  EditIcon,
+  ExternalLinkIcon,
+  HamburgerIcon,
+  RepeatIcon,
+  SearchIcon,
+} from "@chakra-ui/icons";
 import { VscAccount } from "react-icons/vsc";
 import { BsChevronDown } from "react-icons/bs";
+import { MdOutlineLogin } from "react-icons/md";
 import React from "react";
 
 const Navbar: React.FC = () => {
@@ -72,16 +85,31 @@ const Navbar: React.FC = () => {
         >
           Sign Up
         </Button>
-        <Flex
-          alignItems="center"
-          cursor="pointer"
-          padding="4px 6px"
-          borderRadius="4px"
-          _hover={{ outline: "1px solid", outlineColor: "gray.100" }}
-        >
-          <Icon fontSize={22} mr={1} color="gray.500" as={VscAccount} />
-          <Icon color="gray.500" as={BsChevronDown} />
-        </Flex>
+        <Menu>
+          <MenuButton
+            cursor="pointer"
+            padding="4px 6px"
+            borderRadius="4px"
+            _hover={{ outline: "1px solid", outlineColor: "gray.100" }}
+          >
+            <Flex alignItems="center">
+              <Icon fontSize={22} mr={1} color="gray.500" as={VscAccount} />
+              <Icon color="gray.500" as={BsChevronDown} />
+            </Flex>
+          </MenuButton>
+          <MenuList>
+            <MenuItem
+              fontSize="10pt"
+              fontWeight={700}
+              _hover={{ bg: "blue.500", color: "white" }}
+            >
+              <Flex alignItems="center">
+                <Icon fontSize={20} mr={2} as={MdOutlineLogin} />
+                Log In / Sign Up
+              </Flex>
+            </MenuItem>
+          </MenuList>
+        </Menu>
       </Flex>
     </Flex>
   );
