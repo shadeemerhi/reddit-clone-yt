@@ -59,7 +59,6 @@ const Navbar: React.FC = () => {
         <Button
           display={{ base: "none", sm: "flex" }}
           width={{ base: "70px", md: "110px" }}
-          justifyContent="center"
           mr={1}
           height="28px"
           borderRadius="60px"
@@ -76,7 +75,6 @@ const Navbar: React.FC = () => {
         <Button
           display={{ base: "none", sm: "flex" }}
           width={{ base: "70px", md: "110px" }}
-          justifyContent="center"
           height="28px"
           mr={1}
           borderRadius="60px"
