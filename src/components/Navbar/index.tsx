@@ -3,72 +3,101 @@ import {
   Button,
   Container,
   Flex,
+  Icon,
   Image,
   Input,
   InputGroup,
   InputLeftElement,
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
+import { VscAccount } from "react-icons/vsc";
+import { BsChevronDown } from "react-icons/bs";
 import React from "react";
 
 const Navbar: React.FC = () => {
   return (
     <Flex
       bg="white"
-      height="42px"
-      padding="6px 10px"
-      //   justifyContent="space-between"
+      height="44px"
+      padding="6px 20px"
+      justifyContent={{ md: "space-between" }}
     >
-      <Box width="10%" minWidth="100px">
+      <Box width={{ base: "40px", md: "auto" }} mr={2}>
         <Image src="/images/redditlogo.png" height="30px" />
       </Box>
-      <Flex flexGrow={1}>
-        <Box width="70%" mr={4}>
-          <InputGroup>
-            <InputLeftElement
-              pointerEvents="none"
-              color="gray.400"
-              children={<SearchIcon mb={2} />}
-            />
-            <Input
-              placeholder="Search Reddit"
-              fontSize={"10pt"}
-              _placeholder={{ color: "gray.500" }}
-              _hover={{
-                bg: "white",
-                border: "1px solid",
-                borderColor: "blue.400",
-              }}
-              _focus={{
-                outline: "none",
-              }}
-              height="30px"
-              bg="gray.50"
-            />
-          </InputGroup>
-        </Box>
-        <Flex flexGrow={1} justifyContent="space-between">
-          <Button
-            width="120px"
-            height="28px"
-            borderRadius="60px"
-            color="blue.600"
-            bg="white"
-            border={"1px solid"}
-            borderColor="blue.600"
-          >
-            Log In
-          </Button>
-          <Button
-            width="120px"
-            height="28px"
-            borderRadius="60px"
-            color="white"
-            bg="blue.600"
-          >
-            Sign Up
-          </Button>
-          <SearchIcon />
+      <Flex flexGrow={1} maxWidth="600px" mr={4} alignItems="center">
+        <InputGroup>
+          <InputLeftElement
+            pointerEvents="none"
+            color="gray.400"
+            children={<SearchIcon mb={2} />}
+          />
+          <Input
+            placeholder="Search Reddit"
+            fontSize="10pt"
+            _placeholder={{ color: "gray.500" }}
+            _hover={{
+              bg: "white",
+              border: "1px solid",
+              borderColor: "blue.500",
+            }}
+            _focus={{
+              outline: "none",
+              border: "1px solid",
+              borderColor: "blue.500",
+            }}
+            height="30px"
+            bg="gray.50"
+          />
+        </InputGroup>
+      </Flex>
+      <Flex
+        width={{ sm: "auto", md: "300px" }}
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <Button
+          display={{ base: "none", sm: "flex" }}
+          width={{ base: "70px", md: "110px" }}
+          justifyContent="center"
+          mr={1}
+          height="28px"
+          borderRadius="60px"
+          color="blue.500"
+          bg="white"
+          border={"1px solid"}
+          borderColor="blue.500"
+          fontSize="10pt"
+          fontWeight={700}
+          _focus={{ outline: "none" }}
+        >
+          Log In
+        </Button>
+        <Button
+          display={{ base: "none", sm: "flex" }}
+          width={{ base: "70px", md: "110px" }}
+          justifyContent="center"
+          height="28px"
+          mr={1}
+          borderRadius="60px"
+          color="white"
+          bg="blue.500"
+          fontSize="10pt"
+          fontWeight={700}
+          _hover={{ bg: "blue.400" }}
+          _focus={{ outline: "none" }}
+        >
+          Sign Up
+        </Button>
+        <Flex
+          alignItems="center"
+          cursor="pointer"
+          padding="4px 6px"
+          borderRadius="4px"
+          _hover={{ outline: "1px solid", outlineColor: "gray.100" }}
+        >
+          <Icon fontSize={22} mr={1} color="gray.500" as={VscAccount} />
+          <Icon color="gray.500" as={BsChevronDown} />
         </Flex>
       </Flex>
     </Flex>
