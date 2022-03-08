@@ -1,3 +1,4 @@
+import React from "react";
 import {
   useDisclosure,
   Button,
@@ -8,10 +9,13 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
+  Box,
+  Flex,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
 import { useRecoilState } from "recoil";
 import { authModalState } from "../../atoms/authModalAtom";
+import OAuthButtons from "./OAuthButtons";
+import AuthInputs from "./AuthInputs";
 
 type AuthModalProps = {};
 
@@ -28,15 +32,33 @@ const AuthModal: React.FC<AuthModalProps> = () => {
       <Modal isOpen={modalState.open} onClose={handleClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>
+          <ModalHeader
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+          >
             {modalState.view === "login" ? "Login" : "Sign Up"}
           </ModalHeader>
           <ModalCloseButton />
-          {modalState.view === "login" ? (
-            <ModalBody>Log In Body</ModalBody>
-          ) : (
-            <ModalBody>Sign Up Body</ModalBody>
-          )}
+          <ModalBody
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            pb={6}
+            height="100%"
+            // border="1px solid red"
+          >
+            <Flex
+              direction="column"
+              alignItems="center"
+              justifyContent="center"
+              width="60%"
+            >
+              <OAuthButtons />
+              OR
+              <AuthInputs />
+            </Flex>
+          </ModalBody>
         </ModalContent>
       </Modal>
     </>
