@@ -26,8 +26,11 @@ import { VscAccount } from "react-icons/vsc";
 import { BsChevronDown } from "react-icons/bs";
 import { MdOutlineLogin } from "react-icons/md";
 import React from "react";
+import { useSetRecoilState } from "recoil";
+import { authModalState } from "../../atoms/authModalAtom";
 
 const Navbar: React.FC = () => {
+  const setAuthModalState = useSetRecoilState(authModalState);
   return (
     <Flex
       bg="white"
@@ -74,6 +77,7 @@ const Navbar: React.FC = () => {
           display={{ base: "none", sm: "flex" }}
           width={{ base: "70px", md: "110px" }}
           mr={1}
+          onClick={() => setAuthModalState(true)}
         >
           Log In
         </Button>
@@ -82,6 +86,7 @@ const Navbar: React.FC = () => {
           display={{ base: "none", sm: "flex" }}
           width={{ base: "70px", md: "110px" }}
           mr={1}
+          onClick={() => setAuthModalState(true)}
         >
           Sign Up
         </Button>
@@ -102,6 +107,7 @@ const Navbar: React.FC = () => {
               fontSize="10pt"
               fontWeight={700}
               _hover={{ bg: "blue.500", color: "white" }}
+              onClick={() => setAuthModalState(true)}
             >
               <Flex alignItems="center">
                 <Icon fontSize={20} mr={2} as={MdOutlineLogin} />
