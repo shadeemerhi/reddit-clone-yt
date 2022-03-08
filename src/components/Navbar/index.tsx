@@ -57,33 +57,18 @@ const Navbar: React.FC = () => {
         alignItems="center"
       >
         <Button
+          variant="outline"
           display={{ base: "none", sm: "flex" }}
           width={{ base: "70px", md: "110px" }}
           mr={1}
-          height="28px"
-          borderRadius="60px"
-          color="blue.500"
-          bg="white"
-          border={"1px solid"}
-          borderColor="blue.500"
-          fontSize="10pt"
-          fontWeight={700}
-          _focus={{ outline: "none" }}
         >
           Log In
         </Button>
         <Button
+          variant="solid"
           display={{ base: "none", sm: "flex" }}
           width={{ base: "70px", md: "110px" }}
-          height="28px"
           mr={1}
-          borderRadius="60px"
-          color="white"
-          bg="blue.500"
-          fontSize="10pt"
-          fontWeight={700}
-          _hover={{ bg: "blue.400" }}
-          _focus={{ outline: "none" }}
         >
           Sign Up
         </Button>
