@@ -16,24 +16,27 @@ import { authModalState } from "../../atoms/authModalAtom";
 type AuthModalProps = {};
 
 const AuthModal: React.FC<AuthModalProps> = () => {
-  const [open, setOpen] = useRecoilState(authModalState);
-  const handleClose = () => setOpen(false);
+  const [modalState, setModalState] = useRecoilState(authModalState);
+  const handleClose = () =>
+    setModalState((prev) => ({
+      ...prev,
+      open: false,
+    }));
 
   return (
     <>
-      <Modal isOpen={open} onClose={handleClose}>
+      <Modal isOpen={modalState.open} onClose={handleClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>
+            {modalState.view === "login" ? "Login" : "Sign Up"}
+          </ModalHeader>
           <ModalCloseButton />
-          <ModalBody>hello there modal</ModalBody>
-
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleClose}>
-              Close
-            </Button>
-            <Button variant="ghost">Secondary Action</Button>
-          </ModalFooter>
+          {modalState.view === "login" ? (
+            <ModalBody>Log In Body</ModalBody>
+          ) : (
+            <ModalBody>Sign Up Body</ModalBody>
+          )}
         </ModalContent>
       </Modal>
     </>
