@@ -16,12 +16,12 @@ const SignUp: React.FC<SignUpProps> = ({ toggleView }) => {
     confirmPassword: "",
   });
   const [formError, setFormError] = useState("");
-  const [createUserWithEmailAndPassword, user, loading, authError] =
+  const [createUserWithEmailAndPassword, _, loading, authError] =
     useCreateUserWithEmailAndPassword(auth);
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    if (formError) setFormError("");
     event.preventDefault();
+    if (formError) setFormError("");
     if (!form.email.includes("@")) {
       return setFormError("Please enter a valid email");
     }
