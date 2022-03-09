@@ -22,10 +22,10 @@ const SignUp: React.FC<SignUpProps> = ({ toggleView }) => {
         type="password"
         mb={4}
       />
-      <Button width="100%" mb={2}>
+      <Button width="100%" mb={2} type="submit">
         Sign Up
       </Button>
-      <Flex fontSize="9pt">
+      <Flex fontSize="9pt" justifyContent="center">
         <Text mr={1}>Have an account?</Text>
         <Text
           color="blue.500"
