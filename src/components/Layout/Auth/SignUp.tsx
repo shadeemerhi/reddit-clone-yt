@@ -1,8 +1,8 @@
-import { EmailIcon } from "@chakra-ui/icons";
-import { Box, Button, Flex, FormErrorMessage, Text } from "@chakra-ui/react";
+import { Button, Flex, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth } from "../../../firebase/clientApp";
+import { FIREBASE_ERRORS } from "../../../firebase/errors";
 import InputItem from "../InputItem";
 
 type SignUpProps = {
@@ -30,9 +30,8 @@ const SignUp: React.FC<SignUpProps> = ({ toggleView }) => {
       return setFormError("Passwords do not match");
     }
 
+    // Valid form inputs
     createUserWithEmailAndPassword(form.email, form.password);
-
-    // Valid submission
   };
 
   const onChange = ({
@@ -67,7 +66,8 @@ const SignUp: React.FC<SignUpProps> = ({ toggleView }) => {
         onChange={onChange}
       />
       <Text textAlign="center" mt={2} fontSize="10pt" color="red">
-        {formError || authError?.message}
+        {formError ||
+          FIREBASE_ERRORS[authError?.message as keyof typeof FIREBASE_ERRORS]}
       </Text>
       <Button width="100%" mb={2} mt={2} type="submit" isLoading={loading}>
         Sign Up

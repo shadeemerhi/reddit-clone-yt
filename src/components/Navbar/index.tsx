@@ -118,7 +118,8 @@ const Navbar: React.FC = () => {
         </Flex>
       ) : (
         <>
-          {user.displayName} <Button onClick={logout}>Logout</Button>
+          {user.displayName || user.email}{" "}
+          <Button onClick={logout}>Logout</Button>
         </>
       )}
     </Flex>
