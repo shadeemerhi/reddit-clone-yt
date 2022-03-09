@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   useDisclosure,
   Button,
@@ -11,11 +11,16 @@ import {
   ModalFooter,
   Box,
   Flex,
+  Spinner,
+  Text,
 } from "@chakra-ui/react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { authModalState } from "../../../atoms/authModalAtom";
 import OAuthButtons from "./OAuthButtons";
 import AuthInputs from "./Inputs";
+import { userState } from "../../../atoms/userAtom";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth, firestore } from "../../../firebase/clientApp";
 
 type AuthModalProps = {};
 
@@ -26,6 +31,17 @@ const AuthModal: React.FC<AuthModalProps> = () => {
       ...prev,
       open: false,
     }));
+
+  const currentUser = useRecoilValue(userState);
+  const [user, error] = useAuthState(auth);
+
+  // useEffect(() => {
+  //   if (currentUser) handleClose();
+  // }, [currentUser]);
+
+  useEffect(() => {
+    if (user) handleClose();
+  }, [user]);
 
   return (
     <>
@@ -44,18 +60,38 @@ const AuthModal: React.FC<AuthModalProps> = () => {
             display="flex"
             flexDirection="column"
             alignItems="center"
+            justifyContent="center"
             pb={6}
-            height="100%"
           >
             <Flex
               direction="column"
               alignItems="center"
               justifyContent="center"
               width="60%"
+              minHeight="300px"
             >
+              <></>
               <OAuthButtons />
               OR
               <AuthInputs />
+              {user && !currentUser && (
+                <>
+                  <Spinner size="lg" mt={2} mb={2} />
+                  <Text fontSize="8pt" textAlign="center" color="blue.500">
+                    You are logged in. You will be redirected soon
+                  </Text>
+                </>
+              )}
+              {/* {false ? (
+                <Flex
+                  direction="column"
+                  justifyContent="center"
+                  alignItems="center"
+                  height="100%"
+                >
+                </Flex>
+              ) : (
+              )} */}
             </Flex>
           </ModalBody>
         </ModalContent>

@@ -1,6 +1,5 @@
 import { Button, Flex, FormErrorMessage, Text } from "@chakra-ui/react";
 import React from "react";
-import useAuth from "../../../hooks/useAuth";
 import InputItem from "../InputItem";
 
 type LoginProps = {
@@ -8,7 +7,6 @@ type LoginProps = {
 };
 
 const Login: React.FC<LoginProps> = ({ toggleView }) => {
-  const {} = useAuth();
   return (
     <>
       <InputItem name="email" placeholder="email" type="text" mb={2} />
