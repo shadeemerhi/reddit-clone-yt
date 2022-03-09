@@ -13,9 +13,9 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { authModalState } from "../../atoms/authModalAtom";
+import { authModalState } from "../../../atoms/authModalAtom";
 import OAuthButtons from "./OAuthButtons";
-import AuthInputs from "./AuthInputs";
+import AuthInputs from "./Inputs";
 
 type AuthModalProps = {};
 
@@ -46,7 +46,6 @@ const AuthModal: React.FC<AuthModalProps> = () => {
             alignItems="center"
             pb={6}
             height="100%"
-            // border="1px solid red"
           >
             <Flex
               direction="column"
