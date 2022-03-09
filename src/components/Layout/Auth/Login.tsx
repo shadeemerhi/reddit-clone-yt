@@ -1,7 +1,6 @@
 import { Button, Flex, FormErrorMessage, Text } from "@chakra-ui/react";
 import React from "react";
 import useAuth from "../../../hooks/useAuth";
-O;
 import InputItem from "../InputItem";
 
 type LoginProps = {
