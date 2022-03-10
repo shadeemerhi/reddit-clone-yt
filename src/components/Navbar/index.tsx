@@ -1,28 +1,18 @@
 import { SearchIcon } from "@chakra-ui/icons";
 import {
   Box,
-  Button,
   Flex,
-  Icon,
   Image,
   Input,
   InputGroup,
   InputLeftElement,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
 } from "@chakra-ui/react";
 import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { BsChevronDown } from "react-icons/bs";
-import { MdOutlineLogin } from "react-icons/md";
-import { VscAccount } from "react-icons/vsc";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { authModalState } from "../../atoms/authModalAtom";
-import { userState } from "../../atoms/userAtom";
-import { logout } from "../../firebase/authFunctions";
 import { auth } from "../../firebase/clientApp";
+import RightContentWrapper from "./RightContent";
 
 const Navbar: React.FC = () => {
   const setAuthModalState = useSetRecoilState(authModalState);
@@ -65,63 +55,7 @@ const Navbar: React.FC = () => {
           />
         </InputGroup>
       </Flex>
-      {!user ? (
-        <Flex
-          width={{ sm: "auto", md: "300px" }}
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Button
-            variant="outline"
-            display={{ base: "none", sm: "flex" }}
-            width={{ base: "70px", md: "110px" }}
-            mr={1}
-            onClick={() => setAuthModalState({ open: true, view: "login" })}
-          >
-            Log In
-          </Button>
-          <Button
-            variant="solid"
-            display={{ base: "none", sm: "flex" }}
-            width={{ base: "70px", md: "110px" }}
-            mr={1}
-            onClick={() => setAuthModalState({ open: true, view: "signup" })}
-          >
-            Sign Up
-          </Button>
-          <Menu>
-            <MenuButton
-              cursor="pointer"
-              padding="4px 6px"
-              borderRadius="4px"
-              _hover={{ outline: "1px solid", outlineColor: "gray.100" }}
-            >
-              <Flex alignItems="center">
-                <Icon fontSize={22} mr={1} color="gray.500" as={VscAccount} />
-                <Icon color="gray.500" as={BsChevronDown} />
-              </Flex>
-            </MenuButton>
-            <MenuList>
-              <MenuItem
-                fontSize="10pt"
-                fontWeight={700}
-                _hover={{ bg: "blue.500", color: "white" }}
-                onClick={() => setAuthModalState({ open: true, view: "login" })}
-              >
-                <Flex alignItems="center">
-                  <Icon fontSize={20} mr={2} as={MdOutlineLogin} />
-                  Log In / Sign Up
-                </Flex>
-              </MenuItem>
-            </MenuList>
-          </Menu>
-        </Flex>
-      ) : (
-        <>
-          {user.displayName || user.email}{" "}
-          <Button onClick={logout}>Logout</Button>
-        </>
-      )}
+      <RightContentWrapper />
     </Flex>
   );
 };
