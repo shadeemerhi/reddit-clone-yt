@@ -4,7 +4,7 @@ import { useSendPasswordResetEmail } from "react-firebase-hooks/auth";
 import { BsDot, BsReddit } from "react-icons/bs";
 import { ModalView } from "../../../atoms/authModalAtom";
 import { auth } from "../../../firebase/clientApp";
-import InputItem from "../InputItem";
+import InputItem from "../../Layout/InputItem";
 
 type ResetPasswordProps = {
   toggleView: (view: ModalView) => void;

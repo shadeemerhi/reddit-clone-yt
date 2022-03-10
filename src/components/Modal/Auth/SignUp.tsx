@@ -4,7 +4,7 @@ import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { ModalView } from "../../../atoms/authModalAtom";
 import { auth } from "../../../firebase/clientApp";
 import { FIREBASE_ERRORS } from "../../../firebase/errors";
-import InputItem from "../InputItem";
+import InputItem from "../../Layout/InputItem";
 
 type SignUpProps = {
   toggleView: (view: ModalView) => void;

@@ -8,7 +8,7 @@ import { auth } from "../../firebase/clientApp";
 import RightContentWrapper from "./RightContent";
 import SearchInput from "./SearchInput";
 import Directory from "./Directory";
-import AuthModal from "../Layout/Auth/AuthModal";
+import AuthModal from "../Modal/Auth/AuthModal";
 
 const Navbar: React.FC = () => {
   const [user] = useAuthState(auth);
