@@ -14,10 +14,9 @@ type RightContentWrapper = {
 const RightContentWrapper: React.FC<RightContentWrapper> = ({ user }) => {
   return (
     <Flex
-      width={{ sm: "auto", md: "300px" }}
+      // width={{ sm: "auto", md: "300px" }}
       justifyContent="space-between"
       alignItems="center"
-      // border="1px solid red"
     >
       {user ? <Icons /> : <AuthButtons />}
       <MenuWrapper />

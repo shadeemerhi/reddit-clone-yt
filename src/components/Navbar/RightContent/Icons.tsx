@@ -15,7 +15,7 @@ const ActionIcons: React.FC<ActionIconsProps> = () => {
   return (
     <Flex alignItems="center" flexGrow={1}>
       <Box
-        display={{ base: "none", sm: "flex" }}
+        display={{ base: "none", md: "flex" }}
         alignItems="center"
         borderRight="1px solid"
         borderColor="gray.200"
