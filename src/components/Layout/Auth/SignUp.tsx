@@ -1,12 +1,13 @@
-import { Button, Flex, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { Button, Flex, Text } from "@chakra-ui/react";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { ModalView } from "../../../atoms/authModalAtom";
 import { auth } from "../../../firebase/clientApp";
 import { FIREBASE_ERRORS } from "../../../firebase/errors";
 import InputItem from "../InputItem";
 
 type SignUpProps = {
-  toggleView: () => void;
+  toggleView: (view: ModalView) => void;
 };
 
 const SignUp: React.FC<SignUpProps> = ({ toggleView }) => {
@@ -69,7 +70,14 @@ const SignUp: React.FC<SignUpProps> = ({ toggleView }) => {
         {formError ||
           FIREBASE_ERRORS[authError?.message as keyof typeof FIREBASE_ERRORS]}
       </Text>
-      <Button width="100%" mb={2} mt={2} type="submit" isLoading={loading}>
+      <Button
+        width="100%"
+        height="36px"
+        mb={2}
+        mt={2}
+        type="submit"
+        isLoading={loading}
+      >
         Sign Up
       </Button>
       <Flex fontSize="9pt" justifyContent="center">
@@ -78,7 +86,7 @@ const SignUp: React.FC<SignUpProps> = ({ toggleView }) => {
           color="blue.500"
           fontWeight={700}
           cursor="pointer"
-          onClick={toggleView}
+          onClick={() => toggleView("login")}
         >
           LOG IN
         </Text>

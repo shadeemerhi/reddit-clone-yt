@@ -1,13 +1,13 @@
-import { Button, Flex, FormErrorMessage, Text } from "@chakra-ui/react";
-import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
+import { Button, Flex, Text } from "@chakra-ui/react";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { ModalView } from "../../../atoms/authModalAtom";
 import { auth } from "../../../firebase/clientApp";
 import { FIREBASE_ERRORS } from "../../../firebase/errors";
 import InputItem from "../InputItem";
 
 type LoginProps = {
-  toggleView: () => void;
+  toggleView: (view: ModalView) => void;
 };
 
 const Login: React.FC<LoginProps> = ({ toggleView }) => {
@@ -19,7 +19,6 @@ const Login: React.FC<LoginProps> = ({ toggleView }) => {
 
   const [signInWithEmailAndPassword, _, loading, authError] =
     useSignInWithEmailAndPassword(auth);
-  console.log("HERE IS AUTH ERROR", authError);
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -60,16 +59,36 @@ const Login: React.FC<LoginProps> = ({ toggleView }) => {
         {formError ||
           FIREBASE_ERRORS[authError?.message as keyof typeof FIREBASE_ERRORS]}
       </Text>
-      <Button width="100%" mb={2} mt={2} type="submit" isLoading={loading}>
+      <Button
+        width="100%"
+        height="36px"
+        mb={2}
+        mt={2}
+        type="submit"
+        isLoading={loading}
+      >
         Log In
       </Button>
+      <Flex justifyContent="center" mb={2}>
+        <Text fontSize="9pt" mr={1}>
+          Forgot your password?
+        </Text>
+        <Text
+          fontSize="9pt"
+          color="blue.500"
+          cursor="pointer"
+          onClick={() => toggleView("resetPassword")}
+        >
+          Reset
+        </Text>
+      </Flex>
       <Flex fontSize="9pt" justifyContent="center">
         <Text mr={1}>New here?</Text>
         <Text
           color="blue.500"
           fontWeight={700}
           cursor="pointer"
-          onClick={toggleView}
+          onClick={() => toggleView("signup")}
         >
           SIGN UP
         </Text>
