@@ -2,7 +2,7 @@ import { MenuItem, Flex, Icon } from "@chakra-ui/react";
 import React from "react";
 import { MdOutlineLogin } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
-import { logout } from "../../../firebase/authFunctions";
+import { logout } from "../../../../firebase/authFunctions";
 
 type UserListProps = {};
 

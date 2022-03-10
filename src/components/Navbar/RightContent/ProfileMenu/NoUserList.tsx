@@ -1,7 +1,7 @@
 import React from "react";
 import { MenuItem, Flex, Icon } from "@chakra-ui/react";
 import { MdOutlineLogin } from "react-icons/md";
-import { AuthModalState } from "../../../atoms/authModalAtom";
+import { AuthModalState } from "../../../../atoms/authModalAtom";
 
 type NoUserListProps = {
   setModalState: (value: AuthModalState) => void;

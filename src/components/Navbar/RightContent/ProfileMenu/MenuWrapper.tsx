@@ -14,8 +14,8 @@ import { BsChevronDown } from "react-icons/bs";
 import { FaRedditSquare } from "react-icons/fa";
 import { VscAccount } from "react-icons/vsc";
 import { useRecoilState } from "recoil";
-import { authModalState } from "../../../atoms/authModalAtom";
-import { auth } from "../../../firebase/clientApp";
+import { authModalState } from "../../../../atoms/authModalAtom";
+import { auth } from "../../../../firebase/clientApp";
 
 import NoUserList from "./NoUserList";
 import UserList from "./UserList";
@@ -41,7 +41,6 @@ const MenuWrapper: React.FC<MenuWrapperProps> = () => {
             as={user ? FaRedditSquare : VscAccount}
           />
           <ChevronDownIcon color="gray.500" />
-          {/* <Icon color="gray.400" as={BsChevronDown} /> */}
         </Flex>
       </MenuButton>
       <MenuList>

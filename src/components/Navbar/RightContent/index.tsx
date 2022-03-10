@@ -2,20 +2,22 @@ import { Flex } from "@chakra-ui/react";
 import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../../firebase/clientApp";
-import MenuWrapper from "../Menu/MenuWrapper";
+import MenuWrapper from "./ProfileMenu/MenuWrapper";
 import AuthButtons from "./AuthButtons";
 import Icons from "./Icons";
+import { User } from "firebase/auth";
 
-type RightContentWrapper = {};
+type RightContentWrapper = {
+  user: User;
+};
 
-const RightContentWrapper: React.FC<RightContentWrapper> = () => {
-  const [user] = useAuthState(auth);
+const RightContentWrapper: React.FC<RightContentWrapper> = ({ user }) => {
   return (
     <Flex
       width={{ sm: "auto", md: "300px" }}
       justifyContent="space-between"
       alignItems="center"
-      //   border="1px solid red"
+      // border="1px solid red"
     >
       {user ? <Icons /> : <AuthButtons />}
       <MenuWrapper />
