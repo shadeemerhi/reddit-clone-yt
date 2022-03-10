@@ -16,6 +16,7 @@ import { auth } from "../../../firebase/clientApp";
 import AuthInputs from "./Inputs";
 import OAuthButtons from "./OAuthButtons";
 import ResetPassword from "./ResetPassword";
+import ModalWrapper from "../ModalWrapper";
 
 type AuthModalProps = {};
 
@@ -46,44 +47,37 @@ const AuthModal: React.FC<AuthModalProps> = () => {
   }, [user]);
 
   return (
-    <>
-      <Modal isOpen={modalState.open} onClose={handleClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-          >
-            {modalState.view === "login" && "Login"}
-            {modalState.view === "signup" && "Sign Up"}
-            {modalState.view === "resetPassword" && "Reset Password"}
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            pb={6}
-          >
-            <Flex
-              direction="column"
-              alignItems="center"
-              justifyContent="center"
-              width="70%"
-            >
-              {modalState.view === "login" || modalState.view === "signup" ? (
-                <>
-                  <OAuthButtons />
-                  OR
-                  <AuthInputs toggleView={toggleView} />
-                </>
-              ) : (
-                <ResetPassword toggleView={toggleView} />
-              )}
-              {/* // Will implement at end of tutorial */}
-              {/* {user && !currentUser && (
+    <ModalWrapper isOpen={modalState.open} onClose={handleClose}>
+      <ModalHeader display="flex" flexDirection="column" alignItems="center">
+        {modalState.view === "login" && "Login"}
+        {modalState.view === "signup" && "Sign Up"}
+        {modalState.view === "resetPassword" && "Reset Password"}
+      </ModalHeader>
+      <ModalCloseButton />
+      <ModalBody
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        pb={6}
+      >
+        <Flex
+          direction="column"
+          alignItems="center"
+          justifyContent="center"
+          width="70%"
+        >
+          {modalState.view === "login" || modalState.view === "signup" ? (
+            <>
+              <OAuthButtons />
+              OR
+              <AuthInputs toggleView={toggleView} />
+            </>
+          ) : (
+            <ResetPassword toggleView={toggleView} />
+          )}
+          {/* // Will implement at end of tutorial */}
+          {/* {user && !currentUser && (
                 <>
                   <Spinner size="lg" mt={2} mb={2} />
                   <Text fontSize="8pt" textAlign="center" color="blue.500">
@@ -91,7 +85,7 @@ const AuthModal: React.FC<AuthModalProps> = () => {
                   </Text>
                 </>
               )} */}
-              {/* {false ? (
+          {/* {false ? (
                 <Flex
                   direction="column"
                   justifyContent="center"
@@ -101,11 +95,9 @@ const AuthModal: React.FC<AuthModalProps> = () => {
                 </Flex>
               ) : (
               )} */}
-            </Flex>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    </>
+        </Flex>
+      </ModalBody>
+    </ModalWrapper>
   );
 };
 export default AuthModal;
