@@ -73,6 +73,7 @@ const ActionIcons: React.FC<ActionIconsProps> = () => {
           padding={1}
           cursor="pointer"
           _hover={{ bg: "gray.200" }}
+          display={{ base: "none", md: "flex" }}
         >
           <Icon as={GrAdd} fontSize={20} />
         </Flex>

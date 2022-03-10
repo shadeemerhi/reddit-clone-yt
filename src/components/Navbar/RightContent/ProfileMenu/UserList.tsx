@@ -1,4 +1,4 @@
-import { MenuItem, Flex, Icon } from "@chakra-ui/react";
+import { MenuItem, Flex, Icon, MenuDivider } from "@chakra-ui/react";
 import React from "react";
 import { MdOutlineLogin } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
@@ -19,6 +19,7 @@ const UserList: React.FC<UserListProps> = () => {
           Profile
         </Flex>
       </MenuItem>
+      <MenuDivider />
       <MenuItem
         fontSize="10pt"
         fontWeight={700}

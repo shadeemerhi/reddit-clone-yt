@@ -7,6 +7,7 @@ import { authModalState } from "../../atoms/authModalAtom";
 import { auth } from "../../firebase/clientApp";
 import RightContentWrapper from "./RightContent";
 import SearchInput from "./SearchInput";
+import Directory from "./Directory";
 
 const Navbar: React.FC = () => {
   const [user] = useAuthState(auth);
@@ -16,12 +17,13 @@ const Navbar: React.FC = () => {
     <Flex
       bg="white"
       height="44px"
-      padding="6px 20px"
+      padding="6px 12px"
       justifyContent={{ md: "space-between" }}
     >
       <Box width={{ base: "40px", md: "auto" }} mr={2}>
         <Image src="/images/redditlogo.png" height="30px" />
       </Box>
+      {user && <Directory />}
       <SearchInput user={user as User} />
       <RightContentWrapper user={user as User} />
     </Flex>
