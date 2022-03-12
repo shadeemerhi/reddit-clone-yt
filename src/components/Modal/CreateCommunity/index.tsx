@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   ModalHeader,
   ModalCloseButton,
@@ -9,8 +10,13 @@ import {
   Input,
   ModalFooter,
   Button,
+  Stack,
+  Checkbox,
+  Icon,
+  CheckboxGroup,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import { BsFillPersonFill, BsFillEyeFill } from "react-icons/bs";
+import { HiLockClosed } from "react-icons/hi";
 import InputItem from "../../Layout/InputItem";
 import ModalWrapper from "../ModalWrapper";
 
@@ -26,6 +32,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   const [name, setName] = useState("");
   const [charsRemaining, setCharsRemaining] = useState(21);
   const [nameError, setNameError] = useState("");
+  const [communityType, setCommunityType] = useState("public");
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > 21) return;
@@ -42,6 +49,16 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
         "Community names must be between 3–21 characters, and can only contain letters, numbers, or underscores."
       );
     }
+  };
+
+  const onCommunityTypeChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const {
+      target: { name },
+    } = event;
+    if (name === communityType) return;
+    setCommunityType(name);
   };
 
   return (
@@ -92,9 +109,65 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
           <Text fontSize="9pt" color="red" pt={1}>
             {nameError}
           </Text>
+          <Box mt={4} mb={4}>
+            <Text fontWeight={600} fontSize={15}>
+              Community Type
+            </Text>
+            <Stack spacing={2} pt={1}>
+              <Checkbox
+                colorScheme="blue"
+                name="public"
+                isChecked={communityType === "public"}
+                onChange={onCommunityTypeChange}
+              >
+                <Flex alignItems="center">
+                  <Icon as={BsFillPersonFill} mr={2} color="gray.500" />
+                  <Text fontSize="10pt" mr={1}>
+                    Public
+                  </Text>
+                  <Text fontSize="8pt" color="gray.500" pt={1}>
+                    Anyone can view, post, and comment to this community
+                  </Text>
+                </Flex>
+              </Checkbox>
+              <Checkbox
+                colorScheme="blue"
+                name="restricted"
+                isChecked={communityType === "restricted"}
+                onChange={onCommunityTypeChange}
+              >
+                <Flex alignItems="center">
+                  <Icon as={BsFillEyeFill} color="gray.500" mr={2} />
+                  <Text fontSize="10pt" mr={1}>
+                    Restricted
+                  </Text>
+                  <Text fontSize="8pt" color="gray.500" pt={1}>
+                    Anyone can view this community, but only approved users can
+                    post
+                  </Text>
+                </Flex>
+              </Checkbox>
+              <Checkbox
+                colorScheme="blue"
+                name="private"
+                isChecked={communityType === "private"}
+                onChange={onCommunityTypeChange}
+              >
+                <Flex alignItems="center">
+                  <Icon as={HiLockClosed} color="gray.500" mr={2} />
+                  <Text fontSize="10pt" mr={1}>
+                    Private
+                  </Text>
+                  <Text fontSize="8pt" color="gray.500" pt={1}>
+                    Only approved users can view and submit to this community
+                  </Text>
+                </Flex>
+              </Checkbox>
+            </Stack>
+          </Box>
         </ModalBody>
       </Box>
-      <ModalFooter bg="gray.100">
+      <ModalFooter bg="gray.100" borderRadius="0px 0px 10px 10px">
         <Button variant="outline" height="30px" mr={2} onClick={handleClose}>
           Cancel
         </Button>
