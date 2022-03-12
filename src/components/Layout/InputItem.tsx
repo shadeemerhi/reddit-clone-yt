@@ -3,21 +3,30 @@ import React from "react";
 
 type InputItemProps = {
   name: string;
-  placeholder: string;
+  value?: string;
+  placeholder?: string;
   type: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   mb?: number;
+  bg?: string;
+  size?: string;
 };
 
 const InputItem: React.FC<InputItemProps> = ({
   name,
   placeholder,
+  value,
   type,
   onChange,
   mb,
+  bg,
+  size,
 }) => {
   return (
     <Input
+      name={name}
+      placeholder={placeholder}
+      value={value}
       required
       onChange={onChange}
       mb={mb}
@@ -34,10 +43,10 @@ const InputItem: React.FC<InputItemProps> = ({
         border: "1px solid",
         borderColor: "blue.500",
       }}
-      bg="gray.50"
-      name={name}
-      placeholder={placeholder}
+      bg={bg || "gray.50"}
+      size={size}
       type={type}
+      borderRadius={4}
     />
   );
 };
