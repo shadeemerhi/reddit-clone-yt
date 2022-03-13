@@ -1,24 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  Flex,
-  Text,
-  Divider,
   Box,
-  Input,
-  ModalFooter,
   Button,
-  Stack,
   Checkbox,
+  Divider,
+  Flex,
   Icon,
-  CheckboxGroup,
+  Input,
+  ModalBody,
+  ModalCloseButton,
+  ModalFooter,
+  ModalHeader,
+  Stack,
+  Text,
 } from "@chakra-ui/react";
-import { BsFillPersonFill, BsFillEyeFill } from "react-icons/bs";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  runTransaction,
+  where,
+} from "firebase/firestore";
+import { BsFillEyeFill, BsFillPersonFill } from "react-icons/bs";
 import { HiLockClosed } from "react-icons/hi";
-import InputItem from "../../Layout/InputItem";
+import { auth, firestore } from "../../../firebase/clientApp";
 import ModalWrapper from "../ModalWrapper";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 type CreateCommunityModalProps = {
   isOpen: boolean;
@@ -29,10 +38,12 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   isOpen,
   handleClose,
 }) => {
+  const [user] = useAuthState(auth);
   const [name, setName] = useState("");
   const [charsRemaining, setCharsRemaining] = useState(21);
   const [nameError, setNameError] = useState("");
   const [communityType, setCommunityType] = useState("public");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value.length > 21) return;
@@ -40,14 +51,46 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
     setCharsRemaining(21 - event.target.value.length);
   };
 
-  const handleCreateCommunity = () => {
+  const handleCreateCommunity = async () => {
     if (nameError) setNameError("");
     const format = /[ `!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
 
-    if (format.test(name) || nameError.length < 3) {
-      setNameError(
+    if (format.test(name) || name.length < 3) {
+      return setNameError(
         "Community names must be between 3–21 characters, and can only contain letters, numbers, or underscores."
       );
+    }
+
+    setLoading(true);
+    try {
+      const q = query(
+        collection(firestore, "communities"),
+        where("name", "==", name)
+      );
+      const querySnapshot = await getDocs(q);
+      if (querySnapshot.size) {
+        throw `Sorry, /r${name} is taken. Try another.`;
+      }
+
+      // Create community document and communitySnippet subcollection document on user
+      await runTransaction(firestore, async (transaction) => {
+        const communityDocRef = doc(collection(firestore, "communities"));
+        transaction.set(communityDocRef, {
+          creatorId: user?.uid,
+          name,
+        });
+
+        transaction.set(
+          doc(collection(firestore, `users/${user?.uid}/communitySnippets`)),
+          {
+            communityId: communityDocRef.id,
+            isModerator: true,
+            name,
+          }
+        );
+      });
+    } catch (error) {
+      console.log("Transaction error", error);
     }
   };
 
@@ -171,7 +214,12 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
         <Button variant="outline" height="30px" mr={2} onClick={handleClose}>
           Cancel
         </Button>
-        <Button variant="solid" height="30px" onClick={handleCreateCommunity}>
+        <Button
+          variant="solid"
+          height="30px"
+          onClick={handleCreateCommunity}
+          isLoading={loading}
+        >
           Create Community
         </Button>
       </ModalFooter>
