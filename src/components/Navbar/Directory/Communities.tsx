@@ -8,13 +8,13 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { GrAdd } from "react-icons/gr";
-import { RiRedditFill } from "react-icons/ri";
-import { FaReddit } from "react-icons/fa";
 import { collection, getDocs, query } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { FaReddit } from "react-icons/fa";
+import { GrAdd } from "react-icons/gr";
 import { auth, firestore } from "../../../firebase/clientApp";
 import CreateCommunityModal from "../../Modal/CreateCommunity";
+import MenuListItem from "./MenuListItem";
 
 type CommunitiesProps = {
   menuOpen: boolean;
@@ -54,56 +54,41 @@ const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
   if (loading) {
     return (
       <Stack p={3}>
-        <Skeleton height="20px" />
-        <Skeleton height="20px" />
-        <Skeleton height="20px" />
+        {Array.from(Array(10)).map((item) => (
+          <Skeleton height="20px" p="inherit" />
+        ))}
       </Stack>
     );
   }
 
   return (
-    <Box>
+    <>
       <CreateCommunityModal
         isOpen={open}
         handleClose={() => setOpen(false)}
         setSnippetState={setSnippetState}
         userId={user?.uid!}
       />
-      <Box>
-        <Text pl={3} fontSize="7pt" fontWeight={500} color="gray.500">
+      <Box mt={3} mb={4}>
+        <Text pl={3} mb={1} fontSize="7pt" fontWeight={500} color="gray.500">
           MODERATING
         </Text>
         {snippetState
-          .filter((snippet) => snippet.isModerator)
+          .filter((item) => item.isModerator)
           .map((snippet) => (
-            <MenuItem
-              width="100%"
-              fontSize="10pt"
-              _hover={{ bg: "gray.100" }}
-              onClick={() => setOpen(true)}
-            >
-              <Flex alignItems="center">
-                <Icon fontSize={20} mr={2} as={FaReddit} color="blue.500" />
-                {`r/${snippet.name}`}
-              </Flex>
-            </MenuItem>
+            <MenuListItem
+              key={snippet.communityId}
+              displayText={`r/${snippet.name}`}
+              link={`r/${snippet.name}`}
+              icon={FaReddit as typeof Icon}
+              iconColor="brand.100"
+            />
           ))}
       </Box>
-      <Text pl={3} fontSize="7pt" fontWeight={500} color="gray.500">
-        MY COMMUNITIES
-      </Text>
-      <MenuItem
-        width="100%"
-        fontSize="10pt"
-        _hover={{ bg: "gray.100" }}
-        onClick={() => setOpen(true)}
-      >
-        <Flex alignItems="center">
-          <Icon fontSize={20} mr={2} as={GrAdd} />
-          Create Community
-        </Flex>
-      </MenuItem>
-      {snippetState.map((snippet) => (
+      <Box mt={3} mb={4}>
+        <Text pl={3} mb={1} fontSize="7pt" fontWeight={500} color="gray.500">
+          MY COMMUNITIES
+        </Text>
         <MenuItem
           width="100%"
           fontSize="10pt"
@@ -111,12 +96,21 @@ const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
           onClick={() => setOpen(true)}
         >
           <Flex alignItems="center">
-            <Icon fontSize={20} mr={2} as={FaReddit} color="blue.500" />
-            {`r/${snippet.name}`}
+            <Icon fontSize={20} mr={2} as={GrAdd} />
+            Create Community
           </Flex>
         </MenuItem>
-      ))}
-    </Box>
+        {snippetState.map((snippet) => (
+          <MenuListItem
+            key={snippet.communityId}
+            icon={FaReddit as typeof Icon}
+            displayText={`r/${snippet.name}`}
+            link={`r/${snippet.name}`}
+            iconColor="blue.500"
+          />
+        ))}
+      </Box>
+    </>
   );
 };
 

@@ -32,7 +32,7 @@ type CreateCommunityModalProps = {
   isOpen: boolean;
   handleClose: () => void;
   userId: string;
-  setSnippetState?: (value: CommunitySnippet[]) => void;
+  setSnippetState: (value: CommunitySnippet[]) => void;
 };
 
 const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
@@ -94,8 +94,9 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
     } catch (error) {
       console.log("Transaction error", error);
     }
-    // setSnippetState([]);
+    setSnippetState([]);
     setLoading(false);
+    handleClose();
   };
 
   const onCommunityTypeChange = (
