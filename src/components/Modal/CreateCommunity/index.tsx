@@ -65,38 +65,32 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
 
     setLoading(true);
     try {
-      const q = query(
-        collection(firestore, "communities"),
-        where("name", "==", name)
-      );
-      const querySnapshot = await getDocs(q);
-      if (querySnapshot.size) {
-        throw `Sorry, /r${name} is taken. Try another.`;
-      }
-
       // Create community document and communitySnippet subcollection document on user
+      const communityDocRef = doc(firestore, "communities", name);
       await runTransaction(firestore, async (transaction) => {
-        const communityDocRef = doc(collection(firestore, "communities"));
+        const communityDoc = await transaction.get(communityDocRef);
+        if (communityDoc.exists()) {
+          throw new Error(`Sorry, /r${name} is taken. Try another.`);
+        }
         transaction.set(communityDocRef, {
           creatorId: userId,
-          name,
         });
 
         transaction.set(
-          doc(collection(firestore, `users/${userId}/communitySnippets`)),
+          doc(firestore, `users/${userId}/communitySnippets`, name),
           {
-            communityId: communityDocRef.id,
+            communityId: name,
             isModerator: true,
-            name,
           }
         );
       });
-    } catch (error) {
+    } catch (error: any) {
       console.log("Transaction error", error);
+      setNameError(error.message);
     }
     setSnippetState([]);
     setLoading(false);
-    handleClose();
+    // will redirect
   };
 
   const onCommunityTypeChange = (

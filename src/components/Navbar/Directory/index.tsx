@@ -50,12 +50,7 @@ const Directory: React.FC<DirectoryProps> = () => {
               <ChevronDownIcon color="gray.500" />
             </Flex>
           </MenuButton>
-          <MenuList
-            width="100%"
-            maxHeight="300px"
-            overflow="scroll"
-            overflowX="hidden"
-          >
+          <MenuList maxHeight="300px" overflow="scroll" overflowX="hidden">
             <Communities menuOpen={isOpen} />
           </MenuList>
         </>

@@ -22,8 +22,7 @@ type CommunitiesProps = {
 
 export interface CommunitySnippet {
   communityId: string;
-  name: string;
-  isModerator?: boolean;
+  isModerator: boolean;
 }
 
 const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
@@ -69,6 +68,9 @@ const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
         setSnippetState={setSnippetState}
         userId={user?.uid!}
       />
+      {/* COULD DO THIS FOR CLEANER COMPONENTS */}
+      {/* <Moderating snippets={snippetState.filter((item) => item.isModerator)} />
+      <MyCommunities snippets={snippetState} setOpen={setOpen} /> */}
       <Box mt={3} mb={4}>
         <Text pl={3} mb={1} fontSize="7pt" fontWeight={500} color="gray.500">
           MODERATING
@@ -78,8 +80,8 @@ const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
           .map((snippet) => (
             <MenuListItem
               key={snippet.communityId}
-              displayText={`r/${snippet.name}`}
-              link={`r/${snippet.name}`}
+              displayText={`r/${snippet.communityId}`}
+              link={`/r/${snippet.communityId}`}
               icon={FaReddit as typeof Icon}
               iconColor="brand.100"
             />
@@ -104,8 +106,8 @@ const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
           <MenuListItem
             key={snippet.communityId}
             icon={FaReddit as typeof Icon}
-            displayText={`r/${snippet.name}`}
-            link={`r/${snippet.name}`}
+            displayText={`r/${snippet.communityId}`}
+            link={`/r/${snippet.communityId}`}
             iconColor="blue.500"
           />
         ))}
