@@ -2,8 +2,8 @@ import React from "react";
 import { MenuItem, Flex, Icon, Text, Box } from "@chakra-ui/react";
 import { FaReddit } from "react-icons/fa";
 import { GrAdd } from "react-icons/gr";
-import { CommunitySnippet } from "./Communities";
 import MenuListItem from "./MenuListItem";
+import { CommunitySnippet } from "../../../atoms/communitySnippetAtom";
 
 type MyCommunitiesProps = {
   snippets: CommunitySnippet[];

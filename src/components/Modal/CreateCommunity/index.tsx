@@ -13,34 +13,28 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import {
-  collection,
-  doc,
-  getDocs,
-  query,
-  runTransaction,
-  where,
-} from "firebase/firestore";
+import { doc, runTransaction } from "firebase/firestore";
 import React, { useState } from "react";
 import { BsFillEyeFill, BsFillPersonFill } from "react-icons/bs";
 import { HiLockClosed } from "react-icons/hi";
+import { useSetRecoilState } from "recoil";
+import { communitySnippetState } from "../../../atoms/communitySnippetAtom";
 import { firestore } from "../../../firebase/clientApp";
-import { CommunitySnippet } from "../../Navbar/Directory/Communities";
 import ModalWrapper from "../ModalWrapper";
 
 type CreateCommunityModalProps = {
   isOpen: boolean;
   handleClose: () => void;
   userId: string;
-  setSnippetState: (value: CommunitySnippet[]) => void;
 };
 
 const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   isOpen,
   handleClose,
   userId,
-  setSnippetState,
+  // setSnippetState,
 }) => {
+  const setSnippetState = useSetRecoilState(communitySnippetState);
   const [name, setName] = useState("");
   const [charsRemaining, setCharsRemaining] = useState(21);
   const [nameError, setNameError] = useState("");
@@ -88,7 +82,10 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
       console.log("Transaction error", error);
       setNameError(error.message);
     }
-    setSnippetState([]);
+    setSnippetState((prev) => ({
+      ...prev,
+      myCommunities: [],
+    }));
     setLoading(false);
     // will redirect
   };

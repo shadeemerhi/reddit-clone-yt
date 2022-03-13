@@ -15,30 +15,31 @@ import { GrAdd } from "react-icons/gr";
 import { auth, firestore } from "../../../firebase/clientApp";
 import CreateCommunityModal from "../../Modal/CreateCommunity";
 import MenuListItem from "./MenuListItem";
+import { useRecoilState } from "recoil";
+import {
+  CommunitySnippet,
+  communitySnippetState,
+} from "../../../atoms/communitySnippetAtom";
 
 type CommunitiesProps = {
   menuOpen: boolean;
 };
 
-export interface CommunitySnippet {
-  communityId: string;
-  isModerator: boolean;
-}
-
 const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
   const [user] = useAuthState(auth);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [snippetState, setSnippetState] = useState<CommunitySnippet[]>([]);
+  const [snippetState, setSnippetState] = useRecoilState(communitySnippetState);
+  // const [snippetState, setSnippetState] = useState<CommunitySnippet[]>([]);
 
   useEffect(() => {
     // Only fetch snippets if menu is open and we don't have them in state cache
-    if (!menuOpen || !!snippetState.length) return;
+    if (!menuOpen || !!snippetState.myCommunities.length) return;
     setLoading(true);
-    getSnippets();
+    getMySnippets();
   }, [menuOpen]);
 
-  const getSnippets = async () => {
+  const getMySnippets = async () => {
     const snippetQuery = query(
       collection(firestore, `users/${user?.uid}/communitySnippets`)
     );
@@ -46,15 +47,18 @@ const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
     const snippetDocs = await getDocs(snippetQuery);
     const snippets = snippetDocs.docs.map((doc) => ({ ...doc.data() }));
 
-    setSnippetState(snippets as CommunitySnippet[]);
+    setSnippetState((prev) => ({
+      ...prev,
+      myCommunities: snippets as CommunitySnippet[],
+    }));
     setLoading(false);
   };
 
   if (loading) {
     return (
       <Stack p={3}>
-        {Array.from(Array(10)).map((item) => (
-          <Skeleton height="20px" p="inherit" />
+        {Array.from(Array(10)).map((item, index) => (
+          <Skeleton key={index} height="20px" p="inherit" />
         ))}
       </Stack>
     );
@@ -65,7 +69,6 @@ const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
       <CreateCommunityModal
         isOpen={open}
         handleClose={() => setOpen(false)}
-        setSnippetState={setSnippetState}
         userId={user?.uid!}
       />
       {/* COULD DO THIS FOR CLEANER COMPONENTS */}
@@ -75,7 +78,7 @@ const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
         <Text pl={3} mb={1} fontSize="7pt" fontWeight={500} color="gray.500">
           MODERATING
         </Text>
-        {snippetState
+        {snippetState.myCommunities
           .filter((item) => item.isModerator)
           .map((snippet) => (
             <MenuListItem
@@ -102,7 +105,7 @@ const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
             Create Community
           </Flex>
         </MenuItem>
-        {snippetState.map((snippet) => (
+        {snippetState.myCommunities.map((snippet) => (
           <MenuListItem
             key={snippet.communityId}
             icon={FaReddit as typeof Icon}

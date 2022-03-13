@@ -3,11 +3,7 @@ import Layout from "../components/Layout";
 import Main from "../components/Main";
 
 const Home: NextPage = () => {
-  return (
-    <Layout>
-      <Main />
-    </Layout>
-  );
+  return <Main />;
 };
 
 export default Home;
