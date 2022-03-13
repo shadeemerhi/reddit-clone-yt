@@ -92,6 +92,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
     } catch (error) {
       console.log("Transaction error", error);
     }
+    setLoading(false);
   };
 
   const onCommunityTypeChange = (
