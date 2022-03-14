@@ -1,20 +1,15 @@
-import React from "react";
-import {
-  Box,
-  Button,
-  Flex,
-  Icon,
-  Skeleton,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
-import { FaReddit } from "react-icons/fa";
-import { useDocumentDataOnce } from "react-firebase-hooks/firestore";
-import { doc } from "firebase/firestore";
+import { Box, Button, Flex, Icon, Skeleton, Text } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { firestore, auth } from "../../firebase/clientApp";
-import { useSetRecoilState } from "recoil";
+import { FaReddit } from "react-icons/fa";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { authModalState } from "../../atoms/authModalAtom";
+import {
+  CommunitySnippet,
+  myCommunitySnippetState,
+} from "../../atoms/myCommunitySnippetsAtom";
+import { auth } from "../../firebase/clientApp";
+import { getMySnippets } from "../../helpers/firestore";
 
 type HeaderProps = {
   communityData: any;
@@ -23,21 +18,34 @@ type HeaderProps = {
 const Header: React.FC<HeaderProps> = ({ communityData }) => {
   const [user] = useAuthState(auth);
   const setAuthModalState = useSetRecoilState(authModalState);
-  const [value, loading, error] = useDocumentDataOnce(
-    doc(
-      firestore,
-      "users",
-      `${user?.uid}/communitySnippets/${communityData.id}`
-    )
+  const [mySnippetsState, setMySnippetsState] = useRecoilState(
+    myCommunitySnippetState
   );
-  console.log("HERE IS STUFF", value, loading, error);
-  const isJoined = !loading && value;
+  const [loading, setLoading] = useState(!mySnippetsState.length && user);
+
+  const isJoined = mySnippetsState.find(
+    (item) => item.communityId === communityData.id
+  );
 
   const onJoin = () => {
-    console.log("INSIDE FUNCTION");
-
     if (!user) {
       setAuthModalState({ open: true, view: "login" });
+    }
+  };
+
+  useEffect(() => {
+    if (!!mySnippetsState.length || !user?.uid) return;
+    setLoading(true);
+    getSnippets();
+  }, [user]);
+
+  const getSnippets = async () => {
+    try {
+      const snippets = await getMySnippets(user?.uid!);
+      setMySnippetsState(snippets as CommunitySnippet[]);
+      setLoading(false);
+    } catch (error) {
+      console.log("Error getting user snippets", error);
     }
   };
 

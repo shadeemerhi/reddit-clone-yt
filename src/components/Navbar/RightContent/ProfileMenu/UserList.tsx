@@ -3,10 +3,21 @@ import React from "react";
 import { MdOutlineLogin } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 import { logout } from "../../../../firebase/authFunctions";
+import { signOut } from "firebase/auth";
+import { auth } from "../../../../firebase/clientApp";
+import { useResetRecoilState } from "recoil";
+import { myCommunitySnippetState } from "../../../../atoms/myCommunitySnippetsAtom";
 
 type UserListProps = {};
 
 const UserList: React.FC<UserListProps> = () => {
+  const resetSnippets = useResetRecoilState(myCommunitySnippetState);
+
+  const logout = async () => {
+    await signOut(auth);
+    resetSnippets();
+  };
+
   return (
     <>
       <MenuItem

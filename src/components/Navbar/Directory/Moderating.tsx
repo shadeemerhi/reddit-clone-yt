@@ -3,7 +3,7 @@ import { Box, MenuItem, Flex, Icon, Text, ListItem } from "@chakra-ui/react";
 import { FaReddit } from "react-icons/fa";
 import { GrAdd } from "react-icons/gr";
 import MenuListItem from "./MenuListItem";
-import { CommunitySnippet } from "../../../atoms/communitySnippetAtom";
+import { CommunitySnippet } from "../../../atoms/myCommunitySnippetsAtom";
 
 type ModeratingProps = {
   snippets: CommunitySnippet[];

@@ -2,7 +2,7 @@ import { Button, Flex } from "@chakra-ui/react";
 import Header from "../../components/Community/Header";
 import type { NextPage, NextPageContext } from "next";
 import { useRecoilValue } from "recoil";
-import { communitySnippetState } from "../../atoms/communitySnippetAtom";
+import { myCommunitySnippetState } from "../../atoms/myCommunitySnippetsAtom";
 import { doc, getDoc } from "firebase/firestore";
 import { firestore } from "../../firebase/clientApp";
 import Link from "next/link";
@@ -19,9 +19,6 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
   if (!communityData) {
     return <CommunityNotFound />;
   }
-
-  const snippetState = useRecoilValue(communitySnippetState);
-  console.log("here is snippet state", snippetState);
 
   return <Header communityData={communityData} />;
 };

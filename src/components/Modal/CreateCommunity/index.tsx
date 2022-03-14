@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -14,11 +15,10 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { doc, runTransaction } from "firebase/firestore";
-import React, { useState } from "react";
 import { BsFillEyeFill, BsFillPersonFill } from "react-icons/bs";
 import { HiLockClosed } from "react-icons/hi";
 import { useSetRecoilState } from "recoil";
-import { communitySnippetState } from "../../../atoms/communitySnippetAtom";
+import { myCommunitySnippetState } from "../../../atoms/myCommunitySnippetsAtom";
 import { firestore } from "../../../firebase/clientApp";
 import ModalWrapper from "../ModalWrapper";
 
@@ -34,7 +34,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   userId,
   // setSnippetState,
 }) => {
-  const setSnippetState = useSetRecoilState(communitySnippetState);
+  const setSnippetState = useSetRecoilState(myCommunitySnippetState);
   const [name, setName] = useState("");
   const [charsRemaining, setCharsRemaining] = useState(21);
   const [nameError, setNameError] = useState("");
