@@ -9,12 +9,20 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { RiCakeLine } from "react-icons/ri";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../../firebase/clientApp";
+import { Community } from "../../atoms/visitedCommunities";
 
-type AboutProps = {};
+type AboutProps = {
+  communityData?: Community;
+};
 
-const About: React.FC<AboutProps> = () => {
+const About: React.FC<AboutProps> = ({ communityData }) => {
+  if (!communityData) return null;
+  const [user] = useAuthState(auth);
   const router = useRouter();
 
   // Might add later
@@ -36,19 +44,21 @@ const About: React.FC<AboutProps> = () => {
         <Icon as={HiOutlineDotsHorizontal} cursor="pointer" />
       </Flex>
       <Flex direction="column" p={3} bg="white">
-        <Box
-          bg="gray.100"
-          width="100%"
-          p={2}
-          borderRadius={4}
-          border="1px solid"
-          borderColor="gray.300"
-          cursor="pointer"
-        >
-          <Text fontSize="9pt" fontWeight={700} color="blue.500">
-            Add description
-          </Text>
-        </Box>
+        {user?.uid === communityData?.creatorId && (
+          <Box
+            bg="gray.100"
+            width="100%"
+            p={2}
+            borderRadius={4}
+            border="1px solid"
+            borderColor="gray.300"
+            cursor="pointer"
+          >
+            <Text fontSize="9pt" fontWeight={700} color="blue.500">
+              Add description
+            </Text>
+          </Box>
+        )}
         <Stack spacing={2}>
           <Flex width="100%" p={2} fontWeight={600} fontSize="10pt">
             <Flex direction="column" width="50%">
@@ -61,24 +71,21 @@ const About: React.FC<AboutProps> = () => {
             </Flex>
           </Flex>
           <Divider />
-          <Flex width="100%" p={1} fontWeight={500} fontSize="10pt">
-            <Text>Created March 13, 2022</Text>
-          </Flex>
-          <Divider />
           <Flex
-            direction="column"
+            align="center"
             width="100%"
             p={1}
-            fontWeight={600}
+            fontWeight={500}
             fontSize="10pt"
           >
-            <Text>Community Topics</Text>
-            <Link href={`/r/${router.query.community}/submit`}>
-              <Button mt={3} height="30px">
-                Create Post
-              </Button>
-            </Link>
+            <Icon as={RiCakeLine} mr={2} fontSize={18} />
+            <Text>Created March 13, 2022</Text>
           </Flex>
+          <Link href={`/r/${router.query.community}/submit`}>
+            <Button mt={3} height="30px">
+              Create Post
+            </Button>
+          </Link>
         </Stack>
       </Flex>
     </>

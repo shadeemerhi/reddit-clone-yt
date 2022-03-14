@@ -8,11 +8,12 @@ import {
   CommunitySnippet,
   myCommunitySnippetState,
 } from "../../atoms/myCommunitySnippetsAtom";
+import { Community } from "../../atoms/visitedCommunities";
 import { auth } from "../../firebase/clientApp";
 import { getMySnippets } from "../../helpers/firestore";
 
 type HeaderProps = {
-  communityData: any;
+  communityData: Community;
 };
 
 const Header: React.FC<HeaderProps> = ({ communityData }) => {
