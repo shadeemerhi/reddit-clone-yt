@@ -26,7 +26,6 @@ const About: React.FC<AboutProps> = () => {
       display={{ base: "none", md: "flex" }}
       flexDirection="column"
       flexGrow={1}
-      border="1px solid blue"
     >
       <Flex
         justify="space-between"
@@ -84,7 +83,6 @@ const About: React.FC<AboutProps> = () => {
               </Button>
             </Link>
           </Flex>
-          <Divider />
         </Stack>
       </Flex>
     </Box>

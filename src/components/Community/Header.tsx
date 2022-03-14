@@ -53,7 +53,7 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
     <Flex direction="column" width="100%" height="146px">
       <Box height="50%" bg="blue.400" />
       <Flex justifyContent="center" bg="white" height="50%">
-        <Flex width="95%" maxWidth="860px" border="1px solid red">
+        <Flex width="95%" maxWidth="860px">
           <Icon
             as={FaReddit}
             fontSize={64}
