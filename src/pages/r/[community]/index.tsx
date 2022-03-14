@@ -9,6 +9,9 @@ import Link from "next/link";
 import CommunityNotFound from "../../../components/Community/CommunityNotFound";
 import ContentWrapper from "../../../components/Community/ContentWrapper";
 import dynamic from "next/dynamic";
+import About from "../../../components/Community/About";
+import CreatePostLink from "../../../components/Community/CreatePostLink";
+import PageContentLayout from "../../../components/Layout/PageContent";
 
 interface CommunityPageProps {
   communityData: string;
@@ -27,7 +30,16 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
   return (
     <>
       <Header communityData={communityData} />
-      <ContentWrapper />
+      <PageContentLayout>
+        {/* Left Content */}
+        <>
+          <CreatePostLink />
+        </>
+        {/* Right Content */}
+        <>
+          <About />
+        </>
+      </PageContentLayout>
     </>
   );
 };

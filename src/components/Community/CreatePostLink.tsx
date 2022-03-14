@@ -17,7 +17,6 @@ const CreatePostLink: React.FC<CreatePostProps> = () => {
       bg="white"
       height="56px"
       width="100%"
-      // width={{ base: "100%", md: "65%" }}
       p={2}
     >
       <Icon as={FaReddit} fontSize={36} color="gray.300" mr={4} />

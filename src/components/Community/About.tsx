@@ -22,11 +22,7 @@ const About: React.FC<AboutProps> = () => {
   const [editing, setEditing] = useState(false);
 
   return (
-    <Box
-      display={{ base: "none", md: "flex" }}
-      flexDirection="column"
-      flexGrow={1}
-    >
+    <>
       <Flex
         justify="space-between"
         align="center"
@@ -85,7 +81,7 @@ const About: React.FC<AboutProps> = () => {
           </Flex>
         </Stack>
       </Flex>
-    </Box>
+    </>
   );
 };
 export default About;
