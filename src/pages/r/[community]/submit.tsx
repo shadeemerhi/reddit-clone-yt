@@ -1,11 +1,11 @@
-import {} from "react";
 import { NextPage } from "next";
-import Header from "../../../components/Community/Header";
-import PageContentLayout from "../../../components/Layout/PageContent";
+import { Box, Text } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { useRecoilValue } from "recoil";
 import { visitedCommunitiesState } from "../../../atoms/visitedCommunities";
 import About from "../../../components/Community/About";
-import { useRouter } from "next/router";
+import PageContentLayout from "../../../components/Layout/PageContent";
+import NewPostForm from "../../../components/Post/NewPostForm";
 
 const CreateCommmunityPostPage: NextPage = () => {
   const router = useRouter();
@@ -16,13 +16,17 @@ const CreateCommmunityPostPage: NextPage = () => {
   return (
     <PageContentLayout>
       <>
-        <div>hello</div>
+        <Box p="14px 0px" borderBottom="1px solid" borderColor="white">
+          <Text fontWeight={600}>Create a post</Text>
+        </Box>
+        <NewPostForm />
       </>
       <>
         <About
           communityData={visitedCommunities.find(
             (item) => item.id === community
           )}
+          pt={6}
         />
       </>
     </PageContentLayout>

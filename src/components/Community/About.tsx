@@ -18,10 +18,12 @@ import { Community } from "../../atoms/visitedCommunities";
 
 type AboutProps = {
   communityData?: Community;
+  pt?: number;
 };
 
-const About: React.FC<AboutProps> = ({ communityData }) => {
-  if (!communityData) return null;
+const About: React.FC<AboutProps> = ({ communityData, pt }) => {
+  //   if (!communityData) return null;
+
   const [user] = useAuthState(auth);
   const router = useRouter();
 
@@ -30,7 +32,7 @@ const About: React.FC<AboutProps> = ({ communityData }) => {
   const [editing, setEditing] = useState(false);
 
   return (
-    <>
+    <Box pt={pt}>
       <Flex
         justify="space-between"
         align="center"
@@ -88,7 +90,7 @@ const About: React.FC<AboutProps> = ({ communityData }) => {
           </Link>
         </Stack>
       </Flex>
-    </>
+    </Box>
   );
 };
 export default About;
