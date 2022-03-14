@@ -5,7 +5,7 @@ import { Box, Flex } from "@chakra-ui/react";
 const PageContentLayout: React.FC = ({ children }) => {
   return (
     <Flex justify="center" p="16px 0px">
-      <Flex width="95%" maxWidth="860px">
+      <Flex width="100%" maxWidth="860px" border="1px solid red">
         <Flex
           direction="column"
           width={{ base: "100%", md: "65%" }}

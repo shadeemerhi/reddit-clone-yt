@@ -63,11 +63,11 @@ const About: React.FC<AboutProps> = ({ communityData, pt }) => {
         )}
         <Stack spacing={2}>
           <Flex width="100%" p={2} fontWeight={600} fontSize="10pt">
-            <Flex direction="column" width="50%">
+            <Flex direction="column" flexGrow={1}>
               <Text>1</Text>
               <Text>Members</Text>
             </Flex>
-            <Flex direction="column" width="50%">
+            <Flex direction="column" flexGrow={1}>
               <Text>1</Text>
               <Text>Online</Text>
             </Flex>
