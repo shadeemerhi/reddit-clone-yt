@@ -21,7 +21,7 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
   const [mySnippetsState, setMySnippetsState] = useRecoilState(
     myCommunitySnippetState
   );
-  const [loading, setLoading] = useState(!mySnippetsState.length && user);
+  const [loading, setLoading] = useState(!mySnippetsState.length && !!user);
 
   const isJoined = mySnippetsState.find(
     (item) => item.communityId === communityData.id
@@ -53,7 +53,7 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
     <Flex direction="column" width="100%" height="146px">
       <Box height="50%" bg="blue.400" />
       <Flex justifyContent="center" bg="white" height="50%">
-        <Flex width="60%">
+        <Flex width="95%" maxWidth="860px" border="1px solid red">
           <Icon
             as={FaReddit}
             fontSize={64}

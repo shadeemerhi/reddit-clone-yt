@@ -1,12 +1,13 @@
 import { Button, Flex } from "@chakra-ui/react";
-import Header from "../../components/Community/Header";
+import Header from "../../../components/Community/Header";
 import type { NextPage, NextPageContext } from "next";
 import { useRecoilValue } from "recoil";
-import { myCommunitySnippetState } from "../../atoms/myCommunitySnippetsAtom";
+import { myCommunitySnippetState } from "../../../atoms/myCommunitySnippetsAtom";
 import { doc, getDoc } from "firebase/firestore";
-import { firestore } from "../../firebase/clientApp";
+import { firestore } from "../../../firebase/clientApp";
 import Link from "next/link";
-import CommunityNotFound from "../../components/Community/CommunityNotFound";
+import CommunityNotFound from "../../../components/Community/CommunityNotFound";
+import ContentWrapper from "../../../components/Community/ContentWrapper";
 
 interface CommunityPageProps {
   communityData: string;
@@ -20,7 +21,12 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
     return <CommunityNotFound />;
   }
 
-  return <Header communityData={communityData} />;
+  return (
+    <>
+      <Header communityData={communityData} />
+      <ContentWrapper />
+    </>
+  );
 };
 
 export async function getServerSideProps(context: NextPageContext) {
