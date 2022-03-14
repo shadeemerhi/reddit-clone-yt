@@ -1,10 +1,8 @@
+import React from "react";
 import { Flex, Button } from "@chakra-ui/react";
 import Link from "next/link";
-import React from "react";
 
-type CommunityNotFoundProps = {};
-
-const CommunityNotFound: React.FC<CommunityNotFoundProps> = () => {
+const CommunityNotFound: React.FC = () => {
   return (
     <Flex
       direction="column"

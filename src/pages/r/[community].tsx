@@ -13,6 +13,8 @@ interface CommunityPageProps {
 }
 
 const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
+  // set current community in recoil state to access in directory
+
   // Community was not found in the database
   if (!communityData) {
     return <CommunityNotFound />;
@@ -32,10 +34,11 @@ export async function getServerSideProps(context: NextPageContext) {
       context.query.community as string
     );
     const communityDoc = await getDoc(communityDocRef);
-    console.log("here is community doc", communityDoc.data());
     return {
       props: {
-        communityData: communityDoc.data() || "",
+        communityData: communityDoc.exists()
+          ? { id: communityDoc.id, ...communityDoc.data() }
+          : "",
       },
     };
   } catch (error) {
