@@ -2,8 +2,8 @@ import React from "react";
 import { Box, MenuItem, Flex, Icon, Text, ListItem } from "@chakra-ui/react";
 import { FaReddit } from "react-icons/fa";
 import { GrAdd } from "react-icons/gr";
-import { CommunitySnippet } from "./Communities";
 import MenuListItem from "./MenuListItem";
+import { CommunitySnippet } from "../../../atoms/communitySnippetAtom";
 
 type ModeratingProps = {
   snippets: CommunitySnippet[];

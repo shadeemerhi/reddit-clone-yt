@@ -1,54 +1,47 @@
-import { doc, getDoc } from "firebase/firestore";
+import { Button, Flex } from "@chakra-ui/react";
+import Header from "../../components/Community/Header";
 import type { NextPage, NextPageContext } from "next";
-import { useRouter } from "next/router";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useDocumentData } from "react-firebase-hooks/firestore";
 import { useRecoilValue } from "recoil";
 import { communitySnippetState } from "../../atoms/communitySnippetAtom";
-import { auth, firestore } from "../../firebase/clientApp";
+import { doc, getDoc } from "firebase/firestore";
+import { firestore } from "../../firebase/clientApp";
+import Link from "next/link";
+import CommunityNotFound from "../../components/Community/CommunityNotFound";
 
 interface CommunityPageProps {
   communityData: string;
 }
 
 const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
-  const router = useRouter();
-  const { community } = router.query;
+  // Community was not found in the database
+  if (!communityData) {
+    return <CommunityNotFound />;
+  }
 
   const snippetState = useRecoilValue(communitySnippetState);
   console.log("here is snippet state", snippetState);
 
-  // const [data, loading, error] = useDocumentData(
-  //   doc(firestore, "communities", community as string)
-  // );
-  console.log("AT THIS PAGE LOL");
-
-  return <div>The community page: {JSON.stringify(community)}</div>;
+  return <Header communityData={communityData} />;
 };
 
-// export async function getServerSideProps(context: NextPageContext) {
-//   const communityDocRef = doc(
-//     firestore,
-//     "communities",
-//     context.query.community as string
-//   );
-//   const communityDoc = await getDoc(communityDocRef);
-//   // try {
-//   //   const communityDocRef = doc(
-//   //     firestore,
-//   //     "communities",
-//   //     context.query.community as string
-//   //   );
-//   //   const communityDoc = await getDoc(communityDocRef);
-//   //   throw new Error("lol");
-//   // } catch (error: any) {
-//   //   console.log("there was an error", error.message);
-//   // }
-//   return {
-//     props: {
-//       communityData: communityDoc.data(),
-//     }, // will be passed to the page component as props
-//   };
-// }
+export async function getServerSideProps(context: NextPageContext) {
+  try {
+    const communityDocRef = doc(
+      firestore,
+      "communities",
+      context.query.community as string
+    );
+    const communityDoc = await getDoc(communityDocRef);
+    console.log("here is community doc", communityDoc.data());
+    return {
+      props: {
+        communityData: communityDoc.data() || "",
+      },
+    };
+  } catch (error) {
+    // Could create error page here
+    console.log("getServerSideProps error - [community]", error);
+  }
+}
 
 export default CommunityPage;
