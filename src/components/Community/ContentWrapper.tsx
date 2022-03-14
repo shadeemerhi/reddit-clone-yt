@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Flex } from "@chakra-ui/react";
 import CreatePostLink from "./CreatePostLink";
+import About from "./About";
 
 type ContentWrapperProps = {};
 
@@ -10,14 +11,17 @@ const ContentWrapper: React.FC<ContentWrapperProps> = () => {
       <Flex width="95%" maxWidth="860px" border="1px solid red">
         {/* <Box width="65%" border="1px solid green"></Box> */}
         {/* Left Content */}
-        <CreatePostLink />
-        <Box
+        <Flex width={{ base: "100%", md: "65%" }} mr={{ base: 0, md: 6 }}>
+          <CreatePostLink />
+        </Flex>
+        <About />
+        {/* <Box
           display={{ base: "none", md: "flex" }}
           flexGrow={1}
           border="1px solid blue"
         >
           hello
-        </Box>
+        </Box> */}
 
         {/* Right Content */}
       </Flex>

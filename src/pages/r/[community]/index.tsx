@@ -8,12 +8,15 @@ import { firestore } from "../../../firebase/clientApp";
 import Link from "next/link";
 import CommunityNotFound from "../../../components/Community/CommunityNotFound";
 import ContentWrapper from "../../../components/Community/ContentWrapper";
+import dynamic from "next/dynamic";
 
 interface CommunityPageProps {
   communityData: string;
 }
 
 const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
+  console.log("HERE IS COMMUNITY DATA", communityData);
+
   // set current community in recoil state to access in directory
 
   // Community was not found in the database
@@ -29,7 +32,13 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
   );
 };
 
+export default dynamic(() => Promise.resolve(CommunityPage), {
+  ssr: false,
+});
+
 export async function getServerSideProps(context: NextPageContext) {
+  console.log("GET SERVER SIDE PROPS RUNNING");
+
   try {
     const communityDocRef = doc(
       firestore,
@@ -50,4 +59,4 @@ export async function getServerSideProps(context: NextPageContext) {
   }
 }
 
-export default CommunityPage;
+// export default CommunityPage;
