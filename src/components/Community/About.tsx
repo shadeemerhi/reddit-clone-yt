@@ -25,7 +25,8 @@ type AboutProps = {
 const About: React.FC<AboutProps> = ({ communityData, pt, onCreatePage }) => {
   //   if (!communityData) return null;
 
-  const [user] = useAuthState(auth);
+  const [user] = useAuthState(auth); // will revisit how 'auth' state is passed
+
   const router = useRouter();
 
   // Might add later

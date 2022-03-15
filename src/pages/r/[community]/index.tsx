@@ -12,13 +12,15 @@ import CommunityNotFound from "../../../components/Community/CommunityNotFound";
 import CreatePostLink from "../../../components/Community/CreatePostLink";
 import Header from "../../../components/Community/Header";
 import PageContentLayout from "../../../components/Layout/PageContent";
-import { firestore } from "../../../firebase/clientApp";
+import { auth, firestore } from "../../../firebase/clientApp";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 interface CommunityPageProps {
   communityData: Community;
 }
 
 const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
+  const [user, loading] = useAuthState(auth);
   const [visitedCommunities, setVisitedCommunities] = useRecoilState(
     visitedCommunitiesState
   );
@@ -45,9 +47,7 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
       <Header communityData={communityData} />
       <PageContentLayout>
         {/* Left Content */}
-        <>
-          <CreatePostLink />
-        </>
+        <>{user && <CreatePostLink />}</>
         {/* Right Content */}
         <>
           <About communityData={communityData} />
