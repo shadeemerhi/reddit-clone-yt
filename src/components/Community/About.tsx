@@ -19,9 +19,10 @@ import { Community } from "../../atoms/visitedCommunities";
 type AboutProps = {
   communityData?: Community;
   pt?: number;
+  onCreatePage?: boolean;
 };
 
-const About: React.FC<AboutProps> = ({ communityData, pt }) => {
+const About: React.FC<AboutProps> = ({ communityData, pt, onCreatePage }) => {
   //   if (!communityData) return null;
 
   const [user] = useAuthState(auth);
@@ -83,11 +84,13 @@ const About: React.FC<AboutProps> = ({ communityData, pt }) => {
             <Icon as={RiCakeLine} mr={2} fontSize={18} />
             <Text>Created March 13, 2022</Text>
           </Flex>
-          <Link href={`/r/${router.query.community}/submit`}>
-            <Button mt={3} height="30px">
-              Create Post
-            </Button>
-          </Link>
+          {!onCreatePage && (
+            <Link href={`/r/${router.query.community}/submit`}>
+              <Button mt={3} height="30px">
+                Create Post
+              </Button>
+            </Link>
+          )}
         </Stack>
       </Flex>
     </Box>

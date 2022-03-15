@@ -14,7 +14,7 @@ const CreateCommmunityPostPage: NextPage = () => {
   console.log("HERE ARE VISITED COMMUNITIES", visitedCommunities);
 
   return (
-    <PageContentLayout>
+    <PageContentLayout maxWidth="1060px">
       <>
         <Box p="14px 0px" borderBottom="1px solid" borderColor="white">
           <Text fontWeight={600}>Create a post</Text>
@@ -27,6 +27,7 @@ const CreateCommmunityPostPage: NextPage = () => {
             (item) => item.id === community
           )}
           pt={6}
+          onCreatePage
         />
       </>
     </PageContentLayout>
