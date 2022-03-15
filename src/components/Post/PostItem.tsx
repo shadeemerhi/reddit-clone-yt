@@ -43,7 +43,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
       <Flex direction="column">
         <Stack spacing={1} p="10px 10px">
           <Text fontSize="9pt" color="gray.500">
-            Posted by {post.userDisplayText}{" "}
+            Posted by u/{post.userDisplayText}{" "}
             {moment(new Date(post.createdAt.seconds * 1000)).fromNow()}
           </Text>
           <Text fontSize="12pt" fontWeight={600}>
