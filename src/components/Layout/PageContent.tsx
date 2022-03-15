@@ -12,7 +12,7 @@ const PageContentLayout: React.FC<PageContentLayoutProps> = ({
 }) => {
   return (
     <Flex justify="center" p="16px 0px">
-      <Flex width="100%" maxWidth={maxWidth || "860px"}>
+      <Flex width="95%" justify="center" maxWidth={maxWidth || "860px"}>
         <Flex
           direction="column"
           width={{ base: "100%", md: "65%" }}

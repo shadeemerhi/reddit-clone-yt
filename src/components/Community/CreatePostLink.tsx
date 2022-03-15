@@ -20,6 +20,7 @@ const CreatePostLink: React.FC<CreatePostProps> = () => {
       border="1px solid"
       borderColor="gray.300"
       p={2}
+      mb={4}
     >
       <Icon as={FaReddit} fontSize={36} color="gray.300" mr={4} />
       <Link href={`/r/${router.query.community}/submit`}>

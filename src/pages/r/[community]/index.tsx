@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Stack } from "@chakra-ui/react";
 import {
   collection,
   doc,
@@ -12,6 +13,7 @@ import type { NextPage, NextPageContext } from "next";
 import dynamic from "next/dynamic";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
+import safeJsonStringify from "safe-json-stringify";
 import {
   Community,
   Post,
@@ -22,9 +24,8 @@ import CommunityNotFound from "../../../components/Community/CommunityNotFound";
 import CreatePostLink from "../../../components/Community/CreatePostLink";
 import Header from "../../../components/Community/Header";
 import PageContentLayout from "../../../components/Layout/PageContent";
+import PostItem from "../../../components/Post/PostItem";
 import { auth, firestore } from "../../../firebase/clientApp";
-import { serialize } from "v8";
-import safeJsonStringify from "safe-json-stringify";
 
 interface CommunityPageProps {
   communityData: Community;
@@ -126,21 +127,20 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
         <>
           {user && <CreatePostLink />}
           {loading ? (
-            <div>LOADING YOU HOMO</div>
+            <div>WILL ADD LOADERS</div>
           ) : (
-            <>
-              {posts?.map((item: Post) => (
-                <div key={item.id}>
-                  {item.title} {item.voteStatus}
-                </div>
+            <Stack>
+              {posts.map((post: Post) => (
+                <PostItem key={post.id} post={post} />
               ))}
+              {/* PART OF CACHED SOLUTION */}
               {/* {visitedCommunities[
                 communityData.id as keyof typeof visitedCommunities
               ] &&
                 visitedCommunities[
                   communityData.id as keyof typeof visitedCommunities
                 ]?.posts.map((item) => <div key={item.id}>{item.title}</div>)} */}
-            </>
+            </Stack>
           )}
         </>
         {/* Right Content */}
