@@ -36,9 +36,7 @@ const CreateCommmunityPostPage: NextPage = () => {
       </>
       <>
         <About
-          communityData={visitedCommunities.find(
-            (item) => item.id === community
-          )}
+          communityData={visitedCommunities[community as string]}
           pt={6}
           onCreatePage
         />
