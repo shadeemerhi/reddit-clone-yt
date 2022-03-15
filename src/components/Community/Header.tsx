@@ -31,7 +31,13 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
   const onJoin = () => {
     if (!user) {
       setAuthModalState({ open: true, view: "login" });
+      return;
     }
+    if (isJoined) {
+      console.log("LEAVING COMMUNITY");
+      return;
+    }
+    console.log("JOINING COMMUNITY");
   };
 
   useEffect(() => {
