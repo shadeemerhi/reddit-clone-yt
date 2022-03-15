@@ -15,7 +15,7 @@ import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase/clientApp";
 import { Community } from "../../atoms/visitedCommunities";
-import date from "date-and-time";
+import moment from "moment";
 
 type AboutProps = {
   communityData: Community;
@@ -86,8 +86,7 @@ const About: React.FC<AboutProps> = ({ communityData, pt, onCreatePage }) => {
             <Icon as={RiCakeLine} mr={2} fontSize={18} />
             <Text>
               Created{" "}
-              {date.format(
-                new Date(communityData.createdAt.seconds * 1000),
+              {moment(new Date(communityData.createdAt.seconds * 1000)).format(
                 "MMM DD, YYYY"
               )}
             </Text>

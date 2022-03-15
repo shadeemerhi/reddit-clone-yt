@@ -15,6 +15,7 @@ interface VisitedCommunitiesState {
 export interface Post {
   id: string;
   communityId: string;
+  userDisplayText: string;
   creatorId: string;
   title: string;
   body: string;

@@ -1,4 +1,5 @@
 import { Button, Flex, Icon, Input, Stack, Textarea } from "@chakra-ui/react";
+import { User } from "firebase/auth";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { Router, useRouter } from "next/router";
 import React, { useState } from "react";
@@ -6,8 +7,8 @@ import { BiPoll } from "react-icons/bi";
 import { BsLink45Deg, BsMic } from "react-icons/bs";
 import { IoDocumentText, IoImageOutline } from "react-icons/io5";
 import { useSetRecoilState } from "recoil";
-import { visitedCommunitiesState } from "../../atoms/visitedCommunities";
-import { firestore } from "../../firebase/clientApp";
+import { visitedCommunitiesState } from "../../../atoms/visitedCommunities";
+import { firestore } from "../../../firebase/clientApp";
 import TabItem from "./TabItem";
 
 const formTabs = [
@@ -40,10 +41,10 @@ export type TabItem = {
 
 type NewPostFormProps = {
   communityId: string;
-  userId: string;
+  user: User;
 };
 
-const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, userId }) => {
+const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, user }) => {
   const router = useRouter();
   const [selectedTab, setSelectedTab] = useState(formTabs[0].title);
   const [form, setForm] = useState({
@@ -59,7 +60,8 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, userId }) => {
     try {
       const newPostRef = await addDoc(collection(firestore, "posts"), {
         communityId,
-        creatorId: userId,
+        creatorId: user.uid,
+        userDisplayText: user.email!.split("@")[0],
         title,
         body,
         numberOfComments: 0,

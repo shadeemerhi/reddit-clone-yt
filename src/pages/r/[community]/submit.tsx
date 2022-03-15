@@ -5,7 +5,7 @@ import { useRecoilValue } from "recoil";
 import { visitedCommunitiesState } from "../../../atoms/visitedCommunities";
 import About from "../../../components/Community/About";
 import PageContentLayout from "../../../components/Layout/PageContent";
-import NewPostForm from "../../../components/Post/NewPostForm";
+import NewPostForm from "../../../components/Post/PostForm/NewPostForm";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../../firebase/clientApp";
 import { useEffect } from "react";
@@ -30,9 +30,7 @@ const CreateCommmunityPostPage: NextPage = () => {
         <Box p="14px 0px" borderBottom="1px solid" borderColor="white">
           <Text fontWeight={600}>Create a post</Text>
         </Box>
-        {user && (
-          <NewPostForm communityId={community as string} userId={user.uid} />
-        )}
+        {user && <NewPostForm communityId={community as string} user={user} />}
       </>
       <>
         <About
