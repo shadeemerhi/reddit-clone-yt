@@ -31,7 +31,7 @@ interface CommunityPageProps {
 }
 
 const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
-  console.log("HERE IS COMMUNITY DATA", communityData);
+  // console.log("HERE IS COMMUNITY DATA", communityData);
 
   const [user] = useAuthState(auth);
   const [loading, setLoading] = useState(false);
@@ -40,13 +40,6 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
   const [visitedCommunities, setVisitedCommunities] = useRecoilState(
     visitedCommunitiesState
   );
-
-  // set current community in recoil state to access in directory
-
-  // Community was not found in the database
-  if (!communityData) {
-    return <CommunityNotFound />;
-  }
 
   useEffect(() => {
     // First time the user has navigated to this page - add to cache
@@ -119,6 +112,11 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
   //   }));
   //   setLoading(false);
   // };
+
+  // Community was not found in the database
+  if (!communityData) {
+    return <CommunityNotFound />;
+  }
 
   return (
     <>

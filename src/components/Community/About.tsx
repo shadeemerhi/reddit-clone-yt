@@ -15,9 +15,10 @@ import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase/clientApp";
 import { Community } from "../../atoms/visitedCommunities";
+import date from "date-and-time";
 
 type AboutProps = {
-  communityData?: Community;
+  communityData: Community;
   pt?: number;
   onCreatePage?: boolean;
 };
@@ -48,7 +49,7 @@ const About: React.FC<AboutProps> = ({ communityData, pt, onCreatePage }) => {
         <Icon as={HiOutlineDotsHorizontal} cursor="pointer" />
       </Flex>
       <Flex direction="column" p={3} bg="white">
-        {user?.uid === communityData?.creatorId && (
+        {user?.uid === communityData.creatorId && (
           <Box
             bg="gray.100"
             width="100%"
@@ -66,7 +67,7 @@ const About: React.FC<AboutProps> = ({ communityData, pt, onCreatePage }) => {
         <Stack spacing={2}>
           <Flex width="100%" p={2} fontWeight={600} fontSize="10pt">
             <Flex direction="column" flexGrow={1}>
-              <Text>1</Text>
+              <Text>{communityData.numberOfMembers}</Text>
               <Text>Members</Text>
             </Flex>
             <Flex direction="column" flexGrow={1}>
@@ -83,7 +84,13 @@ const About: React.FC<AboutProps> = ({ communityData, pt, onCreatePage }) => {
             fontSize="10pt"
           >
             <Icon as={RiCakeLine} mr={2} fontSize={18} />
-            <Text>Created March 13, 2022</Text>
+            <Text>
+              Created{" "}
+              {date.format(
+                new Date(communityData.createdAt.seconds * 1000),
+                "MMM DD, YYYY"
+              )}
+            </Text>
           </Flex>
           {!onCreatePage && (
             <Link href={`/r/${router.query.community}/submit`}>
