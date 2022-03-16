@@ -14,7 +14,7 @@ import moment from "moment";
 
 type PostItemProps = {
   post: Post;
-  onVote: any;
+  onVote: (post: Post, vote: number) => void;
 };
 
 const PostItem: React.FC<PostItemProps> = ({ post, onVote }) => {
@@ -32,6 +32,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, onVote }) => {
           color="gray.400"
           fontSize={20}
           cursor="pointer"
+          onClick={() => onVote(post, 1)}
         />
         {post.voteStatus}
         <Icon
@@ -39,6 +40,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, onVote }) => {
           color="gray.400"
           fontSize={20}
           cursor="pointer"
+          onClick={() => onVote(post, -1)}
         />
       </Flex>
       <Flex direction="column">
