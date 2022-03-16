@@ -19,7 +19,7 @@ interface CommunityPageProps {
 }
 
 const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
-  const [user] = useAuthState(auth);
+  const [user, loadingUser] = useAuthState(auth);
 
   const [currCommunitiesState, setCurrCommunitiesState] =
     useRecoilState(communitiesState);
@@ -52,7 +52,11 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
         {/* Left Content */}
         <>
           <CreatePostLink />
-          <Posts communityData={communityData} userId={user?.uid} />
+          <Posts
+            communityData={communityData}
+            userId={user?.uid}
+            loadingUser={loadingUser}
+          />
         </>
         {/* Right Content */}
         <>

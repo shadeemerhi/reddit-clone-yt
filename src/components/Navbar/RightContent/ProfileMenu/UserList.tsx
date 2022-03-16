@@ -1,21 +1,20 @@
-import { MenuItem, Flex, Icon, MenuDivider } from "@chakra-ui/react";
 import React from "react";
-import { MdOutlineLogin } from "react-icons/md";
-import { CgProfile } from "react-icons/cg";
-import { logout } from "../../../../firebase/authFunctions";
+import { Flex, Icon, MenuDivider, MenuItem } from "@chakra-ui/react";
 import { signOut } from "firebase/auth";
-import { auth } from "../../../../firebase/clientApp";
+import { CgProfile } from "react-icons/cg";
+import { MdOutlineLogin } from "react-icons/md";
 import { useResetRecoilState } from "recoil";
-import { myCommunitySnippetState } from "../../../../atoms/myCommunitySnippetsAtom";
+import { communitiesState } from "../../../../atoms/communitiesAtom";
+import { auth } from "../../../../firebase/clientApp";
 
 type UserListProps = {};
 
 const UserList: React.FC<UserListProps> = () => {
-  const resetSnippets = useResetRecoilState(myCommunitySnippetState);
+  const resetCommunityState = useResetRecoilState(communitiesState);
 
   const logout = async () => {
     await signOut(auth);
-    resetSnippets();
+    resetCommunityState();
   };
 
   return (

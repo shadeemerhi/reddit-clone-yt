@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, Flex, Icon, Text } from "@chakra-ui/react";
-import { deleteDoc, doc, writeBatch } from "firebase/firestore";
+import { doc, writeBatch } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { FaReddit } from "react-icons/fa";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { authModalState } from "../../atoms/authModalAtom";
 import {
+  communitiesState,
+  Community,
   CommunitySnippet,
-  myCommunitySnippetState,
-} from "../../atoms/myCommunitySnippetsAtom";
-import { communitiesState, Community } from "../../atoms/communitiesAtom";
+} from "../../atoms/communitiesAtom";
 import { auth, firestore } from "../../firebase/clientApp";
 import { getMySnippets } from "../../helpers/firestore";
 
@@ -20,9 +20,6 @@ type HeaderProps = {
 const Header: React.FC<HeaderProps> = ({ communityData }) => {
   const [user] = useAuthState(auth);
   const setAuthModalState = useSetRecoilState(authModalState);
-  // const [mySnippetsState, setMySnippetsState] = useRecoilState(
-  //   myCommunitySnippetState
-  // );
   const [currCommunityState, setCurrCommunityState] =
     useRecoilState(communitiesState);
   const [loading, setLoading] = useState(

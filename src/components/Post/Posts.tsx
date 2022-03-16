@@ -14,6 +14,8 @@ import { Community, Post } from "../../atoms/communitiesAtom";
 import { firestore } from "../../firebase/clientApp";
 import PostItem from "./PostItem";
 import PostLoader from "./Loader";
+import { useSetRecoilState } from "recoil";
+import { authModalState } from "../../atoms/authModalAtom";
 
 type PostVote = {
   id?: string;
@@ -25,15 +27,26 @@ type PostVote = {
 type PostsProps = {
   communityData: Community;
   userId?: string;
+  loadingUser: boolean;
 };
 
-const Posts: React.FC<PostsProps> = ({ communityData, userId }) => {
+const Posts: React.FC<PostsProps> = ({
+  communityData,
+  userId,
+  loadingUser,
+}) => {
   const [posts, setPosts] = useState([]);
   const [postVotes, setPostVotes] = useState<PostVote[]>([]);
   const [loading, setLoading] = useState(false);
+  const setAuthModalState = useSetRecoilState(authModalState);
   const [error, setError] = useState("");
 
   const onVote = async (post: Post, vote: number) => {
+    if (!userId) {
+      setAuthModalState({ open: true, view: "login" });
+      return;
+    }
+
     const { voteStatus } = post;
 
     // is this an upvote or a downvote?
@@ -159,9 +172,13 @@ const Posts: React.FC<PostsProps> = ({ communityData, userId }) => {
   }, [communityData]);
 
   useEffect(() => {
+    if (!userId && !loadingUser) {
+      setPostVotes([]);
+      return;
+    }
     if (!userId) return;
     getUserPostVotes();
-  }, [communityData, userId]);
+  }, [communityData, userId, loadingUser]);
 
   return (
     <>
