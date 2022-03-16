@@ -15,10 +15,10 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 import safeJsonStringify from "safe-json-stringify";
 import {
+  communitiesState,
   Community,
   Post,
-  visitedCommunitiesState,
-} from "../../../atoms/visitedCommunities";
+} from "../../../atoms/communitiesAtom";
 import About from "../../../components/Community/About";
 import CommunityNotFound from "../../../components/Community/CommunityNotFound";
 import CreatePostLink from "../../../components/Community/CreatePostLink";
@@ -32,26 +32,25 @@ interface CommunityPageProps {
 }
 
 const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
-  // console.log("HERE IS COMMUNITY DATA", communityData);
-
   const [user] = useAuthState(auth);
   const [loading, setLoading] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
 
-  const [visitedCommunities, setVisitedCommunities] = useRecoilState(
-    visitedCommunitiesState
-  );
+  const [currCommunitiesState, setCurrCommunitiesState] =
+    useRecoilState(communitiesState);
 
   useEffect(() => {
-    // First time the user has navigated to this page - add to cache
-    // const firstSessionVisit = !visitedCommunities.find(
-    //   (item) => item.id === communityData.id
-    // );
-    const firstSessionVisit = !visitedCommunities[communityData.id];
+    // First time the user has navigated to this community page - add to cache
+    const firstSessionVisit =
+      !currCommunitiesState.visitedCommunities[communityData.id!];
+
     if (firstSessionVisit) {
-      setVisitedCommunities((prev) => ({
+      setCurrCommunitiesState((prev) => ({
         ...prev,
-        [communityData.id]: communityData,
+        visitedCommunities: {
+          ...prev.visitedCommunities,
+          [communityData.id!]: communityData,
+        },
       }));
     }
   }, [communityData]);

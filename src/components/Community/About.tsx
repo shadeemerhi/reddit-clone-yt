@@ -14,7 +14,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase/clientApp";
-import { Community } from "../../atoms/visitedCommunities";
+import { Community } from "../../atoms/communitiesAtom";
 import moment from "moment";
 
 type AboutProps = {

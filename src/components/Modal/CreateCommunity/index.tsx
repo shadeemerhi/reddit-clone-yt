@@ -27,7 +27,7 @@ import { useSetRecoilState } from "recoil";
 import { myCommunitySnippetState } from "../../../atoms/myCommunitySnippetsAtom";
 import { firestore } from "../../../firebase/clientApp";
 import ModalWrapper from "../ModalWrapper";
-import { Community } from "../../../atoms/visitedCommunities";
+import { Community } from "../../../atoms/communitiesAtom";
 import { useRouter } from "next/router";
 
 type CreateCommunityModalProps = {

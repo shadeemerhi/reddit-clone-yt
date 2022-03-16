@@ -1,13 +1,13 @@
+import React, { useState } from "react";
 import { Button, Flex, Icon, Input, Stack, Textarea } from "@chakra-ui/react";
 import { User } from "firebase/auth";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { Router, useRouter } from "next/router";
-import React, { useState } from "react";
+import { useRouter } from "next/router";
 import { BiPoll } from "react-icons/bi";
 import { BsLink45Deg, BsMic } from "react-icons/bs";
 import { IoDocumentText, IoImageOutline } from "react-icons/io5";
 import { useSetRecoilState } from "recoil";
-import { visitedCommunitiesState } from "../../../atoms/visitedCommunities";
+import { communitiesState } from "../../../atoms/communitiesAtom";
 import { firestore } from "../../../firebase/clientApp";
 import TabItem from "./TabItem";
 
@@ -52,7 +52,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, user }) => {
     body: "",
   });
   const [loading, setLoading] = useState(false);
-  const setCommunityPostState = useSetRecoilState(visitedCommunitiesState);
+  const setCommunityPostState = useSetRecoilState(communitiesState);
 
   const handleCreatePost = async () => {
     setLoading(true);
@@ -79,14 +79,18 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, user }) => {
       title: "",
       body: "",
     });
-    setCommunityPostState((prev) => ({
-      ...prev,
-      [communityId]: {
-        ...prev[communityId],
-        posts: [],
-      },
-    }));
+
     router.back();
+    /**
+     * PART OF CACHE SOLUTION - CLEARING POST CACHE
+     */
+    // setCommunityPostState((prev) => ({
+    //   ...prev,
+    //   [communityId]: {
+    //     ...prev[communityId],
+    //     posts: [],
+    //   },
+    // }));
   };
 
   const onChange = ({

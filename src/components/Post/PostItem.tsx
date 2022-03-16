@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex, Icon, Stack, Text } from "@chakra-ui/react";
-import { Post } from "../../atoms/visitedCommunities";
+import { Post } from "../../atoms/communitiesAtom";
 import {
   IoArrowDownCircleOutline,
   IoArrowDownCircleSharp,
