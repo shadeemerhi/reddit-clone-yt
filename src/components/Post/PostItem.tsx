@@ -14,9 +14,10 @@ import moment from "moment";
 
 type PostItemProps = {
   post: Post;
+  onVote: any;
 };
 
-const PostItem: React.FC<PostItemProps> = ({ post }) => {
+const PostItem: React.FC<PostItemProps> = ({ post, onVote }) => {
   return (
     <Flex border="1px solid" borderColor="gray.300" borderRadius={4} bg="white">
       <Flex
