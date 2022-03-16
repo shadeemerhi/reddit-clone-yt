@@ -1,18 +1,18 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Stack, useClipboard } from "@chakra-ui/react";
-import { Community, Post } from "../../atoms/communitiesAtom";
-import PostItem from "./PostItem";
+import React, { useEffect, useState } from "react";
+import { Stack } from "@chakra-ui/react";
 import {
-  query,
   collection,
-  where,
-  orderBy,
-  onSnapshot,
-  getDocs,
-  writeBatch,
   doc,
+  getDocs,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+  writeBatch,
 } from "firebase/firestore";
+import { Community, Post } from "../../atoms/communitiesAtom";
 import { firestore } from "../../firebase/clientApp";
+import PostItem from "./PostItem";
 
 type PostVote = {
   id?: string;
