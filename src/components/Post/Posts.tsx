@@ -13,6 +13,7 @@ import {
 import { Community, Post } from "../../atoms/communitiesAtom";
 import { firestore } from "../../firebase/clientApp";
 import PostItem from "./PostItem";
+import PostLoader from "./Loader";
 
 type PostVote = {
   id?: string;
@@ -130,7 +131,6 @@ const Posts: React.FC<PostsProps> = ({ communityData, userId }) => {
         ...doc.data(),
       }));
       setPostVotes(postVotes as PostVote[]);
-      console.log("POST VOTES", postVotes);
     } catch (error) {
       console.log("getUserPostVotes error", error);
     }
@@ -150,7 +150,6 @@ const Posts: React.FC<PostsProps> = ({ communityData, userId }) => {
         id: post.id,
         ...post.data(),
       }));
-      console.log("HERE ARE POSTS", posts);
       setPosts(posts as []);
       setLoading(false);
     });
@@ -165,11 +164,11 @@ const Posts: React.FC<PostsProps> = ({ communityData, userId }) => {
   }, [communityData, userId]);
 
   return (
-    <Stack>
+    <>
       {loading ? (
-        <div>WILL ADD LOADERS</div>
+        <PostLoader />
       ) : (
-        <>
+        <Stack>
           {posts.map((post: Post) => (
             <PostItem
               key={post.id}
@@ -180,9 +179,9 @@ const Posts: React.FC<PostsProps> = ({ communityData, userId }) => {
               }
             />
           ))}
-        </>
+        </Stack>
       )}
-    </Stack>
+    </>
   );
 };
 export default Posts;
