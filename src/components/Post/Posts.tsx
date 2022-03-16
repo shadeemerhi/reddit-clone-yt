@@ -171,7 +171,14 @@ const Posts: React.FC<PostsProps> = ({ communityData, userId }) => {
       ) : (
         <>
           {posts.map((post: Post) => (
-            <PostItem key={post.id} post={post} onVote={onVote} />
+            <PostItem
+              key={post.id}
+              post={post}
+              onVote={onVote}
+              userVoteValue={
+                postVotes.find((item) => item.postId === post.id)?.voteValue
+              }
+            />
           ))}
         </>
       )}

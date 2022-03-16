@@ -15,9 +15,10 @@ import moment from "moment";
 type PostItemProps = {
   post: Post;
   onVote: (post: Post, vote: number) => void;
+  userVoteValue?: number;
 };
 
-const PostItem: React.FC<PostItemProps> = ({ post, onVote }) => {
+const PostItem: React.FC<PostItemProps> = ({ post, onVote, userVoteValue }) => {
   return (
     <Flex border="1px solid" borderColor="gray.300" borderRadius={4} bg="white">
       <Flex
@@ -28,17 +29,23 @@ const PostItem: React.FC<PostItemProps> = ({ post, onVote }) => {
         borderRadius="3px 0px 0px 3px"
       >
         <Icon
-          as={IoArrowUpCircleOutline}
-          color="gray.400"
-          fontSize={20}
+          as={
+            userVoteValue === 1 ? IoArrowUpCircleSharp : IoArrowUpCircleOutline
+          }
+          color={userVoteValue === 1 ? "brand.100" : "gray.400"}
+          fontSize={22}
           cursor="pointer"
           onClick={() => onVote(post, 1)}
         />
         {post.voteStatus}
         <Icon
-          as={IoArrowDownCircleOutline}
-          color="gray.400"
-          fontSize={20}
+          as={
+            userVoteValue === -1
+              ? IoArrowDownCircleSharp
+              : IoArrowDownCircleOutline
+          }
+          color={userVoteValue === -1 ? "#4379FF" : "gray.400"}
+          fontSize={22}
           cursor="pointer"
           onClick={() => onVote(post, -1)}
         />
