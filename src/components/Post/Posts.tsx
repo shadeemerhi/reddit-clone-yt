@@ -26,78 +26,92 @@ type PostsProps = {
   userId?: string;
 };
 
-enum VoteValue {
-  UPVOTE = 1,
-  DOWNVOTE = -1,
-}
-
 const Posts: React.FC<PostsProps> = ({ communityData, userId }) => {
   const [posts, setPosts] = useState([]);
-  const [userVotes, setUserVotes] = useState<PostVote[]>([]);
+  const [postVotes, setPostVotes] = useState<PostVote[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const onVote = async (post: Post, vote: number) => {
     const { voteStatus } = post;
-    // is this an upvote or a downvote?
-    console.log("HERE IS POST", post, vote);
 
+    // is this an upvote or a downvote?
     // has this user voted on this post already? was it up or down?
-    const existingVote = userVotes.find(
+    const existingVote = postVotes.find(
       (item: PostVote) => item.postId === post.id
     );
-    console.log("HERE IS EXISTING VOTE", existingVote);
-
-    // Check if making same vote
-    if (existingVote && existingVote.voteValue === vote) {
-      console.log("SAME VOTE - RETURNING");
-      return;
-    }
-
-    // If existingVote at this point, user is switching their vote
-    const voteChange = existingVote ? 2 * vote : vote;
 
     try {
+      let voteChange = vote;
       const batch = writeBatch(firestore);
 
-      const postRef = doc(firestore, "posts", post.id);
-      batch.update(postRef, { voteStatus: voteStatus + voteChange });
+      // New vote
+      if (!existingVote) {
+        const newVote: PostVote = {
+          postId: post.id,
+          communityId: communityData.id!,
+          voteValue: vote,
+        };
 
-      const updatedVote: PostVote = {
-        postId: post.id,
-        communityId: communityData.id!,
-        voteValue: vote,
-      };
-      if (existingVote) {
+        const postVoteRef = doc(
+          collection(firestore, "users", `${userId}/postVotes`)
+        );
+
+        // Needed for frontend state since we're not getting resource back
+        newVote.id = postVoteRef.id;
+        batch.set(postVoteRef, {
+          postId: post.id,
+          communityId: communityData.id!,
+          voteValue: vote,
+        });
+
+        // Optimistically update state
+        setPostVotes((prev) => [...prev, newVote]);
+      }
+      // Removing existing vote
+      else {
+        // Used for both possible cases of batch writes
         const postVoteRef = doc(
           firestore,
           "users",
           `${userId}/postVotes/${existingVote.id}`
         );
-        updatedVote.id = existingVote.id;
-        batch.update(postVoteRef, {
-          voteValue: vote,
-        });
-      } else {
-        const postVoteRef = doc(
-          collection(firestore, "users", `${userId}/postVotes`)
-        );
-        updatedVote.id = postVoteRef.id;
-        batch.set(postVoteRef, updatedVote);
-      }
-      await batch.commit();
 
-      // Update vote state
-      if (existingVote) {
-        const existingPostIdx = userVotes.findIndex(
-          (item) => item.postId === post.id
-        );
-        const updatedVotes = [...userVotes];
-        updatedVotes[existingPostIdx] = updatedVote;
-        setUserVotes(updatedVotes);
-        return;
+        // Removing vote
+        if (existingVote.voteValue === vote) {
+          voteChange *= -1;
+
+          setPostVotes((prev) =>
+            prev.filter((item) => item.postId !== post.id)
+          );
+          batch.delete(postVoteRef);
+        }
+        // Changing vote
+        else {
+          voteChange = 2 * vote;
+
+          batch.update(postVoteRef, {
+            voteValue: vote,
+          });
+          // Optimistically update state
+          const existingPostIdx = postVotes.findIndex(
+            (item) => item.postId === post.id
+          );
+          const updatedVotes = [...postVotes];
+          updatedVotes[existingPostIdx] = { ...existingVote, voteValue: vote };
+          setPostVotes(updatedVotes);
+        }
       }
-      setUserVotes((prev) => [...prev, updatedVote]);
+
+      const postRef = doc(firestore, "posts", post.id);
+      batch.update(postRef, { voteStatus: voteStatus + voteChange });
+
+      /**
+       * Perform writes
+       * Could move state updates to after this
+       * but decided to optimistically update
+       */
+      await batch.commit();
     } catch (error) {
       console.log("onVote error", error);
     }
@@ -109,14 +123,13 @@ const Posts: React.FC<PostsProps> = ({ communityData, userId }) => {
         collection(firestore, `users/${userId}/postVotes`),
         where("communityId", "==", communityData.id)
       );
-      console.log("HERE IS USERID", userId);
 
       const postVoteDocs = await getDocs(postVotesQuery);
       const postVotes = postVoteDocs.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      setUserVotes(postVotes as PostVote[]);
+      setPostVotes(postVotes as PostVote[]);
       console.log("POST VOTES", postVotes);
     } catch (error) {
       console.log("getUserPostVotes error", error);

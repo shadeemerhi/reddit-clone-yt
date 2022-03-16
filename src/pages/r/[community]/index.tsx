@@ -25,7 +25,7 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
     useRecoilState(communitiesState);
 
   useEffect(() => {
-    // First time the user has navigated to this community page - add to cache
+    // First time the user has navigated to this community page during session - add to cache
     const firstSessionVisit =
       !currCommunitiesState.visitedCommunities[communityData.id!];
 
