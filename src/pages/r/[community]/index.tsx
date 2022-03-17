@@ -13,6 +13,9 @@ import Header from "../../../components/Community/Header";
 import PageContentLayout from "../../../components/Layout/PageContent";
 import Posts from "../../../components/Post/Posts";
 import { auth, firestore } from "../../../firebase/clientApp";
+import admin from "firebase-admin";
+import nookies from "nookies";
+import { getApp, getApps } from "firebase/app";
 
 interface CommunityPageProps {
   communityData: Community;
@@ -67,9 +70,7 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
   );
 };
 
-export default dynamic(() => Promise.resolve(CommunityPage), {
-  ssr: false,
-});
+export default CommunityPage;
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   console.log("GET SERVER SIDE PROPS RUNNING");

@@ -12,6 +12,7 @@ import {
 } from "../../atoms/communitiesAtom";
 import { auth, firestore } from "../../firebase/clientApp";
 import { getMySnippets } from "../../helpers/firestore";
+import useCommunitySnippets from "../../hooks/useCommunitySnippets";
 
 type HeaderProps = {
   communityData: Community;
@@ -19,14 +20,23 @@ type HeaderProps = {
 
 const Header: React.FC<HeaderProps> = ({ communityData }) => {
   const [user] = useAuthState(auth);
-  const setAuthModalState = useSetRecoilState(authModalState);
-  const [currCommunityState, setCurrCommunityState] =
-    useRecoilState(communitiesState);
-  const [loading, setLoading] = useState(
-    !currCommunityState.mySnippets.length && !!user
-  );
 
-  const isJoined = currCommunityState.mySnippets.find(
+  const setAuthModalState = useSetRecoilState(authModalState);
+  const [currCommunitiesState, setCurrCommunitiesState] =
+    useRecoilState(communitiesState);
+
+  const { loading, setLoading, error } = useCommunitySnippets(
+    user?.uid,
+    !user?.uid,
+    [user],
+    !currCommunitiesState.mySnippets.length && !!user
+  );
+  // const [loading, setLoading] = useState(
+  //   !currCommunityState.mySnippets.length && !!user
+  // );
+  // const [error, setError] = useState('');
+
+  const isJoined = currCommunitiesState.mySnippets.find(
     (item) => item.communityId === communityData.id
   );
 
@@ -69,7 +79,7 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
       await batch.commit();
 
       // Add current community to snippet
-      setCurrCommunityState((prev) => ({
+      setCurrCommunitiesState((prev) => ({
         ...prev,
         mySnippets: [...prev.mySnippets, newSnippet],
       }));
@@ -96,7 +106,7 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
 
       await batch.commit();
 
-      setCurrCommunityState((prev) => ({
+      setCurrCommunitiesState((prev) => ({
         ...prev,
         mySnippets: prev.mySnippets.filter(
           (item) => item.communityId !== communityData.id
@@ -108,26 +118,51 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
     }
   };
 
-  useEffect(() => {
-    if (!!currCommunityState.mySnippets.length || !user?.uid) return;
-    setLoading(true);
-    console.log("GETTING SNIPPETS");
+  /**
+   * USE THIS INITIALLY THEN CONVERT TO CUSTOM HOOK useCommunitySnippets AFTER
+   * ALSO REUSING THE SAME LOGIC INSIDE OF HEADER
+   */
+  // useEffect(() => {
+  //   // Only fetch snippets if menu is open and we don't have them in state cache
+  //   if (!user?.uid || !menuOpen || !!currCommunitiesState.mySnippets.length)
+  //     return;
+  //   setLoading(true);
+  //   getSnippets();
+  // }, [menuOpen, user]);
 
-    getSnippets();
-  }, [user]);
+  // const getSnippets = async () => {
+  //   try {
+  //     const snippets = await getMySnippets(user?.uid!);
+  //     // setMySnippetsState(snippets as CommunitySnippet[]);
+  //     setCurrCommunitiesState((prev) => ({
+  //       ...prev,
+  //       mySnippets: snippets as CommunitySnippet[],
+  //     }));
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.log("Error getting user snippets", error);
+  //   }
+  // };
+  // useEffect(() => {
+  //   if (!!currCommunityState.mySnippets.length || !user?.uid) return;
+  //   setLoading(true);
+  //   console.log("GETTING SNIPPETS");
 
-  const getSnippets = async () => {
-    try {
-      const snippets = await getMySnippets(user?.uid!);
-      setCurrCommunityState((prev) => ({
-        ...prev,
-        mySnippets: snippets as CommunitySnippet[],
-      }));
-      setLoading(false);
-    } catch (error) {
-      console.log("Error getting user snippets", error);
-    }
-  };
+  //   getSnippets();
+  // }, [user]);
+
+  // const getSnippets = async () => {
+  //   try {
+  //     const snippets = await getMySnippets(user?.uid!);
+  //     setCurrCommunityState((prev) => ({
+  //       ...prev,
+  //       mySnippets: snippets as CommunitySnippet[],
+  //     }));
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.log("Error getting user snippets", error);
+  //   }
+  // };
 
   return (
     <Flex direction="column" width="100%" height="146px">
