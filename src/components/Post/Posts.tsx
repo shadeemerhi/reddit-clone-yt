@@ -10,12 +10,12 @@ import {
   where,
   writeBatch,
 } from "firebase/firestore";
-import { Community, Post } from "../../atoms/communitiesAtom";
-import { firestore } from "../../firebase/clientApp";
-import PostItem from "./PostItem";
-import PostLoader from "./Loader";
 import { useSetRecoilState } from "recoil";
 import { authModalState } from "../../atoms/authModalAtom";
+import { Community, Post } from "../../atoms/communitiesAtom";
+import { firestore } from "../../firebase/clientApp";
+import PostLoader from "./Loader";
+import PostItemLink from "./PostItem/PostLink";
 
 type PostVote = {
   id?: string;
@@ -187,13 +187,14 @@ const Posts: React.FC<PostsProps> = ({
       ) : (
         <Stack>
           {posts.map((post: Post) => (
-            <PostItem
+            <PostItemLink
               key={post.id}
               post={post}
               onVote={onVote}
               userVoteValue={
                 postVotes.find((item) => item.postId === post.id)?.voteValue
               }
+              communityId={communityData.id}
             />
           ))}
         </Stack>

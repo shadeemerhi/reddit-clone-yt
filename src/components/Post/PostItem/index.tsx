@@ -1,26 +1,38 @@
 import React from "react";
 import { Flex, Icon, Stack, Text } from "@chakra-ui/react";
-import { Post } from "../../atoms/communitiesAtom";
+import moment from "moment";
+import { BsChat } from "react-icons/bs";
 import {
-  IoArrowDownCircleOutline,
-  IoArrowDownCircleSharp,
-  IoArrowUpCircleOutline,
   IoArrowUpCircleSharp,
+  IoArrowUpCircleOutline,
+  IoArrowDownCircleSharp,
+  IoArrowDownCircleOutline,
   IoArrowRedoOutline,
   IoBookmarkOutline,
 } from "react-icons/io5";
-import { BsChat } from "react-icons/bs";
-import moment from "moment";
+import { Post } from "../../../atoms/communitiesAtom";
 
-type PostItemProps = {
+export type PostItemContentProps = {
   post: Post;
   onVote: (post: Post, vote: number) => void;
   userVoteValue?: number;
+  communityId: string;
 };
 
-const PostItem: React.FC<PostItemProps> = ({ post, onVote, userVoteValue }) => {
+const PostItem: React.FC<PostItemContentProps> = ({
+  post,
+  onVote,
+  userVoteValue,
+}) => {
   return (
-    <Flex border="1px solid" borderColor="gray.300" borderRadius={4} bg="white">
+    <Flex
+      border="1px solid"
+      borderColor="gray.300"
+      borderRadius={4}
+      bg="white"
+      cursor="pointer"
+      _hover={{ borderColor: "gray.500" }}
+    >
       <Flex
         direction="column"
         align="center"
@@ -70,7 +82,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, onVote, userVoteValue }) => {
             cursor="pointer"
           >
             <Icon as={BsChat} mr={2} />
-            <Text fontSize="9pt">{post.numberOfComments} Comments</Text>
+            <Text fontSize="9pt">{post.numberOfComments}</Text>
           </Flex>
           <Flex
             align="center"

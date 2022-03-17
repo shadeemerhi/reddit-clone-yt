@@ -2,7 +2,7 @@ import { FieldValue, Timestamp } from "firebase/firestore";
 import { atom } from "recoil";
 
 export interface Community {
-  id?: string;
+  id: string;
   creatorId: string;
   createdAt: Timestamp;
   numberOfMembers: number;
