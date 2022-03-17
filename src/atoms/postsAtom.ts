@@ -13,3 +13,8 @@ export interface Post {
   createdAt: Timestamp;
   editedAt: Timestamp;
 }
+
+export const postState = atom({
+  key: "postState",
+  default: [],
+});

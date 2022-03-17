@@ -10,13 +10,13 @@ import {
   where,
   writeBatch,
 } from "firebase/firestore";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { authModalState } from "../../atoms/authModalAtom";
 import { Community } from "../../atoms/communitiesAtom";
 import { firestore } from "../../firebase/clientApp";
 import PostLoader from "./Loader";
 import PostItemLink from "./PostItem/PostLink";
-import { Post } from "../../atoms/postsAtom";
+import { Post, postState } from "../../atoms/postsAtom";
 
 type PostVote = {
   id?: string;
@@ -36,7 +36,7 @@ const Posts: React.FC<PostsProps> = ({
   userId,
   loadingUser,
 }) => {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useRecoilState(postState);
   const [postVotes, setPostVotes] = useState<PostVote[]>([]);
   const [loading, setLoading] = useState(false);
   const setAuthModalState = useSetRecoilState(authModalState);
