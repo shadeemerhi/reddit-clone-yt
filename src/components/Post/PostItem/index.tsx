@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactPropTypes } from "react";
 import { Flex, Icon, Stack, Text } from "@chakra-ui/react";
 import moment from "moment";
 import { BsChat } from "react-icons/bs";
@@ -14,14 +14,19 @@ import { Post } from "../../../atoms/postsAtom";
 
 export type PostItemContentProps = {
   post: Post;
-  onVote: (post: Post, vote: number) => void;
+  onVote: (
+    event: React.MouseEvent<SVGElement, MouseEvent>,
+    post: Post,
+    vote: number
+  ) => void;
+  onSelectPost?: (value: Post) => void;
   userVoteValue?: number;
-  communityId: string;
 };
 
 const PostItem: React.FC<PostItemContentProps> = ({
   post,
   onVote,
+  onSelectPost,
   userVoteValue,
 }) => {
   return (
@@ -32,6 +37,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
       bg="white"
       cursor="pointer"
       _hover={{ borderColor: "gray.500" }}
+      onClick={() => (onSelectPost && post ? onSelectPost(post) : null)}
     >
       <Flex
         direction="column"
@@ -47,7 +53,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
           color={userVoteValue === 1 ? "brand.100" : "gray.400"}
           fontSize={22}
           cursor="pointer"
-          onClick={() => onVote(post, 1)}
+          onClick={(event) => onVote(event, post, 1)}
         />
         {post.voteStatus}
         <Icon
@@ -59,15 +65,17 @@ const PostItem: React.FC<PostItemContentProps> = ({
           color={userVoteValue === -1 ? "#4379FF" : "gray.400"}
           fontSize={22}
           cursor="pointer"
-          onClick={() => onVote(post, -1)}
+          onClick={(event) => onVote(event, post, -1)}
         />
       </Flex>
       <Flex direction="column">
         <Stack spacing={1} p="10px 10px">
-          <Text fontSize="9pt" color="gray.500">
-            Posted by u/{post.userDisplayText}{" "}
-            {moment(new Date(post.createdAt.seconds * 1000)).fromNow()}
-          </Text>
+          {post.createdAt && (
+            <Text fontSize="9pt" color="gray.500">
+              Posted by u/{post.userDisplayText}{" "}
+              {moment(new Date(post.createdAt.seconds * 1000)).fromNow()}
+            </Text>
+          )}
           <Text fontSize="12pt" fontWeight={600}>
             {post.title}
           </Text>
@@ -109,4 +117,5 @@ const PostItem: React.FC<PostItemContentProps> = ({
     </Flex>
   );
 };
+
 export default PostItem;

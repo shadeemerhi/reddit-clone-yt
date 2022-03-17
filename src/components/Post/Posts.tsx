@@ -15,15 +15,9 @@ import { authModalState } from "../../atoms/authModalAtom";
 import { Community } from "../../atoms/communitiesAtom";
 import { firestore } from "../../firebase/clientApp";
 import PostLoader from "./Loader";
-import PostItemLink from "./PostItem/PostLink";
-import { Post, postState } from "../../atoms/postsAtom";
-
-type PostVote = {
-  id?: string;
-  postId: string;
-  communityId: string;
-  voteValue: number;
-};
+import { Post, postState, PostVote } from "../../atoms/postsAtom";
+import PostItem from "./PostItem";
+import { useRouter } from "next/router";
 
 type PostsProps = {
   communityData: Community;
@@ -36,13 +30,18 @@ const Posts: React.FC<PostsProps> = ({
   userId,
   loadingUser,
 }) => {
-  const [posts, setPosts] = useRecoilState(postState);
-  const [postVotes, setPostVotes] = useState<PostVote[]>([]);
+  const [postItems, setPostItems] = useRecoilState(postState);
   const [loading, setLoading] = useState(false);
   const setAuthModalState = useSetRecoilState(authModalState);
   const [error, setError] = useState("");
+  const router = useRouter();
 
-  const onVote = async (post: Post, vote: number) => {
+  const onVote = async (
+    event: React.MouseEvent<SVGElement, MouseEvent>,
+    post: Post,
+    vote: number
+  ) => {
+    event.stopPropagation();
     if (!userId) {
       setAuthModalState({ open: true, view: "login" });
       return;
@@ -52,7 +51,7 @@ const Posts: React.FC<PostsProps> = ({
 
     // is this an upvote or a downvote?
     // has this user voted on this post already? was it up or down?
-    const existingVote = postVotes.find(
+    const existingVote = postItems.postVotes.find(
       (item: PostVote) => item.postId === post.id
     );
 
@@ -81,7 +80,10 @@ const Posts: React.FC<PostsProps> = ({
         });
 
         // Optimistically update state
-        setPostVotes((prev) => [...prev, newVote]);
+        setPostItems((prev) => ({
+          ...prev,
+          postVotes: [...prev.postVotes, newVote],
+        }));
       }
       // Removing existing vote
       else {
@@ -96,9 +98,10 @@ const Posts: React.FC<PostsProps> = ({
         if (existingVote.voteValue === vote) {
           voteChange *= -1;
 
-          setPostVotes((prev) =>
-            prev.filter((item) => item.postId !== post.id)
-          );
+          setPostItems((prev) => ({
+            ...prev,
+            postVotes: prev.postVotes.filter((item) => item.postId !== post.id),
+          }));
           batch.delete(postVoteRef);
         }
         // Changing vote
@@ -109,12 +112,15 @@ const Posts: React.FC<PostsProps> = ({
             voteValue: vote,
           });
           // Optimistically update state
-          const existingPostIdx = postVotes.findIndex(
+          const existingPostIdx = postItems.postVotes.findIndex(
             (item) => item.postId === post.id
           );
-          const updatedVotes = [...postVotes];
+          const updatedVotes = [...postItems.postVotes];
           updatedVotes[existingPostIdx] = { ...existingVote, voteValue: vote };
-          setPostVotes(updatedVotes);
+          setPostItems((prev) => ({
+            ...prev,
+            postVotes: updatedVotes,
+          }));
         }
       }
 
@@ -144,10 +150,21 @@ const Posts: React.FC<PostsProps> = ({
         id: doc.id,
         ...doc.data(),
       }));
-      setPostVotes(postVotes as PostVote[]);
+      setPostItems((prev) => ({
+        ...prev,
+        postVotes: postVotes as PostVote[],
+      }));
     } catch (error) {
       console.log("getUserPostVotes error", error);
     }
+  };
+
+  const onSelectPost = (post: Post) => {
+    setPostItems((prev) => ({
+      ...prev,
+      selectedPost: post,
+    }));
+    router.push(`/r/${communityData.id}/comments/${post.id}`);
   };
 
   useEffect(() => {
@@ -164,7 +181,10 @@ const Posts: React.FC<PostsProps> = ({
         id: post.id,
         ...post.data(),
       }));
-      setPosts(posts as []);
+      setPostItems((prev) => ({
+        ...prev,
+        posts: posts as [],
+      }));
       setLoading(false);
     });
 
@@ -174,7 +194,10 @@ const Posts: React.FC<PostsProps> = ({
 
   useEffect(() => {
     if (!userId && !loadingUser) {
-      setPostVotes([]);
+      setPostItems((prev) => ({
+        ...prev,
+        postVotes: [],
+      }));
       return;
     }
     if (!userId) return;
@@ -187,15 +210,16 @@ const Posts: React.FC<PostsProps> = ({
         <PostLoader />
       ) : (
         <Stack>
-          {posts.map((post: Post) => (
-            <PostItemLink
+          {postItems.posts.map((post: Post) => (
+            <PostItem
               key={post.id}
               post={post}
               onVote={onVote}
               userVoteValue={
-                postVotes.find((item) => item.postId === post.id)?.voteValue
+                postItems.postVotes.find((item) => item.postId === post.id)
+                  ?.voteValue
               }
-              communityId={communityData.id}
+              onSelectPost={onSelectPost}
             />
           ))}
         </Stack>
