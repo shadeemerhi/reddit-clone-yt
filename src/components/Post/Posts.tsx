@@ -12,10 +12,11 @@ import {
 } from "firebase/firestore";
 import { useSetRecoilState } from "recoil";
 import { authModalState } from "../../atoms/authModalAtom";
-import { Community, Post } from "../../atoms/communitiesAtom";
+import { Community } from "../../atoms/communitiesAtom";
 import { firestore } from "../../firebase/clientApp";
 import PostLoader from "./Loader";
 import PostItemLink from "./PostItem/PostLink";
+import { Post } from "../../atoms/postsAtom";
 
 type PostVote = {
   id?: string;

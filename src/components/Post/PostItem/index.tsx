@@ -10,7 +10,7 @@ import {
   IoArrowRedoOutline,
   IoBookmarkOutline,
 } from "react-icons/io5";
-import { Post } from "../../../atoms/communitiesAtom";
+import { Post } from "../../../atoms/postsAtom";
 
 export type PostItemContentProps = {
   post: Post;

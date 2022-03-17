@@ -1,5 +1,5 @@
-import { FieldValue, Timestamp } from "firebase/firestore";
 import { atom } from "recoil";
+import { FieldValue, Timestamp } from "firebase/firestore";
 
 export interface Community {
   id: string;
@@ -24,19 +24,6 @@ interface CommunitiesState {
     [key: string]: Community;
   };
   currentCommunity?: Community;
-}
-
-export interface Post {
-  id: string;
-  communityId: string;
-  userDisplayText: string;
-  creatorId: string;
-  title: string;
-  body: string;
-  numberOfComments: number;
-  voteStatus: 0;
-  createdAt: Timestamp;
-  editedAt: Timestamp;
 }
 
 export const defaultCommunitiesState: CommunitiesState = {

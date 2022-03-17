@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import type { GetServerSidePropsContext, NextPage } from "next";
-import dynamic from "next/dynamic";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 import safeJsonStringify from "safe-json-stringify";
@@ -13,9 +12,6 @@ import Header from "../../../components/Community/Header";
 import PageContentLayout from "../../../components/Layout/PageContent";
 import Posts from "../../../components/Post/Posts";
 import { auth, firestore } from "../../../firebase/clientApp";
-import admin from "firebase-admin";
-import nookies from "nookies";
-import { getApp, getApps } from "firebase/app";
 
 interface CommunityPageProps {
   communityData: Community;
