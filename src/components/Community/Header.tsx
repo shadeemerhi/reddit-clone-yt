@@ -22,21 +22,21 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
   const [user] = useAuthState(auth);
 
   const setAuthModalState = useSetRecoilState(authModalState);
-  const [currCommunityState, setCurrCommunityState] =
+  const [communityStateValue, setCommunityStateValue] =
     useRecoilState(communityState);
 
   const { loading, setLoading, error } = useCommunitySnippets(
     user?.uid,
     !user?.uid,
     [user],
-    !currCommunityState.mySnippets.length && !!user
+    !communityStateValue.mySnippets.length && !!user
   );
   // const [loading, setLoading] = useState(
-  //   !currCommunityState.mySnippets.length && !!user
+  //   !communityStateValue.mySnippets.length && !!user
   // );
   // const [error, setError] = useState('');
 
-  const isJoined = currCommunityState.mySnippets.find(
+  const isJoined = communityStateValue.mySnippets.find(
     (item) => item.communityId === communityData.id
   );
 
@@ -79,7 +79,7 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
       await batch.commit();
 
       // Add current community to snippet
-      setCurrCommunityState((prev) => ({
+      setCommunityStateValue((prev) => ({
         ...prev,
         mySnippets: [...prev.mySnippets, newSnippet],
       }));
@@ -106,7 +106,7 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
 
       await batch.commit();
 
-      setCurrCommunityState((prev) => ({
+      setCommunityStateValue((prev) => ({
         ...prev,
         mySnippets: prev.mySnippets.filter(
           (item) => item.communityId !== communityData.id
@@ -144,7 +144,7 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
   //   }
   // };
   // useEffect(() => {
-  //   if (!!currCommunityState.mySnippets.length || !user?.uid) return;
+  //   if (!!communityStateValue.mySnippets.length || !user?.uid) return;
   //   setLoading(true);
   //   console.log("GETTING SNIPPETS");
 
@@ -154,7 +154,7 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
   // const getSnippets = async () => {
   //   try {
   //     const snippets = await getMySnippets(user?.uid!);
-  //     setCurrCommunityState((prev) => ({
+  //     setCommunityStateValue((prev) => ({
   //       ...prev,
   //       mySnippets: snippets as CommunitySnippet[],
   //     }));

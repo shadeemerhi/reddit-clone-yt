@@ -12,13 +12,13 @@ type PostPageProps = {};
 const PostPage: React.FC<PostPageProps> = () => {
   const router = useRouter();
   // const [postItems, setPostItems] = useRecoilState(postState);
-  const [currCommunityState, setCurrCommunityState] =
+  const [communityStateValue, setCommunityStateValue] =
     useRecoilState(communityState);
   const { community } = router.query;
   // console.log("HERE IS POST STATE LOL", postItems);
 
   const { postItems, loading, setLoading, onVote } = usePosts(
-    currCommunityState.visitedCommunities[community as string]
+    communityStateValue.visitedCommunities[community as string]
   );
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const PostPage: React.FC<PostPageProps> = () => {
       // Go fetch it and store in recoil state
     }
 
-    if (!currCommunityState.currentCommunity) {
+    if (!communityStateValue.currentCommunity) {
       // Go fetch it and store in recoil state
     }
   }, []);

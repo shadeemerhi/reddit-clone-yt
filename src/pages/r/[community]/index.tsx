@@ -20,7 +20,7 @@ interface CommunityPageProps {
 const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
   const [user, loadingUser] = useAuthState(auth);
 
-  const [currCommunityState, setCurrCommunityState] =
+  const [communityStateValue, setCommunityStateValue] =
     useRecoilState(communityState);
 
   useEffect(() => {
@@ -34,10 +34,10 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
 
     // First time the user has navigated to this community page during session - add to cache
     const firstSessionVisit =
-      !currCommunityState.visitedCommunities[communityData.id!];
+      !communityStateValue.visitedCommunities[communityData.id!];
 
     if (firstSessionVisit) {
-      setCurrCommunityState((prev) => ({
+      setCommunityStateValue((prev) => ({
         ...prev,
         visitedCommunities: {
           ...prev.visitedCommunities,

@@ -10,13 +10,13 @@ const useCommunitySnippets = (
   fetchDeps: any,
   initLoadingState: boolean
 ) => {
-  const [currCommunityState, setCurrCommunityState] =
+  const [communityStateValue, setCommunityStateValue] =
     useRecoilState(communityState);
   const [loading, setLoading] = useState(initLoadingState);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (preventFetchConditions || !!currCommunityState.mySnippets.length)
+    if (preventFetchConditions || !!communityStateValue.mySnippets.length)
       return;
     getSnippets();
 
@@ -27,7 +27,7 @@ const useCommunitySnippets = (
     setLoading(true);
     try {
       const snippets = await getMySnippets(userId!);
-      setCurrCommunityState((prev) => ({
+      setCommunityStateValue((prev) => ({
         ...prev,
         mySnippets: snippets as CommunitySnippet[],
       }));
@@ -40,7 +40,7 @@ const useCommunitySnippets = (
   };
 
   return {
-    snippets: currCommunityState.mySnippets,
+    snippets: communityStateValue.mySnippets,
     loading,
     setLoading,
     error,
