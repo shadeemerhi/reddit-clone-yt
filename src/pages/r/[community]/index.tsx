@@ -24,6 +24,14 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
     useRecoilState(communitiesState);
 
   useEffect(() => {
+    /**
+     * Don't think we need this as we are already storing in visitedCommunities
+     */
+    // setCurrCommunitiesState((prev) => ({
+    //   ...prev,
+    //   currentCommunity: communityData,
+    // }));
+
     // First time the user has navigated to this community page during session - add to cache
     const firstSessionVisit =
       !currCommunitiesState.visitedCommunities[communityData.id!];

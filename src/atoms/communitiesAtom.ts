@@ -4,7 +4,7 @@ import { FieldValue, Timestamp } from "firebase/firestore";
 export interface Community {
   id: string;
   creatorId: string;
-  createdAt: Timestamp;
+  createdAt?: Timestamp;
   numberOfMembers: number;
 }
 
@@ -23,13 +23,19 @@ interface CommunitiesState {
   visitedCommunities: {
     [key: string]: Community;
   };
-  currentCommunity?: Community;
+  currentCommunity: Community;
 }
+
+const defaultCommunity: Community = {
+  id: "",
+  creatorId: "",
+  numberOfMembers: 0,
+};
 
 export const defaultCommunitiesState: CommunitiesState = {
   mySnippets: [],
   visitedCommunities: {},
-  currentCommunity: undefined,
+  currentCommunity: defaultCommunity,
 };
 
 export const communitiesState = atom<CommunitiesState>({

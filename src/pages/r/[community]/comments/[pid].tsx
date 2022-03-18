@@ -1,14 +1,25 @@
+import { useRouter } from "next/router";
 import React, { useEffect } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { communitiesState } from "../../../../atoms/communitiesAtom";
 import { postState } from "../../../../atoms/postsAtom";
 import PageContentLayout from "../../../../components/Layout/PageContent";
 import PostItem from "../../../../components/Post/PostItem";
+import usePosts from "../../../../hooks/usePosts";
 
 type PostPageProps = {};
 
 const PostPage: React.FC<PostPageProps> = () => {
-  const [postItems, setPostItems] = useRecoilState(postState);
-  console.log("HERE IS POST STATE LOL", postItems.selectedPost);
+  const router = useRouter();
+  // const [postItems, setPostItems] = useRecoilState(postState);
+  const [currCommunitiesState, setCurrCommunitiesState] =
+    useRecoilState(communitiesState);
+  const { community } = router.query;
+  // console.log("HERE IS POST STATE LOL", postItems);
+
+  const { postItems, loading, setLoading, onVote } = usePosts(
+    currCommunitiesState.visitedCommunities[community as string]
+  );
 
   useEffect(() => {
     /**
@@ -16,6 +27,10 @@ const PostPage: React.FC<PostPageProps> = () => {
      * If not, means refresh or link visit
      */
     if (!postItems.selectedPost) {
+      // Go fetch it and store in recoil state
+    }
+
+    if (!currCommunitiesState.currentCommunity) {
       // Go fetch it and store in recoil state
     }
   }, []);
@@ -26,7 +41,7 @@ const PostPage: React.FC<PostPageProps> = () => {
       {postItems.selectedPost && (
         <PostItem
           post={postItems.selectedPost}
-          // onVote={onVote}
+          onVote={onVote}
           userVoteValue={
             postItems.postVotes.find(
               (item) => item.postId === postItems.selectedPost!.id
