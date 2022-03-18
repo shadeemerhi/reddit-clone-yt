@@ -27,7 +27,8 @@ const usePosts = (communityData: Community) => {
   const onVote = async (
     event: React.MouseEvent<SVGElement, MouseEvent>,
     post: Post,
-    vote: number
+    vote: number,
+    postIdx?: number
   ) => {
     event.stopPropagation();
     if (!user?.uid) {
@@ -55,22 +56,58 @@ const usePosts = (communityData: Community) => {
           voteValue: vote,
         };
 
+        console.log("NEW VOTE!!!", newVote);
         const postVoteRef = doc(
           collection(firestore, "users", `${user.uid}/postVotes`)
         );
 
         // Needed for frontend state since we're not getting resource back
         newVote.id = postVoteRef.id;
-        batch.set(postVoteRef, {
-          postId: post.id,
-          communityId: communityData.id!,
-          voteValue: vote,
-        });
+        batch.set(postVoteRef, newVote);
 
-        // Optimistically update state
+        const updatedPost = {
+          ...post,
+          voteStatus: voteStatus + vote,
+        };
+
+        // Create a new state object and modify accordingly
+        let updatedPostState = { ...postItems };
+
+        // Optimistically update state and cache
+        const updatedVotes = [...postItems.postVotes, newVote];
+        updatedPostState = {
+          ...updatedPostState,
+          postVotes: updatedVotes,
+          postsCache: {
+            ...updatedPostState.postsCache,
+            [communityData.id]: {
+              ...updatedPostState.postsCache[communityData.id],
+              postVotes: updatedVotes,
+            },
+          },
+        };
+
+        // Updating post in list of posts
+        if (postIdx) {
+          const updatedPosts = updatedPostState.posts;
+          updatedPosts[postIdx] = updatedPost;
+          updatedPostState = {
+            ...updatedPostState,
+            posts: updatedPosts,
+          };
+        }
+
         setPostItems((prev) => ({
           ...prev,
-          postVotes: [...prev.postVotes, newVote],
+          selectedPost: updatedPost,
+          postVotes: updatedVotes,
+          postsCache: {
+            ...prev.postsCache,
+            [communityData.id]: {
+              ...prev.postsCache[communityData.id],
+              postVotes: updatedVotes,
+            },
+          },
         }));
       }
       // Removing existing vote
@@ -84,6 +121,7 @@ const usePosts = (communityData: Community) => {
 
         // Removing vote
         if (existingVote.voteValue === vote) {
+          console.log("REMOVING EXISTING VOTE!!!");
           voteChange *= -1;
 
           setPostItems((prev) => ({
@@ -94,20 +132,41 @@ const usePosts = (communityData: Community) => {
         }
         // Changing vote
         else {
+          console.log("CHANGING EXISTING VOTE!!!");
           voteChange = 2 * vote;
 
           batch.update(postVoteRef, {
             voteValue: vote,
           });
-          // Optimistically update state
-          const existingPostIdx = postItems.postVotes.findIndex(
+
+          // Optimistically update post voteStatus
+          //   const existingPostIdx = postItems.posts.findIndex(
+          //     (item) => item.id == post.id
+          //   );
+          const updatedPost = {
+            ...post,
+            voteStatus: voteStatus + voteChange,
+          };
+          //   const updatedPosts = [...postItems.posts];
+          //   updatedPosts[0] = updatedPost;
+
+          // Optimistically update voteValue
+          const existingVoteIdx = postItems.postVotes.findIndex(
             (item) => item.postId === post.id
           );
           const updatedVotes = [...postItems.postVotes];
-          updatedVotes[existingPostIdx] = { ...existingVote, voteValue: vote };
+          updatedVotes[existingVoteIdx] = { ...existingVote, voteValue: vote };
           setPostItems((prev) => ({
             ...prev,
+            selectedPost: updatedPost,
             postVotes: updatedVotes,
+            postsCache: {
+              ...prev.postsCache,
+              [communityData.id]: {
+                ...prev.postsCache[communityData.id],
+                postVotes: updatedVotes,
+              },
+            },
           }));
         }
       }

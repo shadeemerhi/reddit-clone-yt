@@ -176,10 +176,6 @@ const Posts: React.FC<PostsProps> = ({
   };
 
   useEffect(() => {
-    // if (!postItems.postsCache[communityData.id]?.posts) {
-    //   getPosts();
-    //   return;
-    // }
     if (postItems.postsCache[communityData.id]?.posts) {
       setPostItems((prev) => ({
         ...prev,
@@ -190,12 +186,6 @@ const Posts: React.FC<PostsProps> = ({
 
     getPosts();
 
-    // if (!postItems.posts.length) {
-    //   setPostItems((prev) => ({
-    //     ...prev,
-    //     posts: postItems.postsCache[communityData.id].posts,
-    //   }));
-    // }
     /**
      * REAL-TIME POST LISTENER
      * IMPLEMENT AT FIRST THEN CHANGE TO POSTS CACHE
@@ -252,10 +242,11 @@ const Posts: React.FC<PostsProps> = ({
         <PostLoader />
       ) : (
         <Stack>
-          {postItems.posts.map((post: Post) => (
+          {postItems.posts.map((post: Post, index) => (
             <PostItem
               key={post.id}
               post={post}
+              postIdx={index}
               onVote={onVote}
               userVoteValue={
                 postItems.postVotes.find((item) => item.postId === post.id)

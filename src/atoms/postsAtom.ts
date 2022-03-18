@@ -9,7 +9,7 @@ export type Post = {
   title: string;
   body: string;
   numberOfComments: number;
-  voteStatus: 0;
+  voteStatus: number;
   createdAt?: Timestamp;
   editedAt?: Timestamp;
 };
@@ -25,9 +25,6 @@ interface PostState {
   selectedPost: Post | null;
   posts: Post[];
   postVotes: PostVote[];
-  //   postCache: {
-  //     [key: string]: Post[];
-  //   };
   postsCache: {
     [key: string]: {
       posts: Post[];
