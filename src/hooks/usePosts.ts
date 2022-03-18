@@ -127,6 +127,8 @@ const usePosts = (communityData: Community) => {
   };
 
   const getUserPostVotes = async () => {
+    console.log("WE ARE GETTING POST VOTES!!!");
+
     try {
       const postVotesQuery = query(
         collection(firestore, `users/${user?.uid}/postVotes`),
@@ -141,6 +143,13 @@ const usePosts = (communityData: Community) => {
       setPostItems((prev) => ({
         ...prev,
         postVotes: postVotes as PostVote[],
+        postsCache: {
+          ...prev.postsCache,
+          [communityData.id]: {
+            ...prev.postsCache[communityData.id],
+            postVotes: postVotes as PostVote[],
+          },
+        },
       }));
     } catch (error) {
       console.log("getUserPostVotes error", error);
@@ -152,10 +161,25 @@ const usePosts = (communityData: Community) => {
       setPostItems((prev) => ({
         ...prev,
         postVotes: [],
+        postsCache: {
+          ...prev.postsCache,
+          [communityData.id]: {
+            ...prev.postsCache[communityData.id],
+            postVotes: [],
+          },
+        },
       }));
       return;
     }
     if (!user?.uid) return;
+
+    if (postItems.postsCache[communityData.id]?.postVotes.length) {
+      setPostItems((prev) => ({
+        ...prev,
+        postVotes: postItems.postsCache[communityData.id].postVotes,
+      }));
+      return;
+    }
     getUserPostVotes();
   }, [communityData, user, loadingUser]);
 

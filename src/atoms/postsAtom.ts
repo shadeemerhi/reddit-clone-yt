@@ -25,12 +25,22 @@ interface PostState {
   selectedPost: Post | null;
   posts: Post[];
   postVotes: PostVote[];
+  //   postCache: {
+  //     [key: string]: Post[];
+  //   };
+  postsCache: {
+    [key: string]: {
+      posts: Post[];
+      postVotes: PostVote[];
+    };
+  };
 }
 
 export const defaultPostState: PostState = {
   selectedPost: null,
   posts: [],
   postVotes: [],
+  postsCache: {},
 };
 
 export const postState = atom({
