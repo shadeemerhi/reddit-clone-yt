@@ -21,7 +21,7 @@ export type PostItemContentProps = {
     postIdx?: number
   ) => void;
   postIdx?: number;
-  onSelectPost?: (value: Post) => void;
+  onSelectPost?: (value: Post, postIdx: number) => void;
   userVoteValue?: number;
 };
 
@@ -40,7 +40,9 @@ const PostItem: React.FC<PostItemContentProps> = ({
       bg="white"
       cursor="pointer"
       _hover={{ borderColor: "gray.500" }}
-      onClick={() => (onSelectPost && post ? onSelectPost(post) : null)}
+      onClick={() =>
+        onSelectPost && post ? onSelectPost(post, postIdx!) : null
+      }
     >
       <Flex
         direction="column"
@@ -68,7 +70,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
           color={userVoteValue === -1 ? "#4379FF" : "gray.400"}
           fontSize={22}
           cursor="pointer"
-          onClick={(event) => onVote(event, post, 1, postIdx)}
+          onClick={(event) => onVote(event, post, -1, postIdx)}
         />
       </Flex>
       <Flex direction="column">

@@ -167,10 +167,10 @@ const Posts: React.FC<PostsProps> = ({
   //   }
   // };
 
-  const onSelectPost = (post: Post) => {
+  const onSelectPost = (post: Post, postIdx: number) => {
     setPostItems((prev) => ({
       ...prev,
-      selectedPost: post,
+      selectedPost: { ...post, listIndex: postIdx },
     }));
     router.push(`/r/${communityData.id}/comments/${post.id}`);
   };
@@ -248,10 +248,11 @@ const Posts: React.FC<PostsProps> = ({
               post={post}
               postIdx={index}
               onVote={onVote}
-              userVoteValue={
-                postItems.postVotes.find((item) => item.postId === post.id)
-                  ?.voteValue
-              }
+              // userVoteValue={
+              //   postItems.postVotes.find((item) => item.postId === post.id)
+              //     ?.voteValue
+              // }
+              userVoteValue={post?.currentUserVoteStatus?.voteValue}
               onSelectPost={onSelectPost}
             />
           ))}
