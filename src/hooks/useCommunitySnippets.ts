@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { RecoilState, useRecoilState } from "recoil";
 
-import { communitiesState, CommunitySnippet } from "../atoms/communitiesAtom";
+import { communityState, CommunitySnippet } from "../atoms/communitiesAtom";
 import { getMySnippets } from "../helpers/firestore";
 
 const useCommunitySnippets = (
@@ -10,13 +10,13 @@ const useCommunitySnippets = (
   fetchDeps: any,
   initLoadingState: boolean
 ) => {
-  const [currCommunitiesState, setCurrCommunitiesState] =
-    useRecoilState(communitiesState);
+  const [currCommunityState, setCurrCommunityState] =
+    useRecoilState(communityState);
   const [loading, setLoading] = useState(initLoadingState);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (preventFetchConditions || !!currCommunitiesState.mySnippets.length)
+    if (preventFetchConditions || !!currCommunityState.mySnippets.length)
       return;
     getSnippets();
 
@@ -27,7 +27,7 @@ const useCommunitySnippets = (
     setLoading(true);
     try {
       const snippets = await getMySnippets(userId!);
-      setCurrCommunitiesState((prev) => ({
+      setCurrCommunityState((prev) => ({
         ...prev,
         mySnippets: snippets as CommunitySnippet[],
       }));
@@ -40,7 +40,7 @@ const useCommunitySnippets = (
   };
 
   return {
-    snippets: currCommunitiesState.mySnippets,
+    snippets: currCommunityState.mySnippets,
     loading,
     setLoading,
     error,

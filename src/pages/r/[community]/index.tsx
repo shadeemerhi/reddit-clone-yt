@@ -4,7 +4,7 @@ import type { GetServerSidePropsContext, NextPage } from "next";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState } from "recoil";
 import safeJsonStringify from "safe-json-stringify";
-import { communitiesState, Community } from "../../../atoms/communitiesAtom";
+import { Community, communityState } from "../../../atoms/communitiesAtom";
 import About from "../../../components/Community/About";
 import CommunityNotFound from "../../../components/Community/CommunityNotFound";
 import CreatePostLink from "../../../components/Community/CreatePostLink";
@@ -20,8 +20,8 @@ interface CommunityPageProps {
 const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
   const [user, loadingUser] = useAuthState(auth);
 
-  const [currCommunitiesState, setCurrCommunitiesState] =
-    useRecoilState(communitiesState);
+  const [currCommunityState, setCurrCommunityState] =
+    useRecoilState(communityState);
 
   useEffect(() => {
     /**
@@ -34,10 +34,10 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
 
     // First time the user has navigated to this community page during session - add to cache
     const firstSessionVisit =
-      !currCommunitiesState.visitedCommunities[communityData.id!];
+      !currCommunityState.visitedCommunities[communityData.id!];
 
     if (firstSessionVisit) {
-      setCurrCommunitiesState((prev) => ({
+      setCurrCommunityState((prev) => ({
         ...prev,
         visitedCommunities: {
           ...prev.visitedCommunities,

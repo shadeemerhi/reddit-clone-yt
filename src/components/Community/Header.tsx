@@ -6,9 +6,9 @@ import { FaReddit } from "react-icons/fa";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { authModalState } from "../../atoms/authModalAtom";
 import {
-  communitiesState,
   Community,
   CommunitySnippet,
+  communityState,
 } from "../../atoms/communitiesAtom";
 import { auth, firestore } from "../../firebase/clientApp";
 import { getMySnippets } from "../../helpers/firestore";
@@ -22,21 +22,21 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
   const [user] = useAuthState(auth);
 
   const setAuthModalState = useSetRecoilState(authModalState);
-  const [currCommunitiesState, setCurrCommunitiesState] =
-    useRecoilState(communitiesState);
+  const [currCommunityState, setCurrCommunityState] =
+    useRecoilState(communityState);
 
   const { loading, setLoading, error } = useCommunitySnippets(
     user?.uid,
     !user?.uid,
     [user],
-    !currCommunitiesState.mySnippets.length && !!user
+    !currCommunityState.mySnippets.length && !!user
   );
   // const [loading, setLoading] = useState(
   //   !currCommunityState.mySnippets.length && !!user
   // );
   // const [error, setError] = useState('');
 
-  const isJoined = currCommunitiesState.mySnippets.find(
+  const isJoined = currCommunityState.mySnippets.find(
     (item) => item.communityId === communityData.id
   );
 
@@ -79,7 +79,7 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
       await batch.commit();
 
       // Add current community to snippet
-      setCurrCommunitiesState((prev) => ({
+      setCurrCommunityState((prev) => ({
         ...prev,
         mySnippets: [...prev.mySnippets, newSnippet],
       }));
@@ -106,7 +106,7 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
 
       await batch.commit();
 
-      setCurrCommunitiesState((prev) => ({
+      setCurrCommunityState((prev) => ({
         ...prev,
         mySnippets: prev.mySnippets.filter(
           (item) => item.communityId !== communityData.id

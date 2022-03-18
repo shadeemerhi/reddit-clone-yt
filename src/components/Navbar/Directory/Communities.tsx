@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Flex,
@@ -11,16 +11,12 @@ import {
 import { useAuthState } from "react-firebase-hooks/auth";
 import { FaReddit } from "react-icons/fa";
 import { GrAdd } from "react-icons/gr";
-import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  communitiesState,
-  CommunitySnippet,
-} from "../../../atoms/communitiesAtom";
+import { useRecoilValue } from "recoil";
+import { communityState } from "../../../atoms/communitiesAtom";
 import { auth } from "../../../firebase/clientApp";
-import { getMySnippets } from "../../../helpers/firestore";
+import useCommunitySnippets from "../../../hooks/useCommunitySnippets";
 import CreateCommunityModal from "../../Modal/CreateCommunity";
 import MenuListItem from "./MenuListItem";
-import useCommunitySnippets from "../../../hooks/useCommunitySnippets";
 
 type CommunitiesProps = {
   menuOpen: boolean;
@@ -33,7 +29,7 @@ const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
   // const [currCommunitiesState, setCurrCommunitiesState] =
   //   useRecoilState(communitiesState);
 
-  const currCommunitiesState = useRecoilValue(communitiesState);
+  const currCommunitiesState = useRecoilValue(communityState);
 
   const { snippets, loading, setLoading, error } = useCommunitySnippets(
     user?.uid,

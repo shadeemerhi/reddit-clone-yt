@@ -13,7 +13,7 @@ export interface CommunitySnippet {
   isModerator?: boolean;
 }
 
-interface CommunitiesState {
+interface CommunityState {
   [key: string]:
     | CommunitySnippet[]
     | { [key: string]: Community }
@@ -32,13 +32,13 @@ const defaultCommunity: Community = {
   numberOfMembers: 0,
 };
 
-export const defaultCommunitiesState: CommunitiesState = {
+export const defaultCommunityState: CommunityState = {
   mySnippets: [],
   visitedCommunities: {},
   currentCommunity: defaultCommunity,
 };
 
-export const communitiesState = atom<CommunitiesState>({
+export const communityState = atom<CommunityState>({
   key: "communitiesState",
-  default: defaultCommunitiesState,
+  default: defaultCommunityState,
 });

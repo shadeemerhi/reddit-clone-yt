@@ -2,7 +2,7 @@ import { NextPage, NextPageContext } from "next";
 import { Box, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useRecoilValue } from "recoil";
-import { communitiesState } from "../../../atoms/communitiesAtom";
+import { communityState } from "../../../atoms/communitiesAtom";
 import About from "../../../components/Community/About";
 import PageContentLayout from "../../../components/Layout/PageContent";
 import NewPostForm from "../../../components/Post/PostForm/NewPostForm";
@@ -16,8 +16,7 @@ const CreateCommmunityPostPage: NextPage = () => {
   const [user, loading, error] = useAuthState(auth);
   const router = useRouter();
   const { community } = router.query;
-  const visitedCommunities =
-    useRecoilValue(communitiesState).visitedCommunities;
+  const visitedCommunities = useRecoilValue(communityState).visitedCommunities;
   console.log("HERE ARE VISITED COMMUNITIES", visitedCommunities);
 
   // Redirects user if not logged in - can probably create protected route component
