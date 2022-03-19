@@ -40,13 +40,14 @@ const About: React.FC<AboutProps> = ({ communityData, pt, onCreatePage }) => {
         p={3}
         color="white"
         bg="blue.400"
+        borderRadius="4px 4px 0px 0px"
       >
         <Text fontSize="10pt" fontWeight={700}>
           About Community
         </Text>
         <Icon as={HiOutlineDotsHorizontal} cursor="pointer" />
       </Flex>
-      <Flex direction="column" p={3} bg="white">
+      <Flex direction="column" p={3} bg="white" borderRadius="0px 0px 4px 4px">
         {user?.uid === communityData?.creatorId && (
           <Box
             bg="gray.100"
