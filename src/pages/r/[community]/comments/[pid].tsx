@@ -1,39 +1,90 @@
-import { useRouter } from "next/router";
 import React, { useEffect } from "react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { communityState } from "../../../../atoms/communitiesAtom";
-import { postState } from "../../../../atoms/postsAtom";
+import { Skeleton, Stack } from "@chakra-ui/react";
+import { doc, getDoc } from "firebase/firestore";
+import { useRouter } from "next/router";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { Community, communityState } from "../../../../atoms/communitiesAtom";
+import { Post, postState } from "../../../../atoms/postsAtom";
+import About from "../../../../components/Community/About";
 import PageContentLayout from "../../../../components/Layout/PageContent";
+import PostLoader from "../../../../components/Post/Loader";
 import PostItem from "../../../../components/Post/PostItem";
+import { firestore } from "../../../../firebase/clientApp";
 import usePosts from "../../../../hooks/usePosts";
 
 type PostPageProps = {};
 
 const PostPage: React.FC<PostPageProps> = () => {
   const router = useRouter();
-  // const [postItems, setPostItems] = useRecoilState(postState);
+  const { pid } = router.query;
   const [communityStateValue, setCommunityStateValue] =
     useRecoilState(communityState);
   const { community } = router.query;
 
   const setPostItemState = useSetRecoilState(postState);
-  // console.log("HERE IS POST STATE LOL", postItems);
 
   const { postItems, loading, setLoading, onVote } = usePosts(
     communityStateValue.visitedCommunities[community as string]
   );
 
+  const fetchPost = async () => {
+    setLoading(true);
+    try {
+      const postDocRef = doc(firestore, "posts", pid as string);
+
+      const postDoc = await getDoc(postDocRef);
+      setPostItemState((prev) => ({
+        ...prev,
+        selectedPost: { id: postDoc.id, ...postDoc.data() } as Post,
+      }));
+    } catch (error: any) {
+      console.log("fetchPost error", error.message);
+    }
+    setLoading(false);
+  };
+
+  const getCommunityData = async () => {
+    setLoading(true);
+    try {
+      const communityDocRef = doc(
+        firestore,
+        "communities",
+        community as string
+      );
+      const communityDoc = await getDoc(communityDocRef);
+      setCommunityStateValue((prev) => ({
+        ...prev,
+        visitedCommunities: {
+          ...prev.visitedCommunities,
+          [community as string]: {
+            id: communityDoc.id,
+            ...communityDoc.data(),
+          } as Community,
+        },
+      }));
+    } catch (error: any) {
+      console.log("getCommunityData error", error.message);
+    }
+  };
+
+  /**
+   * Handles the case of refreshing [pid] OR
+   * visiting [pid] as a link
+   */
   useEffect(() => {
-    /**
-     * Will exist if coming from community page
-     * If not, means refresh or link visit
-     */
-    if (!postItems.selectedPost) {
-      // Go fetch it and store in recoil state
+    const { community, pid } = router.query;
+
+    if (community) {
+      const communityData =
+        communityStateValue.visitedCommunities[community as string];
+      if (!communityData) {
+        getCommunityData();
+        return;
+      }
     }
 
-    if (!communityStateValue.currentCommunity) {
-      // Go fetch it and store in recoil state
+    if (pid && !postItems.selectedPost) {
+      fetchPost();
     }
 
     // Clear selected post state
@@ -43,24 +94,45 @@ const PostPage: React.FC<PostPageProps> = () => {
         selectedPost: null,
       }));
     };
-  }, []);
+  }, [router.query, communityStateValue.visitedCommunities]);
 
   return (
     <PageContentLayout>
       {/* Left Content */}
-      {postItems.selectedPost && (
-        <PostItem
-          post={postItems.selectedPost}
-          onVote={onVote}
-          userVoteValue={
-            postItems.selectedPost.currentUserVoteStatus?.voteValue
-          }
-          postIdx={postItems.selectedPost.postIdx}
-        />
-      )}
-      <></>
+      <>
+        {loading ? (
+          <PostLoader />
+        ) : (
+          <>
+            {postItems.selectedPost && (
+              <PostItem
+                post={postItems.selectedPost}
+                onVote={onVote}
+                userVoteValue={
+                  postItems.selectedPost.currentUserVoteStatus?.voteValue
+                }
+                postIdx={postItems.selectedPost.postIdx}
+              />
+            )}
+          </>
+        )}
+      </>
       {/* Right Content */}
-      <>{/* <About communityData={communityData} /> */}</>
+      <>
+        {loading ? (
+          <Stack>
+            <Skeleton height="20px" />
+            <Skeleton height="20px" />
+            <Skeleton height="20px" />
+          </Stack>
+        ) : (
+          <About
+            communityData={
+              communityStateValue.visitedCommunities[community as string]
+            }
+          />
+        )}
+      </>
     </PageContentLayout>
   );
 };

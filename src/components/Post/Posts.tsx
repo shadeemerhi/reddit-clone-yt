@@ -31,6 +31,9 @@ const Posts: React.FC<PostsProps> = ({
   userId,
   loadingUser,
 }) => {
+  /**
+   * PART OF INITIAL SOLUTION BEFORE CUSTOM HOOK
+   */
   // const [postItems, setPostItems] = useRecoilState(postState);
   // const [loading, setLoading] = useState(false);
   // const setAuthModalState = useSetRecoilState(authModalState);
@@ -244,10 +247,6 @@ const Posts: React.FC<PostsProps> = ({
               post={post}
               postIdx={index}
               onVote={onVote}
-              // userVoteValue={
-              //   postItems.postVotes.find((item) => item.postId === post.id)
-              //     ?.voteValue
-              // }
               userVoteValue={post?.currentUserVoteStatus?.voteValue}
               onSelectPost={onSelectPost}
             />

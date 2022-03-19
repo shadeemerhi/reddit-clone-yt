@@ -108,8 +108,6 @@ const usePosts = (communityData: Community) => {
       let updatedState = { ...postItems };
 
       if (postIdx !== undefined) {
-        console.log("UPDATING THE POST AT INDEX", updatedPost, postIdx);
-
         updatedPosts[postIdx] = updatedPost;
         updatedState = {
           ...updatedState,
@@ -142,7 +140,6 @@ const usePosts = (communityData: Community) => {
 
   const getUserPostVotes = async () => {
     console.log("WE ARE GETTING POST VOTES!!!");
-
     try {
       const postVotesQuery = query(
         collection(firestore, `users/${user?.uid}/postVotes`),
@@ -221,6 +218,7 @@ const usePosts = (communityData: Community) => {
   };
 
   useEffect(() => {
+    if (!user?.uid) return;
     const userVotesFetchRequired =
       (postItems.posts.length && !postItems.votesFetched) || // community page load
       (postItems.selectedPost &&
@@ -230,9 +228,7 @@ const usePosts = (communityData: Community) => {
     if (userVotesFetchRequired) {
       getUserPostVotes();
     }
-
-    if (!user?.uid) return;
-  }, [user, postItems.posts, postItems.selectedPost]);
+  }, [user, postItems.posts, postItems.selectedPost, communityData]);
 
   useEffect(() => {
     if (postItems.postVotes.length && !postItems.votesAddedToPosts) {
@@ -253,8 +249,6 @@ const usePosts = (communityData: Community) => {
       return;
     }
   }, [communityData, user, loadingUser]);
-
-  console.log("HERE IS POST STATE", postItems);
 
   return { postItems, setPostItems, loading, setLoading, onVote, error };
 };
