@@ -11,6 +11,7 @@ import PostLoader from "../../../../components/Post/Loader";
 import PostItem from "../../../../components/Post/PostItem";
 import { firestore } from "../../../../firebase/clientApp";
 import usePosts from "../../../../hooks/usePosts";
+import Comments from "../../../../components/Post/Comments";
 
 type PostPageProps = {};
 
@@ -114,24 +115,18 @@ const PostPage: React.FC<PostPageProps> = () => {
                 }
               />
             )}
+            <Comments />
           </>
         )}
       </>
       {/* Right Content */}
       <>
-        {loading ? (
-          <Stack>
-            <Skeleton height="20px" />
-            <Skeleton height="20px" />
-            <Skeleton height="20px" />
-          </Stack>
-        ) : (
-          <About
-            communityData={
-              communityStateValue.visitedCommunities[community as string]
-            }
-          />
-        )}
+        <About
+          communityData={
+            communityStateValue.visitedCommunities[community as string]
+          }
+          loading={loading}
+        />
       </>
     </PageContentLayout>
   );
