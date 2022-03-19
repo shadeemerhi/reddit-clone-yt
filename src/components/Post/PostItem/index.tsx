@@ -36,9 +36,9 @@ const PostItem: React.FC<PostItemContentProps> = ({
   return (
     <Flex
       border="1px solid"
-      borderColor={onCommunityPage ? "gray.300" : "white"}
-      borderRadius={4}
       bg="white"
+      borderColor={onCommunityPage ? "gray.300" : "white"}
+      borderRadius={onCommunityPage ? 4 : "4px 4px 0px 0px"}
       cursor={onCommunityPage ? "pointer" : "unset"}
       _hover={{ borderColor: onCommunityPage ? "gray.500" : "none" }}
       onClick={() =>
@@ -50,7 +50,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
         align="center"
         bg={onCommunityPage ? "gray.100" : "none"}
         p={2}
-        borderRadius="3px 0px 0px 3px"
+        borderRadius={onCommunityPage ? "3px 0px 0px 3px" : "0"}
       >
         <Icon
           as={

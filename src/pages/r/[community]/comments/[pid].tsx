@@ -17,10 +17,9 @@ type PostPageProps = {};
 
 const PostPage: React.FC<PostPageProps> = () => {
   const router = useRouter();
-  const { pid } = router.query;
+  const { community, pid } = router.query;
   const [communityStateValue, setCommunityStateValue] =
     useRecoilState(communityState);
-  const { community } = router.query;
 
   const setPostItemState = useSetRecoilState(postState);
 
@@ -106,16 +105,18 @@ const PostPage: React.FC<PostPageProps> = () => {
         ) : (
           <>
             {postItems.selectedPost && (
-              <PostItem
-                post={postItems.selectedPost}
-                postIdx={postItems.selectedPost.postIdx}
-                onVote={onVote}
-                userVoteValue={
-                  postItems.selectedPost.currentUserVoteStatus?.voteValue
-                }
-              />
+              <>
+                <PostItem
+                  post={postItems.selectedPost}
+                  postIdx={postItems.selectedPost.postIdx}
+                  onVote={onVote}
+                  userVoteValue={
+                    postItems.selectedPost.currentUserVoteStatus?.voteValue
+                  }
+                />
+                <Comments pid={pid as string} community={community as string} />
+              </>
             )}
-            <Comments />
           </>
         )}
       </>

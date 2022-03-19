@@ -7,7 +7,6 @@ import { BiPoll } from "react-icons/bi";
 import { BsLink45Deg, BsMic } from "react-icons/bs";
 import { IoDocumentText, IoImageOutline } from "react-icons/io5";
 import { useSetRecoilState } from "recoil";
-import { communitiesState } from "../../../atoms/communitiesAtom";
 import { firestore } from "../../../firebase/clientApp";
 import TabItem from "./TabItem";
 
@@ -53,7 +52,6 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, user }) => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const setCommunityPostState = useSetRecoilState(communitiesState);
 
   const handleCreatePost = async () => {
     setLoading(true);
