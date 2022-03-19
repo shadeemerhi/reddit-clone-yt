@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Flex, Icon, Input, Stack, Textarea } from "@chakra-ui/react";
 import { User } from "firebase/auth";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
@@ -6,9 +6,10 @@ import { useRouter } from "next/router";
 import { BiPoll } from "react-icons/bi";
 import { BsLink45Deg, BsMic } from "react-icons/bs";
 import { IoDocumentText, IoImageOutline } from "react-icons/io5";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { firestore } from "../../../firebase/clientApp";
 import TabItem from "./TabItem";
+import { postState } from "../../../atoms/postsAtom";
 
 const formTabs = [
   {
@@ -44,7 +45,6 @@ type NewPostFormProps = {
 };
 
 const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, user }) => {
-  const router = useRouter();
   const [selectedTab, setSelectedTab] = useState(formTabs[0].title);
   const [form, setForm] = useState({
     title: "",
@@ -52,12 +52,15 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, user }) => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const router = useRouter();
+  // const setPostItems = useSetRecoilState(postState);
+  const [postItems, setPostItems] = useRecoilState(postState);
 
   const handleCreatePost = async () => {
     setLoading(true);
     const { title, body } = form;
     try {
-      const newPostRef = await addDoc(collection(firestore, "posts"), {
+      await addDoc(collection(firestore, "posts"), {
         communityId,
         creatorId: user.uid,
         userDisplayText: user.email!.split("@")[0],
@@ -68,15 +71,31 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, user }) => {
         createdAt: serverTimestamp(),
         editedAt: serverTimestamp(),
       });
-      console.log("HERE IS NEW POST ID", newPostRef.id);
+
+      // Clear the cache to cause a refetch of the posts
+      setPostItems((prev) => ({
+        ...prev,
+        posts: [],
+        postsCache: {
+          ...prev.postsCache,
+          [communityId]: [],
+        },
+        votesFetched: false,
+        votesAddedToPosts: false,
+        postVotes: [],
+      }));
     } catch (error) {
       console.log("createPost error", error);
       setError("Error creating post");
     }
-
-    setLoading(false);
-    router.back();
   };
+
+  useEffect(() => {
+    if (!postItems.postsCache[communityId]?.length) {
+      setLoading(false);
+      router.back();
+    }
+  }, [postItems.postsCache]);
 
   const onChange = ({
     target: { name, value },

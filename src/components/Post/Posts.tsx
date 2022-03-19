@@ -179,7 +179,9 @@ const Posts: React.FC<PostsProps> = ({
   };
 
   useEffect(() => {
-    if (postItems.postsCache[communityData.id]) {
+    console.log("INSIDE OF THE UE");
+
+    if (postItems.postsCache[communityData.id]?.length) {
       setPostItems((prev) => ({
         ...prev,
         posts: postItems.postsCache[communityData.id],
