@@ -14,7 +14,7 @@ export type Post = {
     id: string;
     voteValue: number;
   };
-  listIndex?: number;
+  postIdx?: number;
   createdAt?: Timestamp;
   editedAt?: Timestamp;
 };
@@ -30,19 +30,18 @@ interface PostState {
   selectedPost: Post | null;
   posts: Post[];
   postVotes: PostVote[];
-  votedAdded: boolean;
+  votesAddedToPosts: boolean;
+  votesFetched: boolean;
   postsCache: {
-    [key: string]: {
-      posts: Post[];
-      postVotes: PostVote[];
-    };
+    [key: string]: Post[];
   };
 }
 
 export const defaultPostState: PostState = {
   selectedPost: null,
   posts: [],
-  votedAdded: false,
+  votesAddedToPosts: false,
+  votesFetched: false,
   postVotes: [],
   postsCache: {},
 };

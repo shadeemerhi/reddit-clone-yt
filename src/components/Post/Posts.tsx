@@ -170,16 +170,16 @@ const Posts: React.FC<PostsProps> = ({
   const onSelectPost = (post: Post, postIdx: number) => {
     setPostItems((prev) => ({
       ...prev,
-      selectedPost: { ...post, listIndex: postIdx },
+      selectedPost: { ...post, postIdx },
     }));
     router.push(`/r/${communityData.id}/comments/${post.id}`);
   };
 
   useEffect(() => {
-    if (postItems.postsCache[communityData.id]?.posts) {
+    if (postItems.postsCache[communityData.id]) {
       setPostItems((prev) => ({
         ...prev,
-        posts: postItems.postsCache[communityData.id].posts,
+        posts: postItems.postsCache[communityData.id],
       }));
       return;
     }
@@ -223,10 +223,7 @@ const Posts: React.FC<PostsProps> = ({
         posts: posts as Post[],
         postsCache: {
           ...prev.postsCache,
-          [communityData.id]: {
-            ...prev.postsCache[communityData.id],
-            posts: posts as Post[],
-          },
+          [communityData.id]: posts as Post[],
         },
       }));
     } catch (error: any) {
@@ -234,7 +231,6 @@ const Posts: React.FC<PostsProps> = ({
     }
     setLoading(false);
   };
-  // console.log("HERE IS POST STATE", postItems);
 
   return (
     <>

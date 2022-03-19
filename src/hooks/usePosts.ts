@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from "react";
 import {
-  writeBatch,
-  doc,
   collection,
+  doc,
   getDocs,
   query,
   where,
-  orderBy,
-  onSnapshot,
+  writeBatch,
 } from "firebase/firestore";
-import { useRouter } from "next/router";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { authModalState } from "../atoms/authModalAtom";
+import { Community } from "../atoms/communitiesAtom";
 import { Post, postState, PostVote } from "../atoms/postsAtom";
 import { auth, firestore } from "../firebase/clientApp";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { Community } from "../atoms/communitiesAtom";
 
 const usePosts = (communityData: Community) => {
   const [user, loadingUser] = useAuthState(auth);
@@ -41,9 +38,6 @@ const usePosts = (communityData: Community) => {
 
     // is this an upvote or a downvote?
     // has this user voted on this post already? was it up or down?
-    // const existingVote = postItems.postVotes.find(
-    //   (item: PostVote) => item.postId === post.id
-    // );
 
     try {
       let voteChange = vote;
@@ -51,22 +45,6 @@ const usePosts = (communityData: Community) => {
 
       const updatedPost = { ...post };
       const updatedPosts = [...postItems.posts];
-
-      //   updatedPost.voteStatus = post.userVoteStatus ? voteStatus + 2 * vote : voteStatus + vote;
-      //   updatedPost.voteStatus = voteStatus + (existingVote ? 2 : 1) * vote;
-
-      // Updating on community page
-      //   if (postIdx) {
-      //     updatedPosts[postIdx] = updatedPost;
-      //   }
-
-      // Optimistically update UI
-      //   setPostItems((prev) => ({
-      //     ...prev,
-      //     posts: updatedPosts,
-      //   }));
-
-      // Todo - update on single page view - selectedPost
 
       // New vote
       if (!existingVote) {
@@ -91,51 +69,6 @@ const usePosts = (communityData: Community) => {
           id: postVoteRef.id,
           voteValue: vote,
         };
-
-        // const updatedPost = {
-        //   ...post,
-        //   voteStatus: voteStatus + vote,
-        // };
-
-        // // Create a new state object and modify accordingly
-        // let updatedPostState = { ...postItems };
-
-        // // Optimistically update state and cache
-        // const updatedVotes = [...postItems.postVotes, newVote];
-        // updatedPostState = {
-        //   ...updatedPostState,
-        //   postVotes: updatedVotes,
-        //   postsCache: {
-        //     ...updatedPostState.postsCache,
-        //     [communityData.id]: {
-        //       ...updatedPostState.postsCache[communityData.id],
-        //       postVotes: updatedVotes,
-        //     },
-        //   },
-        // };
-
-        // Updating post in list of posts
-        // if (postIdx) {
-        //   const updatedPosts = updatedPostState.posts;
-        //   updatedPosts[postIdx] = updatedPost;
-        //   updatedPostState = {
-        //     ...updatedPostState,
-        //     posts: updatedPosts,
-        //   };
-        // }
-
-        // setPostItems((prev) => ({
-        //   ...prev,
-        //   selectedPost: updatedPost,
-        //   postVotes: updatedVotes,
-        //   postsCache: {
-        //     ...prev.postsCache,
-        //     [communityData.id]: {
-        //       ...prev.postsCache[communityData.id],
-        //       postVotes: updatedVotes,
-        //     },
-        //   },
-        // }));
       }
       // Removing existing vote
       else {
@@ -149,21 +82,15 @@ const usePosts = (communityData: Community) => {
         // Removing vote
         if (existingVote.voteValue === vote) {
           voteChange *= -1;
-          console.log("REMOVING EXISTING VOTE!!!");
 
           updatedPost.voteStatus = voteStatus + -vote;
           delete updatedPost.currentUserVoteStatus;
 
-          //   setPostItems((prev) => ({
-          //     ...prev,
-          //     postVotes: prev.postVotes.filter((item) => item.postId !== post.id),
-          //   }));
           batch.delete(postVoteRef);
         }
         // Changing vote
         else {
           voteChange = 2 * vote;
-          console.log("CHANGING EXISTING VOTE!!!");
           // We know this will exist here
           updatedPost.currentUserVoteStatus = {
             id: updatedPost.currentUserVoteStatus?.id!,
@@ -175,62 +102,38 @@ const usePosts = (communityData: Community) => {
           batch.update(postVoteRef, {
             voteValue: vote,
           });
-
-          // Optimistically update post voteStatus
-          //   const existingPostIdx = postItems.posts.findIndex(
-          //     (item) => item.id == post.id
-          //   );
-          //   const updatedPost = {
-          //     ...post,
-          //     voteStatus: voteStatus + voteChange,
-          //   };
-          //   const updatedPosts = [...postItems.posts];
-          //   updatedPosts[0] = updatedPost;
-
-          // Optimistically update voteValue
-          //   const existingVoteIdx = postItems.postVotes.findIndex(
-          //     (item) => item.postId === post.id
-          //   );
-          //   const updatedVotes = [...postItems.postVotes];
-          //   updatedVotes[existingVoteIdx] = { ...existingVote, voteValue: vote };
-          //   setPostItems((prev) => ({
-          //     ...prev,
-          //     selectedPost: updatedPost,
-          //     postVotes: updatedVotes,
-          //     postsCache: {
-          //       ...prev.postsCache,
-          //       [communityData.id]: {
-          //         ...prev.postsCache[communityData.id],
-          //         postVotes: updatedVotes,
-          //       },
-          //     },
-          //   }));
         }
       }
 
+      let updatedState = { ...postItems };
+
       if (postIdx !== undefined) {
+        console.log("UPDATING THE POST AT INDEX", updatedPost, postIdx);
+
         updatedPosts[postIdx] = updatedPost;
-        setPostItems((prev) => ({
-          ...prev,
+        updatedState = {
+          ...updatedState,
           posts: updatedPosts,
           postsCache: {
-            ...prev.postsCache,
-            [communityData.id]: {
-              ...prev.postsCache[communityData.id],
-              posts: updatedPosts,
-            },
+            ...updatedState.postsCache,
+            [communityData.id]: updatedPosts,
           },
-        }));
+        };
       }
 
+      if (updatedState.selectedPost) {
+        updatedState = {
+          ...updatedState,
+          selectedPost: updatedPost,
+        };
+      }
+
+      // Optimistically update the UI
+      setPostItems(updatedState);
+
+      // Update database
       const postRef = doc(firestore, "posts", post.id);
       batch.update(postRef, { voteStatus: voteStatus + voteChange });
-
-      /**
-       * Perform writes
-       * Could move state updates to after this
-       * but decided to optimistically update
-       */
       await batch.commit();
     } catch (error) {
       console.log("onVote error", error);
@@ -255,13 +158,7 @@ const usePosts = (communityData: Community) => {
       setPostItems((prev) => ({
         ...prev,
         postVotes: postVotes as PostVote[],
-        postsCache: {
-          ...prev.postsCache,
-          [communityData.id]: {
-            ...prev.postsCache[communityData.id],
-            postVotes: postVotes as PostVote[],
-          },
-        },
+        votesFetched: true,
       }));
     } catch (error) {
       console.log("getUserPostVotes error", error);
@@ -281,35 +178,64 @@ const usePosts = (communityData: Community) => {
           id: existingVote.id,
           voteValue: existingVote.voteValue,
         },
-      };
+      } as Post;
     });
+
+    let updatedPostState = {
+      ...postItems,
+      posts: postsWithUserVoteStatus,
+    };
+
+    const { selectedPost } = postItems;
+    if (postItems.selectedPost) {
+      const existingVote = postItems.postVotes.find(
+        (item) => item.postId === selectedPost?.id
+      );
+
+      if (existingVote) {
+        const selectedPostWithUserVoteStatus = {
+          ...selectedPost,
+          currentUserVoteStatus: {
+            id: existingVote.id,
+            voteValue: existingVote.voteValue,
+          },
+        } as Post;
+        updatedPostState = {
+          ...updatedPostState,
+          selectedPost: selectedPostWithUserVoteStatus,
+        };
+      }
+
+      setPostItems(updatedPostState);
+    }
 
     setPostItems((prev) => ({
       ...prev,
       posts: postsWithUserVoteStatus as Post[],
       postsCache: {
         ...prev.postsCache,
-        [communityData.id]: {
-          ...prev.postsCache[communityData.id],
-          posts: postsWithUserVoteStatus as Post[],
-        },
+        [communityData.id]: postsWithUserVoteStatus as Post[],
       },
-      votedAdded: true,
+      votesAddedToPosts: true,
     }));
   };
 
   useEffect(() => {
-    // if (postItems.postVotes && postItems.posts && !postItems.votedAdded) {
-    //   addUserVoteStatusToPosts();
-    // }
-    if (!user?.uid) return;
-    if (postItems.posts.length && !postItems.postVotes.length) {
+    const userVotesFetchRequired =
+      (postItems.posts.length && !postItems.votesFetched) || // community page load
+      (postItems.selectedPost &&
+        !postItems.posts.length &&
+        !postItems.votesFetched); // single post ([pid]) refresh or initial visit
+
+    if (userVotesFetchRequired) {
       getUserPostVotes();
     }
-  }, [postItems.posts, user]);
+
+    if (!user?.uid) return;
+  }, [user, postItems.posts, postItems.selectedPost]);
 
   useEffect(() => {
-    if (postItems.postVotes.length && !postItems.votedAdded) {
+    if (postItems.postVotes.length && !postItems.votesAddedToPosts) {
       addUserVoteStatusToPosts();
     }
   }, [postItems.postVotes]);
@@ -321,24 +247,11 @@ const usePosts = (communityData: Community) => {
         postVotes: [],
         postsCache: {
           ...prev.postsCache,
-          [communityData.id]: {
-            ...prev.postsCache[communityData.id],
-            postVotes: [],
-          },
+          [communityData.id]: [],
         },
       }));
       return;
     }
-    if (!user?.uid) return;
-
-    if (postItems.postsCache[communityData.id]?.postVotes.length) {
-      setPostItems((prev) => ({
-        ...prev,
-        postVotes: postItems.postsCache[communityData.id].postVotes,
-      }));
-      return;
-    }
-    // getUserPostVotes();
   }, [communityData, user, loadingUser]);
 
   console.log("HERE IS POST STATE", postItems);

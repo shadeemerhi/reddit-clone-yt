@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { communityState } from "../../../../atoms/communitiesAtom";
 import { postState } from "../../../../atoms/postsAtom";
 import PageContentLayout from "../../../../components/Layout/PageContent";
@@ -15,6 +15,8 @@ const PostPage: React.FC<PostPageProps> = () => {
   const [communityStateValue, setCommunityStateValue] =
     useRecoilState(communityState);
   const { community } = router.query;
+
+  const setPostItemState = useSetRecoilState(postState);
   // console.log("HERE IS POST STATE LOL", postItems);
 
   const { postItems, loading, setLoading, onVote } = usePosts(
@@ -33,6 +35,14 @@ const PostPage: React.FC<PostPageProps> = () => {
     if (!communityStateValue.currentCommunity) {
       // Go fetch it and store in recoil state
     }
+
+    // Clear selected post state
+    return () => {
+      setPostItemState((prev) => ({
+        ...prev,
+        selectedPost: null,
+      }));
+    };
   }, []);
 
   return (
@@ -43,11 +53,9 @@ const PostPage: React.FC<PostPageProps> = () => {
           post={postItems.selectedPost}
           onVote={onVote}
           userVoteValue={
-            postItems.postVotes.find(
-              (item) => item.postId === postItems.selectedPost!.id
-            )?.voteValue
+            postItems.selectedPost.currentUserVoteStatus?.voteValue
           }
-          // onSelectPost={onSelectPost}
+          postIdx={postItems.selectedPost.postIdx}
         />
       )}
       <></>
