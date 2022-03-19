@@ -107,11 +107,11 @@ const PostPage: React.FC<PostPageProps> = () => {
             {postItems.selectedPost && (
               <PostItem
                 post={postItems.selectedPost}
+                postIdx={postItems.selectedPost.postIdx}
                 onVote={onVote}
                 userVoteValue={
                   postItems.selectedPost.currentUserVoteStatus?.voteValue
                 }
-                postIdx={postItems.selectedPost.postIdx}
               />
             )}
           </>

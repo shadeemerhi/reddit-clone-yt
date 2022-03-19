@@ -248,6 +248,8 @@ const Posts: React.FC<PostsProps> = ({
               postIdx={index}
               onVote={onVote}
               userVoteValue={post?.currentUserVoteStatus?.voteValue}
+              // Indicates that we are on community page
+              // Can use to conditionally apply styling
               onSelectPost={onSelectPost}
             />
           ))}
