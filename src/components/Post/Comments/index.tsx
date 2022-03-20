@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Flex,
-  Skeleton,
   SkeletonCircle,
   SkeletonText,
   Stack,
@@ -55,12 +54,14 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
       const commentDocRef = doc(collection(firestore, "comments"));
       batch.set(commentDocRef, {
         postId: selectedPost.id,
-        authorId: user.uid,
+        creatorId: user.uid,
+        creatorDisplayText: user.email!.split("@")[0],
+        creatorPhotoURL: user.photoURL,
         communityId: community,
         text: comment,
         postTitle: selectedPost.title,
         createdAt: serverTimestamp(),
-      });
+      } as Comment);
 
       // Update post numberOfComments
       batch.update(doc(firestore, "posts", selectedPost.id), {
@@ -74,6 +75,8 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
         {
           id: commentDocRef.id,
           creatorId: user.uid,
+          creatorDisplayText: user.email!.split("@")[0],
+          creatorPhotoURL: user.photoURL,
           communityId: community,
           postId,
           postTitle: title,
@@ -147,7 +150,7 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
         {commentFetchLoading ? (
           <>
             {[0, 1, 2].map((item) => (
-              <Box padding="6" bg="white">
+              <Box key={item} padding="6" bg="white">
                 <SkeletonCircle size="10" />
                 <SkeletonText mt="4" noOfLines={2} spacing="4" />
               </Box>
@@ -158,7 +161,12 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
             {!!comments.length ? (
               <>
                 {comments.map((item: Comment) => (
-                  <CommentItem key={item.id} comment={item} />
+                  <CommentItem
+                    key={item.id}
+                    comment={item}
+                    setComments={setComments}
+                    userId={user?.uid}
+                  />
                 ))}
               </>
             ) : (

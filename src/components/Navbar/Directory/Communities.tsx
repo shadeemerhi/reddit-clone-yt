@@ -31,7 +31,7 @@ const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
 
   const currCommunitiesState = useRecoilValue(communityState);
 
-  const { snippets, loading, setLoading, error } = useCommunitySnippets(
+  const { loading, setLoading, error } = useCommunitySnippets(
     user?.uid,
     !user?.uid || !menuOpen,
     [menuOpen, user],
