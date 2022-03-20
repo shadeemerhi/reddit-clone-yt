@@ -5,7 +5,7 @@ import moment from "moment";
 
 export type Comment = {
   id?: string;
-  authorId: string;
+  creatorId: string;
   communityId: string;
   postId: string;
   postTitle: string;
@@ -25,7 +25,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment }) => {
       </Box>
       <Flex direction="column">
         <Stack direction="row" spacing={1} fontSize="8pt">
-          <Text fontWeight={700}>{comment.authorId}</Text>
+          <Text fontWeight={700}>{comment.creatorId}</Text>
           {comment.createdAt?.seconds && (
             <Text color="gray.600">
               {moment(new Date(comment.createdAt?.seconds * 1000)).fromNow()}
