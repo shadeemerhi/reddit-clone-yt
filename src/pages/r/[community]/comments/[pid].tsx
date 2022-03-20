@@ -116,7 +116,10 @@ const PostPage: React.FC<PostPageProps> = () => {
                     )?.voteValue
                   }
                 />
-                <Comments pid={pid as string} community={community as string} />
+                <Comments
+                  community={community as string}
+                  selectedPost={postItems.selectedPost}
+                />
               </>
             )}
           </>
