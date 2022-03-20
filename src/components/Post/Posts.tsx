@@ -36,8 +36,7 @@ const Posts: React.FC<PostsProps> = ({
    */
   const [postItems, setPostItems] = useRecoilState(postState);
   const [loading, setLoading] = useState(false);
-  const setAuthModalState = useSetRecoilState(authModalState);
-  const [error, setError] = useState("");
+  // const setAuthModalState = useSetRecoilState(authModalState);
   const router = useRouter();
 
   const { onVote } = usePosts(communityData);
