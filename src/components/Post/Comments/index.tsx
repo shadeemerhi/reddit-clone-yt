@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Box, Flex, Stack } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Skeleton,
+  SkeletonCircle,
+  SkeletonText,
+  Stack,
+} from "@chakra-ui/react";
 import {
   collection,
   doc,
@@ -28,7 +35,8 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
   const [user] = useAuthState(auth);
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState<Comment[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [commentFetchLoading, setCommentFetchLoading] = useState(false);
+  const [commentCreateLoading, setCommentCreateLoading] = useState(false);
   const setAuthModalState = useSetRecoilState(authModalState);
   const setPostItemState = useSetRecoilState(postState);
 
@@ -38,7 +46,7 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
       return;
     }
 
-    setLoading(true);
+    setCommentCreateLoading(true);
     try {
       const batch = writeBatch(firestore);
 
@@ -88,11 +96,11 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
     } catch (error: any) {
       console.log("onCreateComment error", error.message);
     }
-    setLoading(false);
+    setCommentCreateLoading(false);
   };
 
   const getPostComments = async () => {
-    setLoading(true);
+    setCommentFetchLoading(true);
     try {
       const commentsQuery = query(
         collection(firestore, "comments"),
@@ -108,7 +116,7 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
     } catch (error: any) {
       console.log("getPostComments error", error.message);
     }
-    setLoading(false);
+    setCommentFetchLoading(false);
   };
 
   useEffect(() => {
@@ -129,15 +137,28 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
         <CommentInput
           comment={comment}
           setComment={setComment}
-          loading={loading}
+          loading={commentCreateLoading}
           user={user}
           onCreateComment={onCreateComment}
         />
       </Flex>
       <Stack spacing={6} p={2}>
-        {comments.map((item: Comment) => (
-          <CommentItem key={item.id} comment={item} />
-        ))}
+        {commentFetchLoading ? (
+          <>
+            {[0, 1, 2].map((item) => (
+              <Box padding="6" bg="white">
+                <SkeletonCircle size="10" />
+                <SkeletonText mt="4" noOfLines={2} spacing="4" />
+              </Box>
+            ))}
+          </>
+        ) : (
+          <>
+            {comments.map((item: Comment) => (
+              <CommentItem key={item.id} comment={item} />
+            ))}
+          </>
+        )}
       </Stack>
     </Box>
   );
