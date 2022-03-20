@@ -178,33 +178,79 @@ const Posts: React.FC<PostsProps> = ({
   };
 
   useEffect(() => {
-    setLoading(true);
+    console.log("INSIDE OF THE UE");
+
+    if (
+      postItems.postsCache[communityData.id]?.length &&
+      !postItems.postUpdateRequired
+    ) {
+      setPostItems((prev) => ({
+        ...prev,
+        posts: postItems.postsCache[communityData.id],
+      }));
+      return;
+    }
+
+    if (postItems.postUpdateRequired) {
+      getPosts();
+    }
     /**
      * REAL-TIME POST LISTENER
      * IMPLEMENT AT FIRST THEN CHANGE TO POSTS CACHE
      *
-     * LATEST UPDATE - MIGHT KEEP THIS AS CACHE IS TOO COMPLICATED
+     * UPDATE - MIGHT KEEP THIS AS CACHE IS TOO COMPLICATED
+     *
+     * LATEST UPDATE - FOUND SOLUTION THAT MEETS IN THE MIDDLE
+     * CACHE POST DATA, BUT REMOVE POSTVOTES CACHE AND HAVE
+     * REAL-TIME LISTENER ON POSTVOTES
      */
-    const postsQuery = query(
-      collection(firestore, "posts"),
-      where("communityId", "==", communityData.id),
-      orderBy("createdAt", "desc")
-    );
-    const unsubscribe = onSnapshot(postsQuery, (querySnaption) => {
-      const posts = querySnaption.docs.map((post) => ({
-        id: post.id,
-        ...post.data(),
-      }));
+    // const postsQuery = query(
+    //   collection(firestore, "posts"),
+    //   where("communityId", "==", communityData.id),
+    //   orderBy("createdAt", "desc")
+    // );
+    // const unsubscribe = onSnapshot(postsQuery, (querySnaption) => {
+    //   const posts = querySnaption.docs.map((post) => ({
+    //     id: post.id,
+    //     ...post.data(),
+    //   }));
+    //   setPostItems((prev) => ({
+    //     ...prev,
+    //     posts: posts as [],
+    //   }));
+    //   setLoading(false);
+    // });
+
+    // // Remove real-time listener on component dismount
+    // return () => unsubscribe();
+  }, [communityData, postItems.postUpdateRequired]);
+
+  const getPosts = async () => {
+    console.log("WE ARE GETTING POSTS!!!");
+
+    setLoading(true);
+    try {
+      const postsQuery = query(
+        collection(firestore, "posts"),
+        where("communityId", "==", communityData.id),
+        orderBy("createdAt", "desc")
+      );
+      const postDocs = await getDocs(postsQuery);
+      const posts = postDocs.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
       setPostItems((prev) => ({
         ...prev,
-        posts: posts as [],
+        posts: posts as Post[],
+        postsCache: {
+          ...prev.postsCache,
+          [communityData.id]: posts as Post[],
+        },
+        postUpdateRequired: false,
       }));
-      setLoading(false);
-    });
-
-    // Remove real-time listener on component dismount
-    return () => unsubscribe();
-  }, [communityData]);
+    } catch (error: any) {
+      console.log("getPosts error", error.message);
+    }
+    setLoading(false);
+  };
 
   return (
     <>
@@ -216,6 +262,7 @@ const Posts: React.FC<PostsProps> = ({
             <PostItem
               key={post.id}
               post={post}
+              postIdx={index}
               onVote={onVote}
               userVoteValue={
                 postItems.postVotes.find((item) => item.postId === post.id)
