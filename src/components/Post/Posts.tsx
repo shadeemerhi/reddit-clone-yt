@@ -34,7 +34,7 @@ const Posts: React.FC<PostsProps> = ({
   /**
    * PART OF INITIAL SOLUTION BEFORE CUSTOM HOOK
    */
-  const [postItems, setPostItems] = useRecoilState(postState);
+  const [postStateValue, setPostStateValue] = useRecoilState(postState);
   const [loading, setLoading] = useState(false);
   // const setAuthModalState = useSetRecoilState(authModalState);
   const router = useRouter();
@@ -169,7 +169,7 @@ const Posts: React.FC<PostsProps> = ({
   // };
 
   const onSelectPost = (post: Post, postIdx: number) => {
-    setPostItems((prev) => ({
+    setPostStateValue((prev) => ({
       ...prev,
       selectedPost: { ...post, postIdx },
     }));
@@ -180,12 +180,12 @@ const Posts: React.FC<PostsProps> = ({
     console.log("INSIDE OF THE UE");
 
     if (
-      postItems.postsCache[communityData.id] &&
-      !postItems.postUpdateRequired
+      postStateValue.postsCache[communityData.id] &&
+      !postStateValue.postUpdateRequired
     ) {
-      setPostItems((prev) => ({
+      setPostStateValue((prev) => ({
         ...prev,
-        posts: postItems.postsCache[communityData.id],
+        posts: postStateValue.postsCache[communityData.id],
       }));
       return;
     }
@@ -220,7 +220,7 @@ const Posts: React.FC<PostsProps> = ({
 
     // // Remove real-time listener on component dismount
     // return () => unsubscribe();
-  }, [communityData, postItems.postUpdateRequired]);
+  }, [communityData, postStateValue.postUpdateRequired]);
 
   const getPosts = async () => {
     console.log("WE ARE GETTING POSTS!!!");
@@ -234,7 +234,7 @@ const Posts: React.FC<PostsProps> = ({
       );
       const postDocs = await getDocs(postsQuery);
       const posts = postDocs.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setPostItems((prev) => ({
+      setPostStateValue((prev) => ({
         ...prev,
         posts: posts as Post[],
         postsCache: {
@@ -255,14 +255,14 @@ const Posts: React.FC<PostsProps> = ({
         <PostLoader />
       ) : (
         <Stack>
-          {postItems.posts.map((post: Post, index) => (
+          {postStateValue.posts.map((post: Post, index) => (
             <PostItem
               key={post.id}
               post={post}
               postIdx={index}
               onVote={onVote}
               userVoteValue={
-                postItems.postVotes.find((item) => item.postId === post.id)
+                postStateValue.postVotes.find((item) => item.postId === post.id)
                   ?.voteValue
               }
               onSelectPost={onSelectPost}

@@ -20,19 +20,19 @@ const CreateCommmunityPostPage: NextPage = () => {
   console.log("HERE ARE VISITED COMMUNITIES", visitedCommunities);
 
   // Redirects user if not logged in - can probably create protected route component
-  useEffect(() => {
-    if (!loading && !user) {
-      // router.push("/");
-      return;
-    }
+  // useEffect(() => {
+  //   if (!loading && !user) {
+  //     // router.push("/");
+  //     return;
+  //   }
 
-    if (!community) return;
-    if (!visitedCommunities[community as string]) {
-      console.log("THIS IS HAPPENING", visitedCommunities[community as string]);
+  //   if (!community) return;
+  //   if (!visitedCommunities[community as string]) {
+  //     console.log("THIS IS HAPPENING", visitedCommunities[community as string]);
 
-      router.push(`/r/${community}`);
-    }
-  }, [user, loading]);
+  //     router.push(`/r/${community}`);
+  //   }
+  // }, [user, loading]);
 
   /**
    * Redirect users to main community page

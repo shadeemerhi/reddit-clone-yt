@@ -17,7 +17,7 @@ import { auth, firestore } from "../firebase/clientApp";
 
 const usePosts = (communityData: Community) => {
   const [user, loadingUser] = useAuthState(auth);
-  const [postItems, setPostItems] = useRecoilState(postState);
+  const [postStateValue, setPostStateValue] = useRecoilState(postState);
   const setAuthModalState = useSetRecoilState(authModalState);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -36,7 +36,7 @@ const usePosts = (communityData: Community) => {
 
     const { voteStatus } = post;
     // const existingVote = post.currentUserVoteStatus;
-    const existingVote = postItems.postVotes.find(
+    const existingVote = postStateValue.postVotes.find(
       (vote) => vote.postId === post.id
     );
 
@@ -48,7 +48,7 @@ const usePosts = (communityData: Community) => {
       const batch = writeBatch(firestore);
 
       const updatedPost = { ...post };
-      const updatedPosts = [...postItems.posts];
+      const updatedPosts = [...postStateValue.posts];
 
       // New vote
       if (!existingVote) {
@@ -109,7 +109,7 @@ const usePosts = (communityData: Community) => {
         }
       }
 
-      let updatedState = { ...postItems };
+      let updatedState = { ...postStateValue };
       if (postIdx !== undefined) {
         updatedPosts[postIdx] = updatedPost;
         updatedState = {
@@ -135,7 +135,7 @@ const usePosts = (communityData: Community) => {
       }
 
       // Optimistically update the UI
-      setPostItems(updatedState);
+      setPostStateValue(updatedState);
 
       // Update database
       const postRef = doc(firestore, "posts", post.id);
@@ -158,7 +158,7 @@ const usePosts = (communityData: Community) => {
         ...postVote.data(),
       }));
 
-      setPostItems((prev) => ({
+      setPostStateValue((prev) => ({
         ...prev,
         postVotes: postVotes as PostVote[],
       }));
@@ -169,7 +169,7 @@ const usePosts = (communityData: Community) => {
 
   useEffect(() => {
     if (!user?.uid && !loadingUser) {
-      setPostItems((prev) => ({
+      setPostStateValue((prev) => ({
         ...prev,
         postVotes: [],
       }));
@@ -177,7 +177,14 @@ const usePosts = (communityData: Community) => {
     }
   }, [user, loadingUser]);
 
-  return { postItems, setPostItems, loading, setLoading, onVote, error };
+  return {
+    postStateValue,
+    setPostStateValue,
+    loading,
+    setLoading,
+    onVote,
+    error,
+  };
 };
 
 export default usePosts;

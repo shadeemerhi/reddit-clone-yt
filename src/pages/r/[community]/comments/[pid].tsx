@@ -21,11 +21,10 @@ const PostPage: React.FC<PostPageProps> = () => {
   const [communityStateValue, setCommunityStateValue] =
     useRecoilState(communityState);
 
-  const setPostItemState = useSetRecoilState(postState);
+  // const setPostState = useSetRecoilState(postState);
 
-  const { postItems, loading, setLoading, onVote } = usePosts(
-    communityStateValue.visitedCommunities[community as string]
-  );
+  const { postStateValue, setPostStateValue, loading, setLoading, onVote } =
+    usePosts(communityStateValue.visitedCommunities[community as string]);
 
   const fetchPost = async () => {
     setLoading(true);
@@ -33,7 +32,7 @@ const PostPage: React.FC<PostPageProps> = () => {
       const postDocRef = doc(firestore, "posts", pid as string);
 
       const postDoc = await getDoc(postDocRef);
-      setPostItemState((prev) => ({
+      setPostStateValue((prev) => ({
         ...prev,
         selectedPost: { id: postDoc.id, ...postDoc.data() } as Post,
       }));
@@ -83,13 +82,13 @@ const PostPage: React.FC<PostPageProps> = () => {
       }
     }
 
-    if (pid && !postItems.selectedPost) {
+    if (pid && !postStateValue.selectedPost) {
       fetchPost();
     }
 
     // Clear selected post state
     return () => {
-      setPostItemState((prev) => ({
+      setPostStateValue((prev) => ({
         ...prev,
         selectedPost: null,
       }));
@@ -104,21 +103,21 @@ const PostPage: React.FC<PostPageProps> = () => {
           <PostLoader />
         ) : (
           <>
-            {postItems.selectedPost && (
+            {postStateValue.selectedPost && (
               <>
                 <PostItem
-                  post={postItems.selectedPost}
-                  postIdx={postItems.selectedPost.postIdx}
+                  post={postStateValue.selectedPost}
+                  postIdx={postStateValue.selectedPost.postIdx}
                   onVote={onVote}
                   userVoteValue={
-                    postItems.postVotes.find(
-                      (item) => item.postId === postItems.selectedPost!.id
+                    postStateValue.postVotes.find(
+                      (item) => item.postId === postStateValue.selectedPost!.id
                     )?.voteValue
                   }
                 />
                 <Comments
                   community={community as string}
-                  selectedPost={postItems.selectedPost}
+                  selectedPost={postStateValue.selectedPost}
                 />
               </>
             )}

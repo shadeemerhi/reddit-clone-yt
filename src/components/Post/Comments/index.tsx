@@ -38,7 +38,7 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
   const [commentFetchLoading, setCommentFetchLoading] = useState(true);
   const [commentCreateLoading, setCommentCreateLoading] = useState(false);
   const setAuthModalState = useSetRecoilState(authModalState);
-  const setPostItemState = useSetRecoilState(postState);
+  const setPostState = useSetRecoilState(postState);
 
   const onCreateComment = async (comment: string) => {
     if (!user) {
@@ -89,7 +89,7 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
       ]);
 
       // Fetch posts again to update number of comments
-      setPostItemState((prev) => ({
+      setPostState((prev) => ({
         ...prev,
         selectedPost: {
           ...prev.selectedPost,
