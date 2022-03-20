@@ -191,9 +191,7 @@ const Posts: React.FC<PostsProps> = ({
       return;
     }
 
-    if (postItems.postUpdateRequired) {
-      getPosts();
-    }
+    getPosts();
     /**
      * REAL-TIME POST LISTENER
      * IMPLEMENT AT FIRST THEN CHANGE TO POSTS CACHE
