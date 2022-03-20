@@ -53,8 +53,6 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, user }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
-  // const setPostItems = useSetRecoilState(postState);
-  const [postItems, setPostItems] = useRecoilState(postState);
 
   const handleCreatePost = async () => {
     setLoading(true);
@@ -71,31 +69,13 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, user }) => {
         createdAt: serverTimestamp(),
         editedAt: serverTimestamp(),
       });
-
-      // Clear the cache to cause a refetch of the posts
-      setPostItems((prev) => ({
-        ...prev,
-        posts: [],
-        postsCache: {
-          ...prev.postsCache,
-          [communityId]: [],
-        },
-        votesFetched: false,
-        votesAddedToPosts: false,
-        postVotes: [],
-      }));
+      setLoading(false);
+      router.back();
     } catch (error) {
       console.log("createPost error", error);
       setError("Error creating post");
     }
   };
-
-  useEffect(() => {
-    if (!postItems.postsCache[communityId]?.length) {
-      setLoading(false);
-      router.back();
-    }
-  }, [postItems.postsCache]);
 
   const onChange = ({
     target: { name, value },

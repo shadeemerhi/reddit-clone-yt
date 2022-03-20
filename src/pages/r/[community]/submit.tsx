@@ -22,10 +22,14 @@ const CreateCommmunityPostPage: NextPage = () => {
   // Redirects user if not logged in - can probably create protected route component
   useEffect(() => {
     if (!loading && !user) {
-      router.push("/");
+      // router.push("/");
       return;
     }
+
+    if (!community) return;
     if (!visitedCommunities[community as string]) {
+      console.log("THIS IS HAPPENING", visitedCommunities[community as string]);
+
       router.push(`/r/${community}`);
     }
   }, [user, loading]);
@@ -37,7 +41,7 @@ const CreateCommmunityPostPage: NextPage = () => {
    * This solution assumes the client is coming from
    * the main community page
    */
-  if (!visitedCommunities[community as string]) return null;
+  // if (!visitedCommunities[community as string]) return null;
 
   return (
     <PageContentLayout maxWidth="1060px">

@@ -17,8 +17,7 @@ export type PostItemContentProps = {
   onVote: (
     event: React.MouseEvent<SVGElement, MouseEvent>,
     post: Post,
-    vote: number,
-    postIdx?: number
+    vote: number
   ) => void;
   postIdx?: number;
   onSelectPost?: (value: Post, postIdx: number) => void;
@@ -59,7 +58,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
           color={userVoteValue === 1 ? "brand.100" : "gray.400"}
           fontSize={22}
           cursor="pointer"
-          onClick={(event) => onVote(event, post, 1, postIdx)}
+          onClick={(event) => onVote(event, post, 1)}
         />
         {post.voteStatus}
         <Icon
@@ -71,7 +70,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
           color={userVoteValue === -1 ? "#4379FF" : "gray.400"}
           fontSize={22}
           cursor="pointer"
-          onClick={(event) => onVote(event, post, -1, postIdx)}
+          onClick={(event) => onVote(event, post, -1)}
         />
       </Flex>
       <Flex direction="column">

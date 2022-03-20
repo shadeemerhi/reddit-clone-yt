@@ -34,14 +34,13 @@ const Posts: React.FC<PostsProps> = ({
   /**
    * PART OF INITIAL SOLUTION BEFORE CUSTOM HOOK
    */
-  // const [postItems, setPostItems] = useRecoilState(postState);
-  // const [loading, setLoading] = useState(false);
-  // const setAuthModalState = useSetRecoilState(authModalState);
-  // const [error, setError] = useState("");
+  const [postItems, setPostItems] = useRecoilState(postState);
+  const [loading, setLoading] = useState(false);
+  const setAuthModalState = useSetRecoilState(authModalState);
+  const [error, setError] = useState("");
   const router = useRouter();
 
-  const { postItems, setPostItems, loading, setLoading, onVote } =
-    usePosts(communityData);
+  const { onVote } = usePosts(communityData);
 
   /**
    * USE ALL BELOW INITIALLY THEN CONVERT TO A CUSTOM HOOK AFTER
@@ -179,63 +178,33 @@ const Posts: React.FC<PostsProps> = ({
   };
 
   useEffect(() => {
-    console.log("INSIDE OF THE UE");
-
-    if (postItems.postsCache[communityData.id]?.length) {
-      setPostItems((prev) => ({
-        ...prev,
-        posts: postItems.postsCache[communityData.id],
-      }));
-      return;
-    }
-
-    getPosts();
-
+    setLoading(true);
     /**
      * REAL-TIME POST LISTENER
      * IMPLEMENT AT FIRST THEN CHANGE TO POSTS CACHE
+     *
+     * LATEST UPDATE - MIGHT KEEP THIS AS CACHE IS TOO COMPLICATED
      */
-    // const unsubscribe = onSnapshot(postsQuery, (querySnaption) => {
-    //   const posts = querySnaption.docs.map((post) => ({
-    //     id: post.id,
-    //     ...post.data(),
-    //   }));
-    //   setPostItems((prev) => ({
-    //     ...prev,
-    //     posts: posts as [],
-    //   }));
-    //   setLoading(false);
-    // });
-
-    // Remove real-time listener on component dismount
-    // return () => unsubscribe();
-  }, [communityData]);
-
-  const getPosts = async () => {
-    console.log("WE ARE GETTING POSTS!!!");
-
-    setLoading(true);
-    try {
-      const postsQuery = query(
-        collection(firestore, "posts"),
-        where("communityId", "==", communityData.id),
-        orderBy("createdAt", "desc")
-      );
-      const postDocs = await getDocs(postsQuery);
-      const posts = postDocs.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    const postsQuery = query(
+      collection(firestore, "posts"),
+      where("communityId", "==", communityData.id),
+      orderBy("createdAt", "desc")
+    );
+    const unsubscribe = onSnapshot(postsQuery, (querySnaption) => {
+      const posts = querySnaption.docs.map((post) => ({
+        id: post.id,
+        ...post.data(),
+      }));
       setPostItems((prev) => ({
         ...prev,
-        posts: posts as Post[],
-        postsCache: {
-          ...prev.postsCache,
-          [communityData.id]: posts as Post[],
-        },
+        posts: posts as [],
       }));
-    } catch (error: any) {
-      console.log("getPosts error", error.message);
-    }
-    setLoading(false);
-  };
+      setLoading(false);
+    });
+
+    // Remove real-time listener on component dismount
+    return () => unsubscribe();
+  }, [communityData]);
 
   return (
     <>
@@ -247,9 +216,11 @@ const Posts: React.FC<PostsProps> = ({
             <PostItem
               key={post.id}
               post={post}
-              postIdx={index}
               onVote={onVote}
-              userVoteValue={post?.currentUserVoteStatus?.voteValue}
+              userVoteValue={
+                postItems.postVotes.find((item) => item.postId === post.id)
+                  ?.voteValue
+              }
               onSelectPost={onSelectPost}
             />
           ))}
