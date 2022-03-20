@@ -116,8 +116,6 @@ const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
     getPostComments();
   }, []);
 
-  console.log("HERE ARE COMMENTS", comments);
-
   return (
     <Box bg="white" p={2} borderRadius="0px 0px 4px 4px">
       <Flex

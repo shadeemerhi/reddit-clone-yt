@@ -180,7 +180,7 @@ const Posts: React.FC<PostsProps> = ({
     console.log("INSIDE OF THE UE");
 
     if (
-      postItems.postsCache[communityData.id]?.length &&
+      postItems.postsCache[communityData.id] &&
       !postItems.postUpdateRequired
     ) {
       setPostItems((prev) => ({
