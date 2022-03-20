@@ -84,22 +84,24 @@ const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
       {/* COULD DO THIS FOR CLEANER COMPONENTS */}
       {/* <Moderating snippets={snippetState.filter((item) => item.isModerator)} />
       <MyCommunities snippets={snippetState} setOpen={setOpen} /> */}
-      <Box mt={3} mb={4}>
-        <Text pl={3} mb={1} fontSize="7pt" fontWeight={500} color="gray.500">
-          MODERATING
-        </Text>
-        {currCommunitiesState.mySnippets
-          .filter((item) => item.isModerator)
-          .map((snippet) => (
-            <MenuListItem
-              key={snippet.communityId}
-              displayText={`r/${snippet.communityId}`}
-              link={`/r/${snippet.communityId}`}
-              icon={FaReddit as typeof Icon}
-              iconColor="brand.100"
-            />
-          ))}
-      </Box>
+      {currCommunitiesState.mySnippets.find((item) => item.isModerator) && (
+        <Box mt={3} mb={4}>
+          <Text pl={3} mb={1} fontSize="7pt" fontWeight={500} color="gray.500">
+            MODERATING
+          </Text>
+          {currCommunitiesState.mySnippets
+            .filter((item) => item.isModerator)
+            .map((snippet) => (
+              <MenuListItem
+                key={snippet.communityId}
+                displayText={`r/${snippet.communityId}`}
+                link={`/r/${snippet.communityId}`}
+                icon={FaReddit as typeof Icon}
+                iconColor="brand.100"
+              />
+            ))}
+        </Box>
+      )}
       <Box mt={3} mb={4}>
         <Text pl={3} mb={1} fontSize="7pt" fontWeight={500} color="gray.500">
           MY COMMUNITIES

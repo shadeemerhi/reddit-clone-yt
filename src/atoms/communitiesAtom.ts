@@ -6,6 +6,7 @@ export interface Community {
   creatorId: string;
   createdAt?: Timestamp;
   numberOfMembers: number;
+  privacyType: "public" | "restrictied" | "private";
 }
 
 export interface CommunitySnippet {
@@ -30,6 +31,7 @@ const defaultCommunity: Community = {
   id: "",
   creatorId: "",
   numberOfMembers: 0,
+  privacyType: "public",
 };
 
 export const defaultCommunityState: CommunityState = {

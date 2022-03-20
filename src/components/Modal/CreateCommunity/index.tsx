@@ -72,6 +72,7 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
           creatorId: userId,
           createdAt: serverTimestamp(),
           numberOfMembers: 1,
+          privacyType: "public",
         });
 
         transaction.set(
