@@ -1,13 +1,13 @@
-import React from "react";
-import { Flex, Icon, Stack, Text } from "@chakra-ui/react";
+import React, { useState } from "react";
+import { Flex, Icon, Image, Skeleton, Stack, Text } from "@chakra-ui/react";
 import moment from "moment";
 import { BsChat } from "react-icons/bs";
 import {
-  IoArrowUpCircleSharp,
-  IoArrowUpCircleOutline,
-  IoArrowDownCircleSharp,
   IoArrowDownCircleOutline,
+  IoArrowDownCircleSharp,
   IoArrowRedoOutline,
+  IoArrowUpCircleOutline,
+  IoArrowUpCircleSharp,
   IoBookmarkOutline,
 } from "react-icons/io5";
 import { Post } from "../../../atoms/postsAtom";
@@ -33,6 +33,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
   userVoteValue,
 }) => {
   const onCommunityPage = !!onSelectPost; // function not passed on [pid] page
+  const [loadingImage, setLoadingImage] = useState(true);
   return (
     <Flex
       border="1px solid"
@@ -74,7 +75,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
           onClick={(event) => onVote(event, post, -1, postIdx)}
         />
       </Flex>
-      <Flex direction="column">
+      <Flex direction="column" width="100%">
         <Stack spacing={1} p="10px 10px">
           {post.createdAt && (
             <Text fontSize="9pt" color="gray.500">
@@ -86,6 +87,22 @@ const PostItem: React.FC<PostItemContentProps> = ({
             {post.title}
           </Text>
           <Text fontSize="10pt">{post.body}</Text>
+          {post.imageURL && (
+            <Flex justify="center" align="center" p={2}>
+              {loadingImage && (
+                <Skeleton height="200px" width="100%" borderRadius={4} />
+              )}
+              <Image
+                width="80%"
+                maxWidth="300px"
+                src={post.imageURL}
+                display={loadingImage ? "none" : "unset"}
+                onLoad={() => setLoadingImage(false)}
+                // src="https://bit.ly/dan-abramov"
+                alt="Post Image"
+              />
+            </Flex>
+          )}
         </Stack>
         <Flex ml={1} mb={0.5} color="gray.500" fontWeight={600}>
           <Flex

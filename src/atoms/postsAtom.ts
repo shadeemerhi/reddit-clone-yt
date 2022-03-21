@@ -14,6 +14,7 @@ export type Post = {
     id: string;
     voteValue: number;
   };
+  imageURL?: string;
   postIdx?: number;
   createdAt?: Timestamp;
   editedAt?: Timestamp;

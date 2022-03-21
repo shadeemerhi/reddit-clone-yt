@@ -7,6 +7,7 @@ import {
   Input,
   Stack,
   Textarea,
+  Image,
 } from "@chakra-ui/react";
 import { User } from "firebase/auth";
 import {
@@ -198,10 +199,21 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, user }) => {
           <Flex direction="column" justify="center" align="center" width="100%">
             {selectedFile ? (
               <Flex direction="column" align="center" justify="center">
-                <img
+                {/* <img
                   src={selectedFile as string}
                   style={{ maxWidth: "400px", maxHeight: "400px" }}
+                /> */}
+                <Image
+                  src={selectedFile as string}
+                  maxWidth="400px"
+                  maxHeight="400px"
                 />
+                {/* <Image
+                  boxSize="150px"
+                  objectFit="cover"
+                  src="https://bit.ly/dan-abramov"
+                  alt="Dan Abramov"
+                /> */}
                 <Stack direction="row" mt={4}>
                   <Button height="28px" onClick={() => setSelectedTab("Post")}>
                     Back to Post
