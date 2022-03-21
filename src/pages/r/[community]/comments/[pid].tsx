@@ -126,6 +126,7 @@ const PostPage: React.FC<PostPageProps> = () => {
                   userIsCreator={
                     user?.uid === postStateValue.selectedPost.creatorId
                   }
+                  router={router}
                 />
                 <Comments
                   user={user}

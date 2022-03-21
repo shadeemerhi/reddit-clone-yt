@@ -20,6 +20,7 @@ import {
 } from "react-icons/io5";
 import { AiOutlineDelete } from "react-icons/ai";
 import { Post } from "../../../atoms/postsAtom";
+import { NextRouter } from "next/router";
 
 export type PostItemContentProps = {
   post: Post;
@@ -30,10 +31,11 @@ export type PostItemContentProps = {
     postIdx?: number
   ) => void;
   onDeletePost: (post: Post) => Promise<boolean>;
+  userIsCreator: boolean;
   onSelectPost?: (value: Post, postIdx: number) => void;
+  router?: NextRouter;
   postIdx?: number;
   userVoteValue?: number;
-  userIsCreator: boolean;
 };
 
 const PostItem: React.FC<PostItemContentProps> = ({
@@ -41,13 +43,14 @@ const PostItem: React.FC<PostItemContentProps> = ({
   postIdx,
   onVote,
   onSelectPost,
+  router,
   onDeletePost,
   userVoteValue,
   userIsCreator,
 }) => {
-  const onCommunityPage = !!onSelectPost; // function not passed on [pid] page
   const [loadingImage, setLoadingImage] = useState(true);
   const [loadingDelete, setLoadingDelete] = useState(false);
+  const onCommunityPage = !router; // router only passed on [pid] page to redirect back
 
   const handleDelete = async (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -56,8 +59,10 @@ const PostItem: React.FC<PostItemContentProps> = ({
     setLoadingDelete(true);
     try {
       const success = await onDeletePost(post);
-
       if (!success) throw new Error("Failed to delete post");
+
+      console.log("Post successfully deleted");
+      if (router) router.back();
     } catch (error: any) {
       console.log("Error deleting post", error.message);
       /**
