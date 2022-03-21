@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Flex, Icon, Image, Skeleton, Stack, Text } from "@chakra-ui/react";
+import {
+  Flex,
+  Icon,
+  Image,
+  Skeleton,
+  Spinner,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import moment from "moment";
 import { BsChat } from "react-icons/bs";
 import {
@@ -10,6 +18,7 @@ import {
   IoArrowUpCircleSharp,
   IoBookmarkOutline,
 } from "react-icons/io5";
+import { AiOutlineDelete } from "react-icons/ai";
 import { Post } from "../../../atoms/postsAtom";
 
 export type PostItemContentProps = {
@@ -20,9 +29,11 @@ export type PostItemContentProps = {
     vote: number,
     postIdx?: number
   ) => void;
-  postIdx?: number;
+  onDeletePost: (post: Post) => Promise<boolean>;
   onSelectPost?: (value: Post, postIdx: number) => void;
+  postIdx?: number;
   userVoteValue?: number;
+  userIsCreator: boolean;
 };
 
 const PostItem: React.FC<PostItemContentProps> = ({
@@ -30,10 +41,34 @@ const PostItem: React.FC<PostItemContentProps> = ({
   postIdx,
   onVote,
   onSelectPost,
+  onDeletePost,
   userVoteValue,
+  userIsCreator,
 }) => {
   const onCommunityPage = !!onSelectPost; // function not passed on [pid] page
   const [loadingImage, setLoadingImage] = useState(true);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+
+  const handleDelete = async (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    event.stopPropagation();
+    setLoadingDelete(true);
+    try {
+      const success = await onDeletePost(post);
+
+      if (!success) throw new Error("Failed to delete post");
+    } catch (error: any) {
+      console.log("Error deleting post", error.message);
+      /**
+       * Don't need to setLoading false if no error
+       * as item will be removed from DOM
+       */
+      setLoadingDelete(false);
+      // setError
+    }
+  };
+
   return (
     <Flex
       border="1px solid"
@@ -133,8 +168,27 @@ const PostItem: React.FC<PostItemContentProps> = ({
             cursor="pointer"
           >
             <Icon as={IoBookmarkOutline} mr={2} />
-            <Text fontSize="9pt">Saved</Text>
+            <Text fontSize="9pt">Save</Text>
           </Flex>
+          {userIsCreator && (
+            <Flex
+              align="center"
+              p="8px 10px"
+              borderRadius={4}
+              _hover={{ bg: "gray.200" }}
+              cursor="pointer"
+              onClick={handleDelete}
+            >
+              {loadingDelete ? (
+                <Spinner size="sm" />
+              ) : (
+                <>
+                  <Icon as={AiOutlineDelete} mr={2} />
+                  <Text fontSize="9pt">Delete</Text>
+                </>
+              )}
+            </Flex>
+          )}
         </Flex>
       </Flex>
     </Flex>

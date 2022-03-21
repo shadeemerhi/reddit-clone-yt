@@ -9,13 +9,15 @@ import About from "../../../../components/Community/About";
 import PageContentLayout from "../../../../components/Layout/PageContent";
 import PostLoader from "../../../../components/Post/Loader";
 import PostItem from "../../../../components/Post/PostItem";
-import { firestore } from "../../../../firebase/clientApp";
+import { auth, firestore } from "../../../../firebase/clientApp";
 import usePosts from "../../../../hooks/usePosts";
 import Comments from "../../../../components/Post/Comments";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 type PostPageProps = {};
 
 const PostPage: React.FC<PostPageProps> = () => {
+  const [user] = useAuthState(auth);
   const router = useRouter();
   const { community, pid } = router.query;
   const [communityStateValue, setCommunityStateValue] =
@@ -23,8 +25,14 @@ const PostPage: React.FC<PostPageProps> = () => {
 
   // const setPostState = useSetRecoilState(postState);
 
-  const { postStateValue, setPostStateValue, loading, setLoading, onVote } =
-    usePosts(communityStateValue.visitedCommunities[community as string]);
+  const {
+    postStateValue,
+    setPostStateValue,
+    onDeletePost,
+    loading,
+    setLoading,
+    onVote,
+  } = usePosts(communityStateValue.visitedCommunities[community as string]);
 
   const fetchPost = async () => {
     setLoading(true);
@@ -109,13 +117,18 @@ const PostPage: React.FC<PostPageProps> = () => {
                   post={postStateValue.selectedPost}
                   postIdx={postStateValue.selectedPost.postIdx}
                   onVote={onVote}
+                  onDeletePost={onDeletePost}
                   userVoteValue={
                     postStateValue.postVotes.find(
                       (item) => item.postId === postStateValue.selectedPost!.id
                     )?.voteValue
                   }
+                  userIsCreator={
+                    user?.uid === postStateValue.selectedPost.creatorId
+                  }
                 />
                 <Comments
+                  user={user}
                   community={community as string}
                   selectedPost={postStateValue.selectedPost}
                 />

@@ -25,14 +25,19 @@ import { Post, postState } from "../../../atoms/postsAtom";
 import { auth, firestore } from "../../../firebase/clientApp";
 import CommentItem, { Comment } from "./CommentItem";
 import CommentInput from "./Input";
+import { User } from "firebase/auth";
 
 type CommentsProps = {
+  user?: User | null;
   selectedPost: Post;
   community: string;
 };
 
-const Comments: React.FC<CommentsProps> = ({ selectedPost, community }) => {
-  const [user] = useAuthState(auth);
+const Comments: React.FC<CommentsProps> = ({
+  user,
+  selectedPost,
+  community,
+}) => {
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentFetchLoading, setCommentFetchLoading] = useState(true);

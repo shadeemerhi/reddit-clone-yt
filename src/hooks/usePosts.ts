@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   collection,
+  deleteDoc,
   doc,
   getDocs,
   onSnapshot,
@@ -8,12 +9,13 @@ import {
   where,
   writeBatch,
 } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { authModalState } from "../atoms/authModalAtom";
 import { Community } from "../atoms/communitiesAtom";
 import { Post, postState, PostVote } from "../atoms/postsAtom";
-import { auth, firestore } from "../firebase/clientApp";
+import { auth, firestore, storage } from "../firebase/clientApp";
 
 const usePosts = (communityData: Community) => {
   const [user, loadingUser] = useAuthState(auth);
@@ -146,6 +148,43 @@ const usePosts = (communityData: Community) => {
     }
   };
 
+  const onDeletePost = async (post: Post): Promise<boolean> => {
+    console.log("DELETING POST: ", post.id);
+
+    try {
+      // if post has an image url, delete it from storage
+      if (post.imageURL) {
+        const imageRef = ref(storage, `posts/${post.id}/image`);
+        await deleteObject(imageRef);
+      }
+
+      // delete post from posts collection
+      const postDocRef = doc(firestore, "posts", post.id);
+      await deleteDoc(postDocRef);
+
+      // Update post state
+      setPostStateValue((prev) => ({
+        ...prev,
+        posts: prev.posts.filter((item) => item.id !== post.id),
+        postsCache: {
+          ...prev.postsCache,
+          [post.communityId]: prev.postsCache[post.communityId].filter(
+            (item) => item.id !== post.id
+          ),
+        },
+      }));
+
+      /**
+       * Cloud Function will trigger on post delete
+       * to delete all comments with postId === post.id
+       */
+      return true;
+    } catch (error) {
+      console.log("THERE WAS AN ERROR", error);
+      return false;
+    }
+  };
+
   useEffect(() => {
     if (!user?.uid || !communityData) return;
     const postVotesQuery = query(
@@ -180,6 +219,7 @@ const usePosts = (communityData: Community) => {
   return {
     postStateValue,
     setPostStateValue,
+    onDeletePost,
     loading,
     setLoading,
     onVote,

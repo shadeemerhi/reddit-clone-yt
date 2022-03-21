@@ -39,7 +39,7 @@ const Posts: React.FC<PostsProps> = ({
   // const setAuthModalState = useSetRecoilState(authModalState);
   const router = useRouter();
 
-  const { onVote } = usePosts(communityData);
+  const { onVote, onDeletePost } = usePosts(communityData);
 
   /**
    * USE ALL BELOW INITIALLY THEN CONVERT TO A CUSTOM HOOK AFTER
@@ -259,10 +259,12 @@ const Posts: React.FC<PostsProps> = ({
               post={post}
               postIdx={index}
               onVote={onVote}
+              onDeletePost={onDeletePost}
               userVoteValue={
                 postStateValue.postVotes.find((item) => item.postId === post.id)
                   ?.voteValue
               }
+              userIsCreator={userId === post.creatorId}
               onSelectPost={onSelectPost}
             />
           ))}
