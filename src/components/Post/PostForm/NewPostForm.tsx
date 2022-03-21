@@ -26,6 +26,8 @@ import { firestore, storage } from "../../../firebase/clientApp";
 import TabItem from "./TabItem";
 import { postState } from "../../../atoms/postsAtom";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import TextInputs from "./TextInputs";
+import ImageUpload from "./ImageUpload";
 
 const formTabs = [
   {
@@ -62,7 +64,7 @@ type NewPostFormProps = {
 
 const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, user }) => {
   const [selectedTab, setSelectedTab] = useState(formTabs[0].title);
-  const [form, setForm] = useState({
+  const [textInputs, setTextInputs] = useState({
     title: "",
     body: "",
   });
@@ -75,7 +77,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, user }) => {
 
   const handleCreatePost = async () => {
     setLoading(true);
-    const { title, body } = form;
+    const { title, body } = textInputs;
     try {
       const postDocRef = await addDoc(collection(firestore, "posts"), {
         communityId,
@@ -128,10 +130,10 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, user }) => {
     };
   };
 
-  const onChange = ({
+  const onTextChange = ({
     target: { name, value },
   }: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm((prev) => ({
+    setTextInputs((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -151,110 +153,21 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, user }) => {
       </Flex>
       <Flex p={4}>
         {selectedTab === "Post" && (
-          <Stack spacing={3} width="100%">
-            <Input
-              name="title"
-              value={form.title}
-              onChange={onChange}
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              fontSize="10pt"
-              borderRadius={4}
-              placeholder="Title"
-            />
-            <Textarea
-              name="body"
-              value={form.body}
-              onChange={onChange}
-              fontSize="10pt"
-              placeholder="Text (optional)"
-              _placeholder={{ color: "gray.500" }}
-              _focus={{
-                outline: "none",
-                bg: "white",
-                border: "1px solid",
-                borderColor: "black",
-              }}
-              height="100px"
-            />
-            <Flex justify="flex-end">
-              <Button
-                height="34px"
-                padding="0px 30px"
-                disabled={!form.title}
-                isLoading={loading}
-                onClick={handleCreatePost}
-              >
-                Post
-              </Button>
-            </Flex>
-          </Stack>
+          <TextInputs
+            textInputs={textInputs}
+            onChange={onTextChange}
+            handleCreatePost={handleCreatePost}
+            loading={loading}
+          />
         )}
         {selectedTab === "Images & Video" && (
-          <Flex direction="column" justify="center" align="center" width="100%">
-            {selectedFile ? (
-              <Flex direction="column" align="center" justify="center">
-                {/* <img
-                  src={selectedFile as string}
-                  style={{ maxWidth: "400px", maxHeight: "400px" }}
-                /> */}
-                <Image
-                  src={selectedFile as string}
-                  maxWidth="400px"
-                  maxHeight="400px"
-                />
-                {/* <Image
-                  boxSize="150px"
-                  objectFit="cover"
-                  src="https://bit.ly/dan-abramov"
-                  alt="Dan Abramov"
-                /> */}
-                <Stack direction="row" mt={4}>
-                  <Button height="28px" onClick={() => setSelectedTab("Post")}>
-                    Back to Post
-                  </Button>
-                  <Button
-                    variant="outline"
-                    height="28px"
-                    onClick={() => setSelectedFile("")}
-                  >
-                    Remove
-                  </Button>
-                </Stack>
-              </Flex>
-            ) : (
-              <Flex
-                justify="center"
-                align="center"
-                p={20}
-                border="1px dashed"
-                borderColor="gray.200"
-                borderRadius={4}
-                width="100%"
-              >
-                <Button
-                  variant="outline"
-                  height="28px"
-                  onClick={() => selectFileRef.current?.click()}
-                >
-                  Upload
-                </Button>
-                <input
-                  id="file-upload"
-                  type="file"
-                  accept="image/x-png,image/gif,image/jpeg"
-                  hidden
-                  ref={selectFileRef}
-                  onChange={onSelectImage}
-                />
-              </Flex>
-            )}
-          </Flex>
+          <ImageUpload
+            selectedFile={selectedFile}
+            setSelectedFile={setSelectedFile}
+            setSelectedTab={setSelectedTab}
+            selectFileRef={selectFileRef}
+            onSelectImage={onSelectImage}
+          />
         )}
       </Flex>
     </Flex>

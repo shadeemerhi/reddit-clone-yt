@@ -177,8 +177,6 @@ const Posts: React.FC<PostsProps> = ({
   };
 
   useEffect(() => {
-    console.log("INSIDE OF THE UE");
-
     if (
       postStateValue.postsCache[communityData.id] &&
       !postStateValue.postUpdateRequired
