@@ -1,26 +1,20 @@
 import React, { useCallback, useState } from "react";
 import {
   Avatar,
-  background,
   Box,
   Flex,
   Icon,
-  Input,
   Spinner,
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { doc, increment, Timestamp, writeBatch } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
+import moment from "moment";
 import { FaReddit } from "react-icons/fa";
 import {
-  IoArrowUpCircleOutline,
   IoArrowDownCircleOutline,
+  IoArrowUpCircleOutline,
 } from "react-icons/io5";
-
-import moment from "moment";
-import { firestore } from "../../../firebase/clientApp";
-import { useSetRecoilState } from "recoil";
-import { Post, postState } from "../../../atoms/postsAtom";
 
 export type Comment = {
   id?: string;
@@ -36,46 +30,31 @@ export type Comment = {
 
 type CommentItemProps = {
   comment: Comment;
-  setComments: React.Dispatch<React.SetStateAction<Comment[]>>;
+  onDeleteComment: (comment: Comment) => Promise<boolean>;
   userId?: string;
 };
 
 const CommentItem: React.FC<CommentItemProps> = ({
   comment,
-  setComments,
+  onDeleteComment,
   userId,
 }) => {
   const [loading, setLoading] = useState(false);
-  const setPostState = useSetRecoilState(postState);
 
-  const onDeleteComment = useCallback(async () => {
+  const handleDelete = useCallback(async () => {
     setLoading(true);
     try {
-      if (!comment.id) throw "Comment has no ID";
-      const batch = writeBatch(firestore);
-      const commentDocRef = doc(firestore, "comments", comment.id);
-      batch.delete(commentDocRef);
+      const success = await onDeleteComment(comment);
 
-      batch.update(doc(firestore, "posts", comment.postId), {
-        numberOfComments: increment(-1),
-      });
-
-      await batch.commit();
-
-      setPostState((prev) => ({
-        ...prev,
-        selectedPost: {
-          ...prev.selectedPost,
-          numberOfComments: prev.selectedPost?.numberOfComments! - 1,
-        } as Post,
-        postUpdateRequired: true,
-      }));
-
-      setComments((prev) => prev.filter((item) => item.id !== comment.id));
+      if (!success) {
+        throw new Error("Error deleting comment");
+      }
     } catch (error: any) {
-      console.log("Error deletig comment", error.message);
+      console.log(error.message);
+      // setError
+      setLoading(false);
     }
-  }, [setComments, setPostState]);
+  }, [setLoading]);
 
   return (
     <Flex>
@@ -123,7 +102,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
               <Text
                 fontSize="9pt"
                 _hover={{ color: "blue.500" }}
-                onClick={onDeleteComment}
+                onClick={handleDelete}
               >
                 Delete
               </Text>
