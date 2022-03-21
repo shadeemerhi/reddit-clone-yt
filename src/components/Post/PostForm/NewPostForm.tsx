@@ -1,15 +1,30 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Flex, Icon, Input, Stack, Textarea } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Icon,
+  Input,
+  Stack,
+  Textarea,
+} from "@chakra-ui/react";
 import { User } from "firebase/auth";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  serverTimestamp,
+  updateDoc,
+} from "firebase/firestore";
 import { useRouter } from "next/router";
 import { BiPoll } from "react-icons/bi";
 import { BsLink45Deg, BsMic } from "react-icons/bs";
 import { IoDocumentText, IoImageOutline } from "react-icons/io5";
+import { AiFillCloseCircle } from "react-icons/ai";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { firestore } from "../../../firebase/clientApp";
+import { firestore, storage } from "../../../firebase/clientApp";
 import TabItem from "./TabItem";
 import { postState } from "../../../atoms/postsAtom";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
 
 const formTabs = [
   {
@@ -50,7 +65,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, user }) => {
     title: "",
     body: "",
   });
-  const [selectedFile, setSelectedFile] = useState();
+  const [selectedFile, setSelectedFile] = useState<string>();
   const selectFileRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -61,7 +76,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, user }) => {
     setLoading(true);
     const { title, body } = form;
     try {
-      await addDoc(collection(firestore, "posts"), {
+      const postDocRef = await addDoc(collection(firestore, "posts"), {
         communityId,
         creatorId: user.uid,
         userDisplayText: user.email!.split("@")[0],
@@ -73,6 +88,19 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, user }) => {
         editedAt: serverTimestamp(),
       });
 
+      console.log("HERE IS NEW POST ID", postDocRef.id);
+
+      // // check if selectedFile exists, if it does, do image processing
+      if (selectedFile) {
+        const imageRef = ref(storage, `posts/${postDocRef.id}/image`);
+        await uploadString(imageRef, selectedFile, "data_url");
+        const downloadURL = await getDownloadURL(imageRef);
+        await updateDoc(postDocRef, {
+          imageURL: downloadURL,
+        });
+        console.log("HERE IS DOWNLOAD URL", downloadURL);
+      }
+
       // Clear the cache to cause a refetch of the posts
       setPostItems((prev) => ({
         ...prev,
@@ -83,6 +111,20 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, user }) => {
       console.log("createPost error", error);
       setError("Error creating post");
     }
+    setLoading(false);
+  };
+
+  const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const reader = new FileReader();
+    if (event.target.files?.[0]) {
+      reader.readAsDataURL(event.target.files[0]);
+    }
+
+    reader.onload = (readerEvent) => {
+      if (readerEvent.target?.result) {
+        setSelectedFile(readerEvent.target?.result as string);
+      }
+    };
   };
 
   const onChange = ({
@@ -153,29 +195,53 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ communityId, user }) => {
           </Stack>
         )}
         {selectedTab === "Images & Video" && (
-          <Flex
-            justify="center"
-            align="center"
-            width="100%"
-            p={20}
-            border="1px dashed"
-            borderColor="gray.200"
-            borderRadius={4}
-          >
-            <Button
-              variant="outline"
-              height="28px"
-              onClick={() => selectFileRef.current?.click()}
-            >
-              Upload
-            </Button>
-            <input
-              id="file-upload"
-              type="file"
-              accept="image/x-png,image/gif,image/jpeg"
-              hidden
-              ref={selectFileRef}
-            />
+          <Flex direction="column" justify="center" align="center" width="100%">
+            {selectedFile ? (
+              <Flex direction="column" align="center" justify="center">
+                <img
+                  src={selectedFile as string}
+                  style={{ maxWidth: "400px", maxHeight: "400px" }}
+                />
+                <Stack direction="row" mt={4}>
+                  <Button height="28px" onClick={() => setSelectedTab("Post")}>
+                    Back to Post
+                  </Button>
+                  <Button
+                    variant="outline"
+                    height="28px"
+                    onClick={() => setSelectedFile("")}
+                  >
+                    Remove
+                  </Button>
+                </Stack>
+              </Flex>
+            ) : (
+              <Flex
+                justify="center"
+                align="center"
+                p={20}
+                border="1px dashed"
+                borderColor="gray.200"
+                borderRadius={4}
+                width="100%"
+              >
+                <Button
+                  variant="outline"
+                  height="28px"
+                  onClick={() => selectFileRef.current?.click()}
+                >
+                  Upload
+                </Button>
+                <input
+                  id="file-upload"
+                  type="file"
+                  accept="image/x-png,image/gif,image/jpeg"
+                  hidden
+                  ref={selectFileRef}
+                  onChange={onSelectImage}
+                />
+              </Flex>
+            )}
           </Flex>
         )}
       </Flex>
