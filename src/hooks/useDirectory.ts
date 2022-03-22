@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { communityState } from "../atoms/communitiesAtom";
 import {
+  defaultMenuItem,
   DirectoryMenuItem,
   directoryMenuState,
 } from "../atoms/directoryMenuAtom";
@@ -34,7 +35,9 @@ const useDirectory = () => {
         icon: FaReddit,
         iconColor: "blue.500",
       });
+      return;
     }
+    setDirectoryState(defaultMenuItem);
   }, [router.query?.community, communityStateValue.visitedCommunities]);
 
   return { directoryState, onSelectMenuItem };

@@ -3,6 +3,7 @@ import {
   Flex,
   Icon,
   Image,
+  Link,
   Skeleton,
   Spinner,
   Stack,
@@ -19,6 +20,8 @@ import {
   IoBookmarkOutline,
 } from "react-icons/io5";
 import { AiOutlineDelete } from "react-icons/ai";
+import { BsDot } from "react-icons/bs";
+import { FaReddit } from "react-icons/fa";
 import { Post } from "../../../atoms/postsAtom";
 import { NextRouter } from "next/router";
 
@@ -37,6 +40,7 @@ export type PostItemContentProps = {
   router?: NextRouter;
   postIdx?: number;
   userVoteValue?: number;
+  homePage?: boolean;
 };
 
 const PostItem: React.FC<PostItemContentProps> = ({
@@ -48,6 +52,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
   onDeletePost,
   userVoteValue,
   userIsCreator,
+  homePage,
 }) => {
   const [loadingImage, setLoadingImage] = useState(true);
   const [loadingDelete, setLoadingDelete] = useState(false);
@@ -121,10 +126,24 @@ const PostItem: React.FC<PostItemContentProps> = ({
       <Flex direction="column" width="100%">
         <Stack spacing={1} p="10px 10px">
           {post.createdAt && (
-            <Text fontSize="9pt" color="gray.500">
-              Posted by u/{post.userDisplayText}{" "}
-              {moment(new Date(post.createdAt.seconds * 1000)).fromNow()}
-            </Text>
+            <Stack direction="row" spacing={0.6} align="center" fontSize="9pt">
+              {homePage && (
+                <>
+                  <Icon as={FaReddit} fontSize={18} mr={1} color="blue.500" />
+                  <Link href={`r/${post.communityId}`}>
+                    <Text
+                      fontWeight={700}
+                      _hover={{ textDecoration: "underline" }}
+                    >{`r/${post.communityId}`}</Text>
+                  </Link>
+                  <Icon as={BsDot} color="gray.500" fontSize={8} />
+                </>
+              )}
+              <Text color="gray.500">
+                Posted by u/{post.userDisplayText}{" "}
+                {moment(new Date(post.createdAt.seconds * 1000)).fromNow()}
+              </Text>
+            </Stack>
           )}
           <Text fontSize="12pt" fontWeight={600}>
             {post.title}
