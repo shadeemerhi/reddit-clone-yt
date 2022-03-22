@@ -198,11 +198,10 @@ const usePosts = (communityData?: Community) => {
     }
   };
 
-  useEffect(() => {
-    if (!user?.uid || !communityData) return;
+  const getCommunityPostVotes = async (communityId: string) => {
     const postVotesQuery = query(
       collection(firestore, `users/${user?.uid}/postVotes`),
-      where("communityId", "==", communityData?.id)
+      where("communityId", "==", communityId)
     );
     const unsubscribe = onSnapshot(postVotesQuery, (querySnapshot) => {
       const postVotes = querySnapshot.docs.map((postVote) => ({
@@ -217,7 +216,45 @@ const usePosts = (communityData?: Community) => {
     });
 
     return () => unsubscribe();
+  };
+
+  // const clearUserPostVotes = () => {
+  //   setPostStateValue((prev) => ({
+  //     ...prev,
+  //     postVotes: [],
+  //   }));
+  // }
+
+  useEffect(() => {
+    if (!user?.uid || !communityData) return;
+    getCommunityPostVotes(communityData.id);
+
+    // return () => unsubscribe();
   }, [user, communityData]);
+
+  /**
+   * DO THIS INITIALLY FOR POST VOTES
+   */
+  // useEffect(() => {
+  //   if (!user?.uid || !communityData) return;
+  //   const postVotesQuery = query(
+  //     collection(firestore, `users/${user?.uid}/postVotes`),
+  //     where("communityId", "==", communityData?.id)
+  //   );
+  //   const unsubscribe = onSnapshot(postVotesQuery, (querySnapshot) => {
+  //     const postVotes = querySnapshot.docs.map((postVote) => ({
+  //       id: postVote.id,
+  //       ...postVote.data(),
+  //     }));
+
+  //     setPostStateValue((prev) => ({
+  //       ...prev,
+  //       postVotes: postVotes as PostVote[],
+  //     }));
+  //   });
+
+  //   return () => unsubscribe();
+  // }, [user, communityData]);
 
   useEffect(() => {
     // Logout or no authenticated user

@@ -34,12 +34,13 @@ const Posts: React.FC<PostsProps> = ({
   /**
    * PART OF INITIAL SOLUTION BEFORE CUSTOM HOOK
    */
-  const [postStateValue, setPostStateValue] = useRecoilState(postState);
   const [loading, setLoading] = useState(false);
   // const setAuthModalState = useSetRecoilState(authModalState);
   const router = useRouter();
 
-  const { onVote, onDeletePost } = usePosts(communityData!);
+  const { postStateValue, setPostStateValue, onVote, onDeletePost } = usePosts(
+    communityData!
+  );
 
   /**
    * USE ALL BELOW INITIALLY THEN CONVERT TO A CUSTOM HOOK AFTER
