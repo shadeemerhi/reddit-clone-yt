@@ -20,6 +20,7 @@ import PostItem from "../components/Post/PostItem";
 import { auth, firestore } from "../firebase/clientApp";
 import usePosts from "../hooks/usePosts";
 import useCommunityData from "../hooks/useCommunityData";
+import Recommendations from "../components/Community/Recommendations";
 
 const Home: NextPage = () => {
   const [user, loadingUser] = useAuthState(auth);
@@ -157,7 +158,7 @@ const Home: NextPage = () => {
         )}
       </>
       <>
-        <Box>RHS</Box>
+        <Recommendations />
       </>
     </PageContentLayout>
   );
