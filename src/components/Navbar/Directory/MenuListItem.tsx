@@ -1,10 +1,7 @@
 import React from "react";
 import { Flex, Icon, MenuItem } from "@chakra-ui/react";
-import { FaReddit } from "react-icons/fa";
-import Link from "next/link";
 import { IconType } from "react-icons";
-import { useSetRecoilState } from "recoil";
-import { directoryMenuState } from "../../../atoms/directoryMenuAtom";
+import useDirectory from "../../../hooks/useDirectory";
 
 type DirectoryItemProps = {
   displayText: string;
@@ -19,13 +16,13 @@ const MenuListItem: React.FC<DirectoryItemProps> = ({
   icon,
   iconColor,
 }) => {
-  const setDirectoryState = useSetRecoilState(directoryMenuState);
+  const { onSelectMenuItem } = useDirectory();
   return (
     <MenuItem
       width="100%"
       fontSize="10pt"
       _hover={{ bg: "gray.100" }}
-      onClick={() => setDirectoryState({ displayText, link, icon, iconColor })}
+      onClick={() => onSelectMenuItem({ displayText, link, icon, iconColor })}
     >
       <Flex alignItems="center">
         <Icon fontSize={20} mr={2} as={icon} color={iconColor} />

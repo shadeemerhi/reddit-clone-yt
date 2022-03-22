@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -9,31 +9,14 @@ import {
   MenuList,
   Text,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import { useRecoilValue } from "recoil";
-import { directoryMenuState } from "../../../atoms/directoryMenuAtom";
+import useDirectory from "../../../hooks/useDirectory";
 import Communities from "./Communities";
 
 const Directory: React.FC = () => {
-  const router = useRouter();
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
 
-  // Use <Link> for initial build; implement directory logic near end
-  const directoryState = useRecoilValue(directoryMenuState);
-
-  /**
-   * CAN CREATE A CUSTOM HOOK TO CONTROL DIRECTORY STATE - THIS UE DOESN'T WORK PROPERLY IN ALL CASES
-   */
-  // useEffect(() => {
-  //   console.log("HERE IS ROUTER STUFF", router.query);
-
-  //   const { community } = router.query;
-
-  //   if (community && directoryState.link === "/") return;
-
-  //   router.push(directoryState.link);
-  // }, [directoryState]);
+  const { directoryState } = useDirectory();
 
   return (
     <Menu>
