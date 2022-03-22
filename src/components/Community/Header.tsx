@@ -25,16 +25,17 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
   const [communityStateValue, setCommunityStateValue] =
     useRecoilState(communityState);
 
-  const { loading, setLoading, error } = useCommunitySnippets(
-    user?.uid,
-    !user?.uid,
-    [user],
-    !communityStateValue.mySnippets.length && !!user
-  );
+  // const { loading, setLoading, error } = useCommunitySnippets(
+  //   user?.uid,
+  //   [user],
+  //   !communityStateValue.mySnippets.length && !!user,
+  //   !user?.uid
+  // );
   // const [loading, setLoading] = useState(
   //   !communityStateValue.mySnippets.length && !!user
   // );
   // const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const isJoined = communityStateValue.mySnippets.find(
     (item) => item.communityId === communityData.id

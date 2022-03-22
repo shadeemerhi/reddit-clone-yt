@@ -17,7 +17,7 @@ import { Community } from "../atoms/communitiesAtom";
 import { Post, postState, PostVote } from "../atoms/postsAtom";
 import { auth, firestore, storage } from "../firebase/clientApp";
 
-const usePosts = (communityData: Community) => {
+const usePosts = (communityData?: Community) => {
   const [user, loadingUser] = useAuthState(auth);
   const [postStateValue, setPostStateValue] = useRecoilState(postState);
   const setAuthModalState = useSetRecoilState(authModalState);
@@ -56,7 +56,7 @@ const usePosts = (communityData: Community) => {
       if (!existingVote) {
         const newVote: PostVote = {
           postId: post.id,
-          communityId: communityData.id!,
+          communityId: communityData?.id!,
           voteValue: vote,
         };
 
@@ -119,7 +119,7 @@ const usePosts = (communityData: Community) => {
           posts: updatedPosts,
           postsCache: {
             ...updatedState.postsCache,
-            [communityData.id]: updatedPosts,
+            [communityData?.id!]: updatedPosts,
           },
         };
       }

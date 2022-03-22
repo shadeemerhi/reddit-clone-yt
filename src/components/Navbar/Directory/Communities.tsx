@@ -31,12 +31,12 @@ const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
 
   const currCommunitiesState = useRecoilValue(communityState);
 
-  const { loading, setLoading, error } = useCommunitySnippets(
-    user?.uid,
-    !user?.uid || !menuOpen,
-    [menuOpen, user],
-    false
-  );
+  // const { loading, setLoading, error } = useCommunitySnippets(
+  //   user?.uid,
+  //   [menuOpen, user],
+  //   false,
+  //   !user?.uid || !menuOpen
+  // );
 
   /**
    * USE THIS INITIALLY THEN CONVERT TO CUSTOM HOOK useCommunitySnippets AFTER
@@ -64,15 +64,15 @@ const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
   //   }
   // };
 
-  if (loading) {
-    return (
-      <Stack p={3}>
-        {Array.from(Array(10)).map((item, index) => (
-          <Skeleton key={index} height="20px" p="inherit" />
-        ))}
-      </Stack>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <Stack p={3}>
+  //       {Array.from(Array(10)).map((item, index) => (
+  //         <Skeleton key={index} height="20px" p="inherit" />
+  //       ))}
+  //     </Stack>
+  //   );
+  // }
 
   return (
     <>
