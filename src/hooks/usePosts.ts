@@ -181,7 +181,7 @@ const usePosts = (communityData?: Community) => {
         posts: prev.posts.filter((item) => item.id !== post.id),
         postsCache: {
           ...prev.postsCache,
-          [post.communityId]: prev.postsCache[post.communityId].filter(
+          [post.communityId]: prev.postsCache[post.communityId]?.filter(
             (item) => item.id !== post.id
           ),
         },
