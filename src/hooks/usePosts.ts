@@ -16,6 +16,7 @@ import { authModalState } from "../atoms/authModalAtom";
 import { Community } from "../atoms/communitiesAtom";
 import { Post, postState, PostVote } from "../atoms/postsAtom";
 import { auth, firestore, storage } from "../firebase/clientApp";
+import { useRouter } from "next/router";
 
 const usePosts = (communityData?: Community) => {
   const [user, loadingUser] = useAuthState(auth);
@@ -23,11 +24,23 @@ const usePosts = (communityData?: Community) => {
   const setAuthModalState = useSetRecoilState(authModalState);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const router = useRouter();
+
+  const onSelectPost = (post: Post, postIdx: number) => {
+    console.log("HERE IS STUFF", post, postIdx);
+
+    setPostStateValue((prev) => ({
+      ...prev,
+      selectedPost: { ...post, postIdx },
+    }));
+    router.push(`/r/${post.communityId}/comments/${post.id}`);
+  };
 
   const onVote = async (
     event: React.MouseEvent<SVGElement, MouseEvent>,
     post: Post,
     vote: number,
+    communityId: string,
     postIdx?: number
   ) => {
     event.stopPropagation();
@@ -56,7 +69,7 @@ const usePosts = (communityData?: Community) => {
       if (!existingVote) {
         const newVote: PostVote = {
           postId: post.id,
-          communityId: communityData?.id!,
+          communityId,
           voteValue: vote,
         };
 
@@ -119,7 +132,7 @@ const usePosts = (communityData?: Community) => {
           posts: updatedPosts,
           postsCache: {
             ...updatedState.postsCache,
-            [communityData?.id!]: updatedPosts,
+            [communityId]: updatedPosts,
           },
         };
       }
@@ -207,6 +220,7 @@ const usePosts = (communityData?: Community) => {
   }, [user, communityData]);
 
   useEffect(() => {
+    // Logout or no authenticated user
     if (!user?.uid && !loadingUser) {
       setPostStateValue((prev) => ({
         ...prev,
@@ -219,6 +233,7 @@ const usePosts = (communityData?: Community) => {
   return {
     postStateValue,
     setPostStateValue,
+    onSelectPost,
     onDeletePost,
     loading,
     setLoading,

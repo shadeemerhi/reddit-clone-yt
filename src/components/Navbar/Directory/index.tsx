@@ -22,9 +22,18 @@ const Directory: React.FC = () => {
   // Use <Link> for initial build; implement directory logic near end
   const directoryState = useRecoilValue(directoryMenuState);
 
-  useEffect(() => {
-    router.push(directoryState.link);
-  }, [directoryState]);
+  /**
+   * CAN CREATE A CUSTOM HOOK TO CONTROL DIRECTORY STATE - THIS UE DOESN'T WORK PROPERLY IN ALL CASES
+   */
+  // useEffect(() => {
+  //   console.log("HERE IS ROUTER STUFF", router.query);
+
+  //   const { community } = router.query;
+
+  //   if (community && directoryState.link === "/") return;
+
+  //   router.push(directoryState.link);
+  // }, [directoryState]);
 
   return (
     <Menu>

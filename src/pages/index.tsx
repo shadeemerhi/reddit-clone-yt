@@ -2,13 +2,12 @@ import { useEffect, useState } from "react";
 import { Box, Stack } from "@chakra-ui/react";
 import {
   collection,
-  getDocs,
-  query,
-  where,
-  limit,
-  Query,
   DocumentData,
+  getDocs,
+  limit,
+  query,
   QuerySnapshot,
+  where,
 } from "firebase/firestore";
 import type { NextPage } from "next";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -26,8 +25,8 @@ const Home: NextPage = () => {
   const [user, loadingUser] = useAuthState(auth);
   const [loading, setLoading] = useState(false);
   const [postStateValue, setPostStateValue] = useRecoilState(postState);
-  const { onVote, onDeletePost } = usePosts();
-  const { snippets } = useCommunitySnippets();
+  const { onVote, onSelectPost, onDeletePost } = usePosts();
+  const { snippets, initSnippetsFetched } = useCommunitySnippets();
 
   const getHomePosts = async () => {
     setLoading(true);
@@ -38,7 +37,6 @@ const Home: NextPage = () => {
        */
 
       const myCommunityIds = snippets.map((snippet) => snippet.communityId);
-      console.log("HERE ARE IDS", myCommunityIds);
 
       let postPromises: Array<Promise<QuerySnapshot<DocumentData>>> = [];
       [0, 1, 2].forEach((index) => {
@@ -56,10 +54,8 @@ const Home: NextPage = () => {
       });
 
       const queryResults = await Promise.all(postPromises);
-      console.log("HERE ARE QUERY RESULTS", queryResults);
 
       const feedPosts: Post[] = [];
-
       queryResults.forEach((result) => {
         const posts = result.docs.map((doc) => ({
           id: doc.id,
@@ -84,9 +80,9 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    if (!snippets.length) return;
+    if (!snippets.length && initSnippetsFetched) return;
     getHomePosts();
-  }, [snippets]);
+  }, [snippets, initSnippetsFetched]);
 
   return (
     <PageContentLayout>
@@ -109,7 +105,7 @@ const Home: NextPage = () => {
                   )?.voteValue
                 }
                 userIsCreator={user?.uid === post.creatorId}
-                // onSelectPost={onSelectPost}
+                onSelectPost={onSelectPost}
               />
             ))}
           </Stack>

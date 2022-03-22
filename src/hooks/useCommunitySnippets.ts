@@ -35,6 +35,7 @@ const useCommunitySnippets = () => {
       setCommunityStateValue((prev) => ({
         ...prev,
         mySnippets: snippets as CommunitySnippet[],
+        initSnippetsFetched: true,
       }));
       setLoading(false);
     } catch (error: any) {
@@ -46,6 +47,7 @@ const useCommunitySnippets = () => {
 
   return {
     snippets: communityStateValue.mySnippets,
+    initSnippetsFetched: communityStateValue.initSnippetsFetched,
     loading,
     setLoading,
     error,

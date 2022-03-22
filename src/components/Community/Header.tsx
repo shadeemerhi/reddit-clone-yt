@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Box, Button, Flex, Icon, Text } from "@chakra-ui/react";
 import { doc, writeBatch } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -11,7 +11,6 @@ import {
   communityState,
 } from "../../atoms/communitiesAtom";
 import { auth, firestore } from "../../firebase/clientApp";
-import { getMySnippets } from "../../helpers/firestore";
 import useCommunitySnippets from "../../hooks/useCommunitySnippets";
 
 type HeaderProps = {
@@ -25,17 +24,7 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
   const [communityStateValue, setCommunityStateValue] =
     useRecoilState(communityState);
 
-  // const { loading, setLoading, error } = useCommunitySnippets(
-  //   user?.uid,
-  //   [user],
-  //   !communityStateValue.mySnippets.length && !!user,
-  //   !user?.uid
-  // );
-  // const [loading, setLoading] = useState(
-  //   !communityStateValue.mySnippets.length && !!user
-  // );
-  // const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const { loading, setLoading, error } = useCommunitySnippets();
 
   const isJoined = communityStateValue.mySnippets.find(
     (item) => item.communityId === communityData.id

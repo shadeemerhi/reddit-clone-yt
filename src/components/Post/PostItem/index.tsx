@@ -28,6 +28,7 @@ export type PostItemContentProps = {
     event: React.MouseEvent<SVGElement, MouseEvent>,
     post: Post,
     vote: number,
+    communityId: string,
     postIdx?: number
   ) => void;
   onDeletePost: (post: Post) => Promise<boolean>;
@@ -100,7 +101,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
           color={userVoteValue === 1 ? "brand.100" : "gray.400"}
           fontSize={22}
           cursor="pointer"
-          onClick={(event) => onVote(event, post, 1, postIdx)}
+          onClick={(event) => onVote(event, post, 1, post.communityId, postIdx)}
         />
         {post.voteStatus}
         <Icon
@@ -112,7 +113,9 @@ const PostItem: React.FC<PostItemContentProps> = ({
           color={userVoteValue === -1 ? "#4379FF" : "gray.400"}
           fontSize={22}
           cursor="pointer"
-          onClick={(event) => onVote(event, post, -1, postIdx)}
+          onClick={(event) =>
+            onVote(event, post, -1, post.communityId, postIdx)
+          }
         />
       </Flex>
       <Flex direction="column" width="100%">
@@ -138,7 +141,6 @@ const PostItem: React.FC<PostItemContentProps> = ({
                 src={post.imageURL}
                 display={loadingImage ? "none" : "unset"}
                 onLoad={() => setLoadingImage(false)}
-                // src="https://bit.ly/dan-abramov"
                 alt="Post Image"
               />
             </Flex>

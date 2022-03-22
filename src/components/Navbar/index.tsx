@@ -11,6 +11,7 @@ import { auth } from "../../firebase/clientApp";
 import Directory from "./Directory";
 import RightContent from "./RightContent";
 import SearchInput from "./SearchInput";
+import router from "next/router";
 
 const Navbar: React.FC = () => {
   const [user] = useAuthState(auth);
@@ -29,7 +30,10 @@ const Navbar: React.FC = () => {
         width={{ base: "40px", md: "auto" }}
         mr={2}
         cursor="pointer"
-        onClick={() => setDirectoryState(defaultMenuItem)}
+        onClick={() => {
+          setDirectoryState(defaultMenuItem);
+          router.push("/");
+        }}
       >
         <Image src="/images/redditlogo.png" height="30px" />
       </Box>

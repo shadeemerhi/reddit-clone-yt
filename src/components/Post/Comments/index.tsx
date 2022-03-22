@@ -39,76 +39,73 @@ const Comments: React.FC<CommentsProps> = ({
 }) => {
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState<Comment[]>([]);
-  const [commentFetchLoading, setCommentFetchLoading] = useState(true);
+  const [commentFetchLoading, setCommentFetchLoading] = useState(false);
   const [commentCreateLoading, setCommentCreateLoading] = useState(false);
   const setAuthModalState = useSetRecoilState(authModalState);
   const setPostState = useSetRecoilState(postState);
 
-  const onCreateComment = useCallback(
-    async (comment: string) => {
-      if (!user) {
-        setAuthModalState({ open: true, view: "login" });
-        return;
-      }
+  const onCreateComment = async (comment: string) => {
+    if (!user) {
+      setAuthModalState({ open: true, view: "login" });
+      return;
+    }
 
-      setCommentCreateLoading(true);
-      try {
-        const batch = writeBatch(firestore);
+    setCommentCreateLoading(true);
+    try {
+      const batch = writeBatch(firestore);
 
-        // Create comment document
-        const commentDocRef = doc(collection(firestore, "comments"));
-        batch.set(commentDocRef, {
-          postId: selectedPost.id,
+      // Create comment document
+      const commentDocRef = doc(collection(firestore, "comments"));
+      batch.set(commentDocRef, {
+        postId: selectedPost.id,
+        creatorId: user.uid,
+        creatorDisplayText: user.email!.split("@")[0],
+        creatorPhotoURL: user.photoURL,
+        communityId: community,
+        text: comment,
+        postTitle: selectedPost.title,
+        createdAt: serverTimestamp(),
+      } as Comment);
+
+      // Update post numberOfComments
+      batch.update(doc(firestore, "posts", selectedPost.id), {
+        numberOfComments: increment(1),
+      });
+      await batch.commit();
+
+      setComment("");
+      const { id: postId, title } = selectedPost;
+      setComments((prev) => [
+        {
+          id: commentDocRef.id,
           creatorId: user.uid,
           creatorDisplayText: user.email!.split("@")[0],
           creatorPhotoURL: user.photoURL,
           communityId: community,
+          postId,
+          postTitle: title,
           text: comment,
-          postTitle: selectedPost.title,
-          createdAt: serverTimestamp(),
-        } as Comment);
+          createdAt: {
+            seconds: Date.now() / 1000,
+          },
+        } as Comment,
+        ...prev,
+      ]);
 
-        // Update post numberOfComments
-        batch.update(doc(firestore, "posts", selectedPost.id), {
-          numberOfComments: increment(1),
-        });
-        await batch.commit();
-
-        setComment("");
-        const { id: postId, title } = selectedPost;
-        setComments((prev) => [
-          {
-            id: commentDocRef.id,
-            creatorId: user.uid,
-            creatorDisplayText: user.email!.split("@")[0],
-            creatorPhotoURL: user.photoURL,
-            communityId: community,
-            postId,
-            postTitle: title,
-            text: comment,
-            createdAt: {
-              seconds: Date.now() / 1000,
-            },
-          } as Comment,
-          ...prev,
-        ]);
-
-        // Fetch posts again to update number of comments
-        setPostState((prev) => ({
-          ...prev,
-          selectedPost: {
-            ...prev.selectedPost,
-            numberOfComments: prev.selectedPost?.numberOfComments! + 1,
-          } as Post,
-          postUpdateRequired: true,
-        }));
-      } catch (error: any) {
-        console.log("onCreateComment error", error.message);
-      }
-      setCommentCreateLoading(false);
-    },
-    [setPostState, setComment, setComments, setCommentCreateLoading]
-  );
+      // Fetch posts again to update number of comments
+      setPostState((prev) => ({
+        ...prev,
+        selectedPost: {
+          ...prev.selectedPost,
+          numberOfComments: prev.selectedPost?.numberOfComments! + 1,
+        } as Post,
+        postUpdateRequired: true,
+      }));
+    } catch (error: any) {
+      console.log("onCreateComment error", error.message);
+    }
+    setCommentCreateLoading(false);
+  };
 
   const onDeleteComment = useCallback(
     async (comment: Comment): Promise<boolean> => {
@@ -143,7 +140,7 @@ const Comments: React.FC<CommentsProps> = ({
     [setComments, setPostState]
   );
 
-  const getPostComments = useCallback(async () => {
+  const getPostComments = async () => {
     try {
       const commentsQuery = query(
         collection(firestore, "comments"),
@@ -160,9 +157,11 @@ const Comments: React.FC<CommentsProps> = ({
       console.log("getPostComments error", error.message);
     }
     setCommentFetchLoading(false);
-  }, [setComments, setCommentFetchLoading]);
+  };
 
   useEffect(() => {
+    console.log("HERE IS SELECTED POST", selectedPost.id);
+
     getPostComments();
   }, []);
 

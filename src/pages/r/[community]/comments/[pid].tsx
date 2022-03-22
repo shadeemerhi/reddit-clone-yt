@@ -1,18 +1,17 @@
 import React, { useEffect } from "react";
-import { Skeleton, Stack } from "@chakra-ui/react";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/router";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useRecoilState } from "recoil";
 import { Community, communityState } from "../../../../atoms/communitiesAtom";
-import { Post, postState } from "../../../../atoms/postsAtom";
+import { Post } from "../../../../atoms/postsAtom";
 import About from "../../../../components/Community/About";
 import PageContentLayout from "../../../../components/Layout/PageContent";
+import Comments from "../../../../components/Post/Comments";
 import PostLoader from "../../../../components/Post/Loader";
 import PostItem from "../../../../components/Post/PostItem";
 import { auth, firestore } from "../../../../firebase/clientApp";
 import usePosts from "../../../../hooks/usePosts";
-import Comments from "../../../../components/Post/Comments";
-import { useAuthState } from "react-firebase-hooks/auth";
 
 type PostPageProps = {};
 
@@ -22,9 +21,6 @@ const PostPage: React.FC<PostPageProps> = () => {
   const { community, pid } = router.query;
   const [communityStateValue, setCommunityStateValue] =
     useRecoilState(communityState);
-
-  // const setPostState = useSetRecoilState(postState);
-
   const {
     postStateValue,
     setPostStateValue,
@@ -51,7 +47,8 @@ const PostPage: React.FC<PostPageProps> = () => {
   };
 
   const getCommunityData = async () => {
-    setLoading(true);
+    // this causes weird memory leak error - not sure why
+    // setLoading(true);
     try {
       const communityDocRef = doc(
         firestore,
