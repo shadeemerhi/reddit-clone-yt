@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -9,15 +10,8 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import { IconType } from "react-icons";
-import { TiHome } from "react-icons/ti";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import {
-  DirectoryMenuItem,
-  directoryMenuState,
-} from "../../../atoms/directoryMenuAtom";
-import CreateCommunityModal from "../../Modal/CreateCommunity";
+import { useRecoilValue } from "recoil";
+import { directoryMenuState } from "../../../atoms/directoryMenuAtom";
 import Communities from "./Communities";
 
 const Directory: React.FC = () => {
