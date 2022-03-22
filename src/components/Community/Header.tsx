@@ -11,7 +11,7 @@ import {
   communityState,
 } from "../../atoms/communitiesAtom";
 import { auth, firestore } from "../../firebase/clientApp";
-import useCommunitySnippets from "../../hooks/useCommunitySnippets";
+import useCommunityData from "../../hooks/useCommunityData";
 
 type HeaderProps = {
   communityData: Community;
@@ -24,7 +24,11 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
   const [communityStateValue, setCommunityStateValue] =
     useRecoilState(communityState);
 
-  const { loading, setLoading, error } = useCommunitySnippets();
+  /**
+   * !!!Don't pass communityData boolean until the end
+   * It's a small optimization!!!
+   */
+  const { loading, setLoading, error } = useCommunityData(!!communityData);
 
   const isJoined = communityStateValue.mySnippets.find(
     (item) => item.communityId === communityData.id
@@ -109,7 +113,7 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
   };
 
   /**
-   * USE THIS INITIALLY THEN CONVERT TO CUSTOM HOOK useCommunitySnippets AFTER
+   * USE THIS INITIALLY THEN CONVERT TO CUSTOM HOOK useCommunityData AFTER
    * ALSO REUSING THE SAME LOGIC INSIDE OF HEADER
    */
   // useEffect(() => {

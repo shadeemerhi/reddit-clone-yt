@@ -221,8 +221,6 @@ const usePosts = (communityData?: Community) => {
   useEffect(() => {
     if (!user?.uid || !communityData) return;
     getCommunityPostVotes(communityData.id);
-
-    // return () => unsubscribe();
   }, [user, communityData]);
 
   /**

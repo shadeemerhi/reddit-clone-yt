@@ -1,47 +1,21 @@
-import { NextPage, NextPageContext } from "next";
 import { Box, Text } from "@chakra-ui/react";
+import { NextPage } from "next";
 import { useRouter } from "next/router";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { useRecoilValue } from "recoil";
 import { communityState } from "../../../atoms/communitiesAtom";
 import About from "../../../components/Community/About";
 import PageContentLayout from "../../../components/Layout/PageContent";
 import NewPostForm from "../../../components/Post/PostForm/NewPostForm";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, firestore } from "../../../firebase/clientApp";
-import { useEffect } from "react";
-import { doc, getDoc } from "firebase/firestore";
-import safeJsonStringify from "safe-json-stringify";
+import { auth } from "../../../firebase/clientApp";
+import useCommunityData from "../../../hooks/useCommunityData";
 
 const CreateCommmunityPostPage: NextPage = () => {
-  const [user, loading, error] = useAuthState(auth);
+  const [user, loadingUser, error] = useAuthState(auth);
   const router = useRouter();
   const { community } = router.query;
   const visitedCommunities = useRecoilValue(communityState).visitedCommunities;
-  console.log("HERE ARE VISITED COMMUNITIES", visitedCommunities);
-
-  // Redirects user if not logged in - can probably create protected route component
-  // useEffect(() => {
-  //   if (!loading && !user) {
-  //     // router.push("/");
-  //     return;
-  //   }
-
-  //   if (!community) return;
-  //   if (!visitedCommunities[community as string]) {
-  //     console.log("THIS IS HAPPENING", visitedCommunities[community as string]);
-
-  //     router.push(`/r/${community}`);
-  //   }
-  // }, [user, loading]);
-
-  /**
-   * Redirect users to main community page
-   * This servers as a workaround to not SSRing
-   * this page or fetching the community here
-   * This solution assumes the client is coming from
-   * the main community page
-   */
-  // if (!visitedCommunities[community as string]) return null;
+  const { loading } = useCommunityData();
 
   return (
     <PageContentLayout maxWidth="1060px">
@@ -57,6 +31,7 @@ const CreateCommmunityPostPage: NextPage = () => {
             communityData={visitedCommunities[community as string]}
             pt={6}
             onCreatePage
+            loading={loading}
           />
         </>
       )}

@@ -18,8 +18,8 @@ import PageContentLayout from "../components/Layout/PageContent";
 import PostLoader from "../components/Post/Loader";
 import PostItem from "../components/Post/PostItem";
 import { auth, firestore } from "../firebase/clientApp";
-import useCommunitySnippets from "../hooks/useCommunitySnippets";
 import usePosts from "../hooks/usePosts";
+import useCommunityData from "../hooks/useCommunityData";
 
 const Home: NextPage = () => {
   const [user, loadingUser] = useAuthState(auth);
@@ -33,7 +33,9 @@ const Home: NextPage = () => {
     loading,
     setLoading,
   } = usePosts();
-  const { snippets, initSnippetsFetched } = useCommunitySnippets();
+  const {
+    communityStateValue: { mySnippets, initSnippetsFetched },
+  } = useCommunityData();
 
   // WILL NEED TO HANDLE CASE OF NO USER
   const getHomePosts = async () => {
@@ -44,7 +46,7 @@ const Home: NextPage = () => {
        * do query for 20 posts ordered by voteStatus
        */
 
-      const myCommunityIds = snippets.map((snippet) => snippet.communityId);
+      const myCommunityIds = mySnippets.map((snippet) => snippet.communityId);
 
       let postPromises: Array<Promise<QuerySnapshot<DocumentData>>> = [];
       [0, 1, 2].forEach((index) => {
@@ -109,9 +111,9 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    if (!snippets.length && initSnippetsFetched) return;
+    if (!mySnippets.length && initSnippetsFetched) return;
     getHomePosts();
-  }, [snippets, initSnippetsFetched]);
+  }, [mySnippets, initSnippetsFetched]);
 
   useEffect(() => {
     if (!user?.uid || !postStateValue.posts.length) return;
