@@ -112,7 +112,8 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    if (!mySnippets.length && initSnippetsFetched) return;
+    // if (!mySnippets.length && initSnippetsFetched) return;
+    if (!mySnippets.length || postStateValue.posts.length) return;
     getHomePosts();
   }, [mySnippets, initSnippetsFetched]);
 

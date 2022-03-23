@@ -13,12 +13,14 @@ import { FaReddit } from "react-icons/fa";
 import { Community } from "../../atoms/communitiesAtom";
 import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 import { firestore } from "../../firebase/clientApp";
+import useCommunityData from "../../hooks/useCommunityData";
 
 type RecommendationsProps = {};
 
 const Recommendations: React.FC<RecommendationsProps> = () => {
   const [communities, setCommunities] = useState<Community[]>([]);
   const [loading, setLoading] = useState(false);
+  const { communityStateValue, onJoinLeaveCommunity } = useCommunityData();
 
   const getCommunityRecommendations = async () => {
     setLoading(true);
@@ -81,35 +83,54 @@ const Recommendations: React.FC<RecommendationsProps> = () => {
           </Stack>
         ) : (
           <>
-            {communities.map((item, index) => (
-              <Flex
-                key={index}
-                align="center"
-                justify="space-between"
-                fontSize="10pt"
-                borderBottom="1px solid"
-                borderColor="gray.200"
-                p="10px 14px"
-                fontWeight={600}
-              >
-                <Text>{index + 1}</Text>
-                <Box display="flex" alignItems="center">
-                  <Icon as={FaReddit} fontSize={30} color="brand.100" mr={2} />
-                  <span
-                    style={{
-                      display: "block",
-                      width: "120px",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }}
-                  >{`r/${item.id}`}</span>
-                </Box>
-                <Button height="22px" fontSize="9pt">
-                  Join
-                </Button>
-              </Flex>
-            ))}
+            {communities.map((item, index) => {
+              const isJoined = !!communityStateValue.mySnippets.find(
+                (snippet) => snippet.communityId === item.id
+              );
+              return (
+                <Flex
+                  key={index}
+                  position="relative"
+                  align="center"
+                  fontSize="10pt"
+                  borderBottom="1px solid"
+                  borderColor="gray.200"
+                  p="10px 12px"
+                  fontWeight={600}
+                >
+                  <Flex width="80%" align="center">
+                    <Flex width="15%">
+                      <Text mr={2}>{index + 1}</Text>
+                    </Flex>
+                    <Flex align="center" width="80%">
+                      <Icon
+                        as={FaReddit}
+                        fontSize={30}
+                        color="brand.100"
+                        mr={2}
+                      />
+                      <span
+                        style={{
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >{`r/${item.id}`}</span>
+                    </Flex>
+                  </Flex>
+                  <Box position="absolute" right="10px">
+                    <Button
+                      height="22px"
+                      fontSize="8pt"
+                      onClick={() => onJoinLeaveCommunity(item.id, isJoined)}
+                      variant={isJoined ? "outline" : "solid"}
+                    >
+                      {isJoined ? "Joined" : "Join"}
+                    </Button>
+                  </Box>
+                </Flex>
+              );
+            })}
             <Box p="10px 20px">
               <Button height="30px" width="100%">
                 View All
