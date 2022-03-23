@@ -25,7 +25,7 @@ type CommunitiesProps = {
 const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
   const [user] = useAuthState(auth);
   const [open, setOpen] = useState(false);
-  const { communityStateValue } = useCommunityData();
+  const mySnippets = useRecoilValue(communityState).mySnippets;
   // const [loading, setLoading] = useState(false);
   // const [currCommunitiesState, setCurrCommunitiesState] =
   //   useRecoilState(communitiesState);
@@ -85,12 +85,12 @@ const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
       {/* COULD DO THIS FOR CLEANER COMPONENTS */}
       {/* <Moderating snippets={snippetState.filter((item) => item.isModerator)} />
       <MyCommunities snippets={snippetState} setOpen={setOpen} /> */}
-      {communityStateValue.mySnippets.find((item) => item.isModerator) && (
+      {mySnippets.find((item) => item.isModerator) && (
         <Box mt={3} mb={4}>
           <Text pl={3} mb={1} fontSize="7pt" fontWeight={500} color="gray.500">
             MODERATING
           </Text>
-          {communityStateValue.mySnippets
+          {mySnippets
             .filter((item) => item.isModerator)
             .map((snippet) => (
               <MenuListItem
@@ -118,7 +118,7 @@ const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
             Create Community
           </Flex>
         </MenuItem>
-        {communityStateValue.mySnippets.map((snippet) => (
+        {mySnippets.map((snippet) => (
           <MenuListItem
             key={snippet.communityId}
             icon={FaReddit}

@@ -21,10 +21,11 @@ import { auth, firestore } from "../firebase/clientApp";
 import usePosts from "../hooks/usePosts";
 import useCommunityData from "../hooks/useCommunityData";
 import Recommendations from "../components/Community/Recommendations";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { communityState } from "../atoms/communitiesAtom";
 
 const Home: NextPage = () => {
   const [user, loadingUser] = useAuthState(auth);
-  // const [loading, setLoading] = useState(false);
   const {
     postStateValue,
     setPostStateValue,
@@ -34,12 +35,12 @@ const Home: NextPage = () => {
     loading,
     setLoading,
   } = usePosts();
-  const {
-    communityStateValue: { mySnippets, initSnippetsFetched },
-  } = useCommunityData();
+  const mySnippets = useRecoilValue(communityState).mySnippets;
 
   // WILL NEED TO HANDLE CASE OF NO USER
-  const getHomePosts = async () => {
+  const getUserHomePosts = async () => {
+    console.log("GETTING USER FEED");
+
     setLoading(true);
     try {
       /**
@@ -85,9 +86,13 @@ const Home: NextPage = () => {
       // if not in any, get 5 communities ordered by number of members
       // for each one, get 2 posts ordered by voteStatus and set these to postState posts
     } catch (error: any) {
-      console.log("getHomePosts error", error.message);
+      console.log("getUserHomePosts error", error.message);
     }
     setLoading(false);
+  };
+
+  const getNoUserHomePosts = async () => {
+    console.log("GETTING NO USER FEED");
   };
 
   const getUserPostVotes = async () => {
@@ -112,10 +117,15 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    // if (!mySnippets.length && initSnippetsFetched) return;
     if (!mySnippets.length || postStateValue.posts.length) return;
-    getHomePosts();
-  }, [mySnippets, initSnippetsFetched]);
+    getUserHomePosts();
+  }, [mySnippets, postStateValue.posts]);
+
+  useEffect(() => {
+    if (!user && !loadingUser) {
+      getNoUserHomePosts();
+    }
+  }, [user, loadingUser]);
 
   useEffect(() => {
     if (!user?.uid || !postStateValue.posts.length) return;
