@@ -6,6 +6,7 @@ import {
   getDocs,
   limit,
   onSnapshot,
+  orderBy,
   query,
   QuerySnapshot,
   where,
@@ -40,7 +41,6 @@ const Home: NextPage = () => {
   // WILL NEED TO HANDLE CASE OF NO USER
   const getUserHomePosts = async () => {
     console.log("GETTING USER FEED");
-
     setLoading(true);
     try {
       /**
@@ -93,6 +93,28 @@ const Home: NextPage = () => {
 
   const getNoUserHomePosts = async () => {
     console.log("GETTING NO USER FEED");
+    setLoading(true);
+    try {
+      const postQuery = query(
+        collection(firestore, "posts"),
+        orderBy("voteStatus", "desc"),
+        limit(20)
+      );
+      const postDocs = await getDocs(postQuery);
+      const posts = postDocs.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      console.log("NO USER FEED", posts);
+
+      setPostStateValue((prev) => ({
+        ...prev,
+        posts: posts as Post[],
+      }));
+    } catch (error: any) {
+      console.log("getNoUserHomePosts error", error.message);
+    }
+    setLoading(false);
   };
 
   const getUserPostVotes = async () => {
@@ -117,9 +139,12 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    if (!mySnippets.length || postStateValue.posts.length) return;
-    getUserHomePosts();
-  }, [mySnippets, postStateValue.posts]);
+    if (!mySnippets.length) return;
+
+    if (user) {
+      getUserHomePosts();
+    }
+  }, [user, mySnippets]);
 
   useEffect(() => {
     if (!user && !loadingUser) {
