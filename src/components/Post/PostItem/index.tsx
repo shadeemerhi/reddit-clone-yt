@@ -22,6 +22,7 @@ import {
   IoBookmarkOutline,
 } from "react-icons/io5";
 import { Post } from "../../../atoms/postsAtom";
+import Link from "next/link";
 
 export type PostItemContentProps = {
   post: Post;
@@ -54,7 +55,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
 }) => {
   const [loadingImage, setLoadingImage] = useState(true);
   const [loadingDelete, setLoadingDelete] = useState(false);
-  const singlePostView = !onSelectPost; // router only passed on [pid] page to redirect back
+  const singlePostView = !onSelectPost; // function not passed to [pid]
 
   const handleDelete = async (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -76,13 +77,6 @@ const PostItem: React.FC<PostItemContentProps> = ({
       setLoadingDelete(false);
       // setError
     }
-  };
-
-  const onCommunityLinkClick = (
-    event: React.MouseEvent<HTMLParagraphElement>
-  ) => {
-    event.stopPropagation();
-    router?.push(`r/${post.communityId}`);
   };
 
   return (
@@ -135,11 +129,13 @@ const PostItem: React.FC<PostItemContentProps> = ({
               {homePage && (
                 <>
                   <Icon as={FaReddit} fontSize={18} mr={1} color="blue.500" />
-                  <Text
-                    fontWeight={700}
-                    _hover={{ textDecoration: "underline" }}
-                    onClick={onCommunityLinkClick}
-                  >{`r/${post.communityId}`}</Text>
+                  <Link href={`r/${post.communityId}`}>
+                    <Text
+                      fontWeight={700}
+                      _hover={{ textDecoration: "underline" }}
+                      onClick={(event) => event.stopPropagation()}
+                    >{`r/${post.communityId}`}</Text>
+                  </Link>
                   <Icon as={BsDot} color="gray.500" fontSize={8} />
                 </>
               )}

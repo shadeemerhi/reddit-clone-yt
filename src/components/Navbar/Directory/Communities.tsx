@@ -1,20 +1,11 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Flex,
-  Icon,
-  MenuItem,
-  Skeleton,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Flex, Icon, MenuItem, Text } from "@chakra-ui/react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { FaReddit } from "react-icons/fa";
 import { GrAdd } from "react-icons/gr";
 import { useRecoilValue } from "recoil";
 import { communityState } from "../../../atoms/communitiesAtom";
 import { auth } from "../../../firebase/clientApp";
-import useCommunityData from "../../../hooks/useCommunityData";
 import CreateCommunityModal from "../../Modal/CreateCommunity";
 import MenuListItem from "./MenuListItem";
 
@@ -26,54 +17,6 @@ const Communities: React.FC<CommunitiesProps> = ({ menuOpen }) => {
   const [user] = useAuthState(auth);
   const [open, setOpen] = useState(false);
   const mySnippets = useRecoilValue(communityState).mySnippets;
-  // const [loading, setLoading] = useState(false);
-  // const [currCommunitiesState, setCurrCommunitiesState] =
-  //   useRecoilState(communitiesState);
-
-  // const currCommunitiesState = useRecoilValue(communityState);
-
-  // const { loading, setLoading, error } = useCommunityData(
-  //   user?.uid,
-  //   [menuOpen, user],
-  //   false,
-  //   !user?.uid || !menuOpen
-  // );
-
-  /**
-   * USE THIS INITIALLY THEN CONVERT TO CUSTOM HOOK useCommunityData AFTER
-   * ALSO REUSING THE SAME LOGIC INSIDE OF HEADER
-   */
-  // useEffect(() => {
-  //   // Only fetch snippets if menu is open and we don't have them in state cache
-  //   if (!user?.uid || !menuOpen || !!currCommunitiesState.mySnippets.length)
-  //     return;
-  //   setLoading(true);
-  //   getSnippets();
-  // }, [menuOpen, user]);
-
-  // const getSnippets = async () => {
-  //   try {
-  //     const snippets = await getMySnippets(user?.uid!);
-  //     // setMySnippetsState(snippets as CommunitySnippet[]);
-  //     setCurrCommunitiesState((prev) => ({
-  //       ...prev,
-  //       mySnippets: snippets as CommunitySnippet[],
-  //     }));
-  //     setLoading(false);
-  //   } catch (error) {
-  //     console.log("Error getting user snippets", error);
-  //   }
-  // };
-
-  // if (loading) {
-  //   return (
-  //     <Stack p={3}>
-  //       {Array.from(Array(10)).map((item, index) => (
-  //         <Skeleton key={index} height="20px" p="inherit" />
-  //       ))}
-  //     </Stack>
-  //   );
-  // }
 
   return (
     <>

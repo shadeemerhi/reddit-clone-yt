@@ -125,7 +125,10 @@ const Recommendations: React.FC<RecommendationsProps> = () => {
                       <Button
                         height="22px"
                         fontSize="8pt"
-                        onClick={() => onJoinLeaveCommunity(item.id, isJoined)}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onJoinLeaveCommunity(item.id, isJoined);
+                        }}
                         variant={isJoined ? "outline" : "solid"}
                       >
                         {isJoined ? "Joined" : "Join"}
