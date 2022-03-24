@@ -39,7 +39,6 @@ const Home: NextPage = () => {
   const mySnippets = useRecoilValue(communityState).mySnippets;
   const router = useRouter();
 
-  // WILL NEED TO HANDLE CASE OF NO USER
   const getUserHomePosts = async () => {
     console.log("GETTING USER FEED");
     setLoading(true);
@@ -48,34 +47,53 @@ const Home: NextPage = () => {
        * if snippets has no length (i.e. user not in any communities yet)
        * do query for 20 posts ordered by voteStatus
        */
-
-      const myCommunityIds = mySnippets.map((snippet) => snippet.communityId);
-
-      let postPromises: Array<Promise<QuerySnapshot<DocumentData>>> = [];
-      [0, 1, 2].forEach((index) => {
-        if (!myCommunityIds[index]) return;
-
-        postPromises.push(
-          getDocs(
-            query(
-              collection(firestore, "posts"),
-              where("communityId", "==", myCommunityIds[index]),
-              limit(2)
-            )
-          )
-        );
-      });
-
-      const queryResults = await Promise.all(postPromises);
-
       const feedPosts: Post[] = [];
-      queryResults.forEach((result) => {
-        const posts = result.docs.map((doc) => ({
+
+      // User has joined communities
+      if (mySnippets.length) {
+        const myCommunityIds = mySnippets.map((snippet) => snippet.communityId);
+        // Getting 2 posts from 3 communities that user has joined
+        let postPromises: Array<Promise<QuerySnapshot<DocumentData>>> = [];
+        [0, 1, 2].forEach((index) => {
+          if (!myCommunityIds[index]) return;
+
+          postPromises.push(
+            getDocs(
+              query(
+                collection(firestore, "posts"),
+                where("communityId", "==", myCommunityIds[index]),
+                limit(3)
+              )
+            )
+          );
+        });
+        const queryResults = await Promise.all(postPromises);
+        /**
+         * queryResults is an array of length 3, each with 0-2 posts from
+         * 3 communities that the user has joined
+         */
+        queryResults.forEach((result) => {
+          const posts = result.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as Post[];
+          feedPosts.push(...posts);
+        });
+      }
+      // User has not joined any communities yet
+      else {
+        const postQuery = query(
+          collection(firestore, "posts"),
+          orderBy("voteStatus", "desc"),
+          limit(10)
+        );
+        const postDocs = await getDocs(postQuery);
+        const posts = postDocs.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         })) as Post[];
         feedPosts.push(...posts);
-      });
+      }
 
       console.log("HERE ARE FEED POSTS", feedPosts);
 
