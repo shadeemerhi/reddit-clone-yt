@@ -16,10 +16,10 @@ const Directory: React.FC = () => {
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
 
-  const { directoryState } = useDirectory();
+  const { directoryState, toggleMenuOpen } = useDirectory();
 
   return (
-    <Menu>
+    <Menu isOpen={directoryState.isOpen}>
       {({ isOpen }) => (
         <>
           <MenuButton
@@ -29,6 +29,7 @@ const Directory: React.FC = () => {
             _hover={{ outline: "1px solid", outlineColor: "gray.200" }}
             mr={2}
             ml={{ base: 0, md: 2 }}
+            onClick={toggleMenuOpen}
           >
             <Flex
               alignItems="center"
@@ -40,15 +41,17 @@ const Directory: React.FC = () => {
                   <Icon
                     fontSize={24}
                     mr={{ base: 1, md: 2 }}
-                    color={directoryState.iconColor}
-                    as={directoryState.icon}
+                    color={directoryState.selectedMenuItem.iconColor}
+                    as={directoryState.selectedMenuItem.icon}
                   />
                   <Box
                     display={{ base: "none", lg: "flex" }}
                     flexDirection="column"
                     fontSize="10pt"
                   >
-                    <Text fontWeight={600}>{directoryState.displayText}</Text>
+                    <Text fontWeight={600}>
+                      {directoryState.selectedMenuItem.displayText}
+                    </Text>
                   </Box>
                 </>
               </Flex>

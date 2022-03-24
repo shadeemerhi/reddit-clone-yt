@@ -9,11 +9,19 @@ export type DirectoryMenuItem = {
   iconColor: string;
 };
 
-export const defaultMenuItem: DirectoryMenuItem = {
-  displayText: "Home",
-  link: "/",
-  icon: TiHome,
-  iconColor: "black",
+interface DirectoryMenuState {
+  isOpen: boolean;
+  selectedMenuItem: DirectoryMenuItem;
+}
+
+export const defaultMenuItem: DirectoryMenuState = {
+  isOpen: false,
+  selectedMenuItem: {
+    displayText: "Home",
+    link: "/",
+    icon: TiHome,
+    iconColor: "black",
+  },
 };
 
 export const directoryMenuState = atom({

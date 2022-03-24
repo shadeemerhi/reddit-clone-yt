@@ -18,8 +18,18 @@ const useDirectory = () => {
 
   const onSelectMenuItem = (menuItem: DirectoryMenuItem) => {
     // setState here
-    setDirectoryState(menuItem);
+    setDirectoryState((prev) => ({
+      ...prev,
+      selectedMenuItem: menuItem,
+    }));
     router.push(menuItem.link);
+  };
+
+  const toggleMenuOpen = () => {
+    setDirectoryState((prev) => ({
+      ...prev,
+      isOpen: !directoryState.isOpen,
+    }));
   };
 
   useEffect(() => {
@@ -29,18 +39,21 @@ const useDirectory = () => {
       communityStateValue.visitedCommunities[community as string];
 
     if (existingCommunity) {
-      setDirectoryState({
-        displayText: `r/${existingCommunity.id}`,
-        link: `r/${existingCommunity.id}`,
-        icon: FaReddit,
-        iconColor: "blue.500",
-      });
+      setDirectoryState((prev) => ({
+        ...prev,
+        selectedMenuItem: {
+          displayText: `r/${existingCommunity.id}`,
+          link: `r/${existingCommunity.id}`,
+          icon: FaReddit,
+          iconColor: "blue.500",
+        },
+      }));
       return;
     }
     setDirectoryState(defaultMenuItem);
   }, [router.query?.community, communityStateValue.visitedCommunities]);
 
-  return { directoryState, onSelectMenuItem };
+  return { directoryState, onSelectMenuItem, toggleMenuOpen };
 };
 
 export default useDirectory;
