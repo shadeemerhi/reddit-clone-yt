@@ -28,7 +28,7 @@ const Directory: React.FC = () => {
             borderRadius="4px"
             _hover={{ outline: "1px solid", outlineColor: "gray.200" }}
             mr={2}
-            ml={2}
+            ml={{ base: 0, md: 2 }}
           >
             <Flex
               alignItems="center"
