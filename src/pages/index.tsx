@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Box, Stack } from "@chakra-ui/react";
+import { useEffect } from "react";
+import { Stack } from "@chakra-ui/react";
 import {
   collection,
   DocumentData,
@@ -12,18 +12,18 @@ import {
   where,
 } from "firebase/firestore";
 import type { NextPage } from "next";
+import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { useRecoilValue } from "recoil";
+import { communityState } from "../atoms/communitiesAtom";
 import { Post, PostVote } from "../atoms/postsAtom";
 import CreatePostLink from "../components/Community/CreatePostLink";
+import Recommendations from "../components/Community/Recommendations";
 import PageContentLayout from "../components/Layout/PageContent";
 import PostLoader from "../components/Post/Loader";
 import PostItem from "../components/Post/PostItem";
 import { auth, firestore } from "../firebase/clientApp";
 import usePosts from "../hooks/usePosts";
-import useCommunityData from "../hooks/useCommunityData";
-import Recommendations from "../components/Community/Recommendations";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { communityState } from "../atoms/communitiesAtom";
 
 const Home: NextPage = () => {
   const [user, loadingUser] = useAuthState(auth);
@@ -37,6 +37,7 @@ const Home: NextPage = () => {
     setLoading,
   } = usePosts();
   const mySnippets = useRecoilValue(communityState).mySnippets;
+  const router = useRouter();
 
   // WILL NEED TO HANDLE CASE OF NO USER
   const getUserHomePosts = async () => {
@@ -188,6 +189,7 @@ const Home: NextPage = () => {
                 userIsCreator={user?.uid === post.creatorId}
                 onSelectPost={onSelectPost}
                 homePage
+                router={router}
               />
             ))}
           </Stack>

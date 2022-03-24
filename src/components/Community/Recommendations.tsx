@@ -14,6 +14,8 @@ import { Community } from "../../atoms/communitiesAtom";
 import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 import { firestore } from "../../firebase/clientApp";
 import useCommunityData from "../../hooks/useCommunityData";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 type RecommendationsProps = {};
 
@@ -21,6 +23,7 @@ const Recommendations: React.FC<RecommendationsProps> = () => {
   const [communities, setCommunities] = useState<Community[]>([]);
   const [loading, setLoading] = useState(false);
   const { communityStateValue, onJoinLeaveCommunity } = useCommunityData();
+  const router = useRouter();
 
   const getCommunityRecommendations = async () => {
     setLoading(true);
@@ -49,7 +52,7 @@ const Recommendations: React.FC<RecommendationsProps> = () => {
   }, []);
 
   return (
-    <Flex direction="column" bg="white" borderRadius={4}>
+    <Flex direction="column" bg="white" borderRadius={4} cursor="pointer">
       <Flex
         align="flex-end"
         color="white"
@@ -88,47 +91,48 @@ const Recommendations: React.FC<RecommendationsProps> = () => {
                 (snippet) => snippet.communityId === item.id
               );
               return (
-                <Flex
-                  key={index}
-                  position="relative"
-                  align="center"
-                  fontSize="10pt"
-                  borderBottom="1px solid"
-                  borderColor="gray.200"
-                  p="10px 12px"
-                  fontWeight={600}
-                >
-                  <Flex width="80%" align="center">
-                    <Flex width="15%">
-                      <Text mr={2}>{index + 1}</Text>
+                <Link key={item.id} href={`/r/${item.id}`}>
+                  <Flex
+                    position="relative"
+                    align="center"
+                    fontSize="10pt"
+                    borderBottom="1px solid"
+                    borderColor="gray.200"
+                    p="10px 12px"
+                    fontWeight={600}
+                  >
+                    <Flex width="80%" align="center">
+                      <Flex width="15%">
+                        <Text mr={2}>{index + 1}</Text>
+                      </Flex>
+                      <Flex align="center" width="80%">
+                        <Icon
+                          as={FaReddit}
+                          fontSize={30}
+                          color="brand.100"
+                          mr={2}
+                        />
+                        <span
+                          style={{
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >{`r/${item.id}`}</span>
+                      </Flex>
                     </Flex>
-                    <Flex align="center" width="80%">
-                      <Icon
-                        as={FaReddit}
-                        fontSize={30}
-                        color="brand.100"
-                        mr={2}
-                      />
-                      <span
-                        style={{
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                        }}
-                      >{`r/${item.id}`}</span>
-                    </Flex>
+                    <Box position="absolute" right="10px">
+                      <Button
+                        height="22px"
+                        fontSize="8pt"
+                        onClick={() => onJoinLeaveCommunity(item.id, isJoined)}
+                        variant={isJoined ? "outline" : "solid"}
+                      >
+                        {isJoined ? "Joined" : "Join"}
+                      </Button>
+                    </Box>
                   </Flex>
-                  <Box position="absolute" right="10px">
-                    <Button
-                      height="22px"
-                      fontSize="8pt"
-                      onClick={() => onJoinLeaveCommunity(item.id, isJoined)}
-                      variant={isJoined ? "outline" : "solid"}
-                    >
-                      {isJoined ? "Joined" : "Join"}
-                    </Button>
-                  </Box>
-                </Flex>
+                </Link>
               );
             })}
             <Box p="10px 20px">
