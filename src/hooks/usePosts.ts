@@ -83,11 +83,6 @@ const usePosts = (communityData?: Community) => {
         batch.set(postVoteRef, newVote);
 
         updatedPost.voteStatus = voteStatus + vote;
-
-        // updatedPost.currentUserVoteStatus = {
-        //   id: postVoteRef.id,
-        //   voteValue: vote,
-        // };
       }
       // Removing existing vote
       else {
@@ -101,23 +96,13 @@ const usePosts = (communityData?: Community) => {
         // Removing vote
         if (existingVote.voteValue === vote) {
           voteChange *= -1;
-
           updatedPost.voteStatus = voteStatus + -vote;
-          // delete updatedPost.currentUserVoteStatus;
-
           batch.delete(postVoteRef);
         }
         // Changing vote
         else {
           voteChange = 2 * vote;
-          // We know this will exist here
-          // updatedPost.currentUserVoteStatus = {
-          //   id: updatedPost.currentUserVoteStatus?.id!,
-          //   voteValue: vote,
-          // };
-
           updatedPost.voteStatus = voteStatus + 2 * vote;
-
           batch.update(postVoteRef, {
             voteValue: vote,
           });
