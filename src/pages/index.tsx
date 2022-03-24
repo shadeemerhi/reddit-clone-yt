@@ -36,7 +36,7 @@ const Home: NextPage = () => {
     loading,
     setLoading,
   } = usePosts();
-  const mySnippets = useRecoilValue(communityState).mySnippets;
+  const communityStateValue = useRecoilValue(communityState);
   const router = useRouter();
 
   const getUserHomePosts = async () => {
@@ -50,8 +50,12 @@ const Home: NextPage = () => {
       const feedPosts: Post[] = [];
 
       // User has joined communities
-      if (mySnippets.length) {
-        const myCommunityIds = mySnippets.map((snippet) => snippet.communityId);
+      if (communityStateValue.mySnippets.length) {
+        console.log("GETTING POSTS IN USER COMMUNITIES");
+
+        const myCommunityIds = communityStateValue.mySnippets.map(
+          (snippet) => snippet.communityId
+        );
         // Getting 2 posts from 3 communities that user has joined
         let postPromises: Array<Promise<QuerySnapshot<DocumentData>>> = [];
         [0, 1, 2].forEach((index) => {
@@ -82,6 +86,8 @@ const Home: NextPage = () => {
       }
       // User has not joined any communities yet
       else {
+        console.log("USER HAS NO COMMUNITIES - GETTING GENERAL POSTS");
+
         const postQuery = query(
           collection(firestore, "posts"),
           orderBy("voteStatus", "desc"),
@@ -158,12 +164,17 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    if (!mySnippets.length) return;
+    /**
+     * initSnippetsFetched ensures that user snippets have been retrieved;
+     * the value is set to true when snippets are first retrieved inside
+     * of getSnippets in useCommunityData
+     */
+    if (!communityStateValue.initSnippetsFetched) return;
 
     if (user) {
       getUserHomePosts();
     }
-  }, [user, mySnippets]);
+  }, [user, communityStateValue.initSnippetsFetched]);
 
   useEffect(() => {
     if (!user && !loadingUser) {
