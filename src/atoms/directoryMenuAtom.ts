@@ -14,17 +14,19 @@ interface DirectoryMenuState {
   selectedMenuItem: DirectoryMenuItem;
 }
 
-export const defaultMenuItem: DirectoryMenuState = {
+export const defaultMenuItem = {
+  displayText: "Home",
+  link: "/",
+  icon: TiHome,
+  iconColor: "black",
+};
+
+export const defaultMenuState: DirectoryMenuState = {
   isOpen: false,
-  selectedMenuItem: {
-    displayText: "Home",
-    link: "/",
-    icon: TiHome,
-    iconColor: "black",
-  },
+  selectedMenuItem: defaultMenuItem,
 };
 
 export const directoryMenuState = atom({
   key: "directoryMenuState",
-  default: defaultMenuItem,
+  default: defaultMenuState,
 });

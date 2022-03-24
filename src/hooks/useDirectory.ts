@@ -17,12 +17,15 @@ const useDirectory = () => {
   const communityStateValue = useRecoilValue(communityState);
 
   const onSelectMenuItem = (menuItem: DirectoryMenuItem) => {
-    // setState here
     setDirectoryState((prev) => ({
       ...prev,
       selectedMenuItem: menuItem,
     }));
-    router.push(menuItem.link);
+
+    router?.push(menuItem.link);
+    if (directoryState.isOpen) {
+      toggleMenuOpen();
+    }
   };
 
   const toggleMenuOpen = () => {
@@ -50,7 +53,10 @@ const useDirectory = () => {
       }));
       return;
     }
-    setDirectoryState(defaultMenuItem);
+    setDirectoryState((prev) => ({
+      ...prev,
+      selectedMenuItem: defaultMenuItem,
+    }));
   }, [router.query?.community, communityStateValue.visitedCommunities]);
 
   return { directoryState, onSelectMenuItem, toggleMenuOpen };
