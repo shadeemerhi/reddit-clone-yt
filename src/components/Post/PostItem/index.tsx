@@ -96,6 +96,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
         align="center"
         bg={singlePostView ? "none" : "gray.100"}
         p={2}
+        width="40px"
         borderRadius={singlePostView ? "0" : "3px 0px 0px 3px"}
       >
         <Icon
@@ -107,7 +108,9 @@ const PostItem: React.FC<PostItemContentProps> = ({
           cursor="pointer"
           onClick={(event) => onVote(event, post, 1, post.communityId, postIdx)}
         />
-        {post.voteStatus}
+        <Text fontSize="9pt" fontWeight={600}>
+          {post.voteStatus}
+        </Text>
         <Icon
           as={
             userVoteValue === -1
@@ -128,7 +131,7 @@ const PostItem: React.FC<PostItemContentProps> = ({
             <Stack direction="row" spacing={0.6} align="center" fontSize="9pt">
               {homePage && (
                 <>
-                  <Icon as={FaReddit} fontSize={18} mr={1} color="blue.500" />
+                  {<Icon as={FaReddit} fontSize={18} mr={1} color="blue.500" />}
                   <Link href={`r/${post.communityId}`}>
                     <Text
                       fontWeight={700}
@@ -155,8 +158,9 @@ const PostItem: React.FC<PostItemContentProps> = ({
                 <Skeleton height="200px" width="100%" borderRadius={4} />
               )}
               <Image
-                width="80%"
-                maxWidth="300px"
+                // width="80%"
+                // maxWidth="500px"
+                maxHeight="460px"
                 src={post.imageURL}
                 display={loadingImage ? "none" : "unset"}
                 onLoad={() => setLoadingImage(false)}

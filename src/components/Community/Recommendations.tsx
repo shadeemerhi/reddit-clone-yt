@@ -1,22 +1,21 @@
-import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
   Flex,
   Icon,
+  Image,
   Skeleton,
   SkeletonCircle,
   Stack,
   Text,
-  Image,
 } from "@chakra-ui/react";
+import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
 import { FaReddit } from "react-icons/fa";
 import { Community } from "../../atoms/communitiesAtom";
-import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 import { firestore } from "../../firebase/clientApp";
 import useCommunityData from "../../hooks/useCommunityData";
-import { useRouter } from "next/router";
-import Link from "next/link";
 
 type RecommendationsProps = {};
 
@@ -24,7 +23,6 @@ const Recommendations: React.FC<RecommendationsProps> = () => {
   const [communities, setCommunities] = useState<Community[]>([]);
   const [loading, setLoading] = useState(false);
   const { communityStateValue, onJoinLeaveCommunity } = useCommunityData();
-  const router = useRouter();
 
   const getCommunityRecommendations = async () => {
     setLoading(true);
