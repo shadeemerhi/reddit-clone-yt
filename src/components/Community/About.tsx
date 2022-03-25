@@ -78,7 +78,7 @@ const About: React.FC<AboutProps> = ({
   };
 
   return (
-    <Box pt={pt}>
+    <Box pt={pt} position="sticky" top="14px">
       <Flex
         justify="space-between"
         align="center"
@@ -121,7 +121,9 @@ const About: React.FC<AboutProps> = ({
             <Stack spacing={2}>
               <Flex width="100%" p={2} fontWeight={600} fontSize="10pt">
                 <Flex direction="column" flexGrow={1}>
-                  <Text>{communityData?.numberOfMembers}</Text>
+                  <Text>
+                    {(communityData?.numberOfMembers).toLocaleString()}
+                  </Text>
                   <Text>Members</Text>
                 </Flex>
                 <Flex direction="column" flexGrow={1}>
@@ -155,7 +157,7 @@ const About: React.FC<AboutProps> = ({
                 </Link>
               )}
               {/* !!!ADDED AT THE VERY END!!! INITIALLY DOES NOT EXIST */}
-              {user?.uid === communityData.creatorId && (
+              {user?.uid === communityData?.creatorId && (
                 <>
                   <Divider />
                   <Stack fontSize="10pt" spacing={1}>
@@ -169,11 +171,11 @@ const About: React.FC<AboutProps> = ({
                       >
                         Change Image
                       </Text>
-                      {communityData.imageURL || selectedFile ? (
+                      {communityData?.imageURL || selectedFile ? (
                         <Image
                           borderRadius="full"
                           boxSize="40px"
-                          src={selectedFile || communityData.imageURL}
+                          src={selectedFile || communityData?.imageURL}
                           alt="Dan Abramov"
                         />
                       ) : (
