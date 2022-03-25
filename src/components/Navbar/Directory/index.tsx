@@ -8,6 +8,7 @@ import {
   MenuButton,
   MenuList,
   Text,
+  Image,
 } from "@chakra-ui/react";
 import useDirectory from "../../../hooks/useDirectory";
 import Communities from "./Communities";
@@ -38,12 +39,21 @@ const Directory: React.FC = () => {
             >
               <Flex alignItems="center">
                 <>
-                  <Icon
-                    fontSize={24}
-                    mr={{ base: 1, md: 2 }}
-                    color={directoryState.selectedMenuItem.iconColor}
-                    as={directoryState.selectedMenuItem.icon}
-                  />
+                  {directoryState.selectedMenuItem.imageURL ? (
+                    <Image
+                      borderRadius="full"
+                      boxSize="24px"
+                      src={directoryState.selectedMenuItem.imageURL}
+                      mr={2}
+                    />
+                  ) : (
+                    <Icon
+                      fontSize={24}
+                      mr={{ base: 1, md: 2 }}
+                      color={directoryState.selectedMenuItem.iconColor}
+                      as={directoryState.selectedMenuItem.icon}
+                    />
+                  )}
                   <Box
                     display={{ base: "none", lg: "flex" }}
                     flexDirection="column"
