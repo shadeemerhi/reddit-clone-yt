@@ -131,7 +131,16 @@ const PostItem: React.FC<PostItemContentProps> = ({
             <Stack direction="row" spacing={0.6} align="center" fontSize="9pt">
               {homePage && (
                 <>
-                  {<Icon as={FaReddit} fontSize={18} mr={1} color="blue.500" />}
+                  {post.communityImageURL ? (
+                    <Image
+                      borderRadius="full"
+                      boxSize="18px"
+                      src={post.communityImageURL}
+                      mr={2}
+                    />
+                  ) : (
+                    <Icon as={FaReddit} fontSize={18} mr={1} color="blue.500" />
+                  )}
                   <Link href={`r/${post.communityId}`}>
                     <Text
                       fontWeight={700}

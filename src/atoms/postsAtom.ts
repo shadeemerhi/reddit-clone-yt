@@ -4,6 +4,7 @@ import { Timestamp } from "firebase/firestore";
 export type Post = {
   id: string;
   communityId: string;
+  communityImageURL?: string;
   userDisplayText: string; // change to authorDisplayText
   creatorId: string;
   title: string;

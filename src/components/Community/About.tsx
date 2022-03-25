@@ -122,7 +122,7 @@ const About: React.FC<AboutProps> = ({
               <Flex width="100%" p={2} fontWeight={600} fontSize="10pt">
                 <Flex direction="column" flexGrow={1}>
                   <Text>
-                    {(communityData?.numberOfMembers).toLocaleString()}
+                    {communityData?.numberOfMembers?.toLocaleString()}
                   </Text>
                   <Text>Members</Text>
                 </Flex>

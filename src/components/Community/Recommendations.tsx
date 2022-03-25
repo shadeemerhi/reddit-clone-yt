@@ -51,7 +51,14 @@ const Recommendations: React.FC<RecommendationsProps> = () => {
   }, []);
 
   return (
-    <Flex direction="column" bg="white" borderRadius={4} cursor="pointer">
+    <Flex
+      direction="column"
+      bg="white"
+      borderRadius={4}
+      cursor="pointer"
+      position="sticky"
+      top="14px"
+    >
       <Flex
         align="flex-end"
         color="white"
