@@ -73,8 +73,8 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
     setLoading(false);
   };
 
-  const onJoinLeaveCommunity = (communityId: string, isJoined?: boolean) => {
-    console.log("ON JOIN LEAVE", communityId);
+  const onJoinLeaveCommunity = (community: Community, isJoined?: boolean) => {
+    console.log("ON JOIN LEAVE", community.id);
 
     if (!user) {
       setAuthModalState({ open: true, view: "login" });
@@ -83,30 +83,31 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
 
     setLoading(true);
     if (isJoined) {
-      leaveCommunity(communityId);
+      leaveCommunity(community.id);
       return;
     }
-    joinCommunity(communityId);
+    joinCommunity(community);
   };
 
-  const joinCommunity = async (communityId: string) => {
-    console.log("JOINING COMMUNITY: ", communityId);
+  const joinCommunity = async (community: Community) => {
+    console.log("JOINING COMMUNITY: ", community.id);
     try {
       const batch = writeBatch(firestore);
 
       const newSnippet: CommunitySnippet = {
-        communityId,
+        communityId: community.id,
+        imageURL: community.imageURL || "",
       };
       batch.set(
         doc(
           firestore,
           `users/${user?.uid}/communitySnippets`,
-          communityId // will for sure have this value at this point
+          community.id // will for sure have this value at this point
         ),
         newSnippet
       );
 
-      batch.update(doc(firestore, "communities", communityId), {
+      batch.update(doc(firestore, "communities", community.id), {
         numberOfMembers: increment(1),
       });
 

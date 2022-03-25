@@ -63,7 +63,7 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
                 height="30px"
                 pr={6}
                 pl={6}
-                onClick={() => onJoinLeaveCommunity(communityData.id, isJoined)}
+                onClick={() => onJoinLeaveCommunity(communityData, isJoined)}
                 isLoading={loading}
               >
                 {isJoined ? "Joined" : "Join"}

@@ -154,52 +154,56 @@ const About: React.FC<AboutProps> = ({
                   </Button>
                 </Link>
               )}
-              {/* // ONLY CREATOR OF COMMUNITY CAN SEE THIS */}
-              <Divider />
-              <Stack fontSize="10pt" spacing={1}>
-                <Text fontWeight={600}>Admin</Text>
-                <Flex align="center" justify="space-between">
-                  <Text
-                    color="blue.500"
-                    cursor="pointer"
-                    _hover={{ textDecoration: "underline" }}
-                    onClick={() => selectFileRef.current?.click()}
-                  >
-                    Change Image
-                  </Text>
-                  {communityData.imageURL || selectedFile ? (
-                    <Image
-                      borderRadius="full"
-                      boxSize="40px"
-                      src={selectedFile || communityData.imageURL}
-                      alt="Dan Abramov"
+              {/* !!!ADDED AT THE VERY END!!! INITIALLY DOES NOT EXIST */}
+              {user?.uid === communityData.creatorId && (
+                <>
+                  <Divider />
+                  <Stack fontSize="10pt" spacing={1}>
+                    <Text fontWeight={600}>Admin</Text>
+                    <Flex align="center" justify="space-between">
+                      <Text
+                        color="blue.500"
+                        cursor="pointer"
+                        _hover={{ textDecoration: "underline" }}
+                        onClick={() => selectFileRef.current?.click()}
+                      >
+                        Change Image
+                      </Text>
+                      {communityData.imageURL || selectedFile ? (
+                        <Image
+                          borderRadius="full"
+                          boxSize="40px"
+                          src={selectedFile || communityData.imageURL}
+                          alt="Dan Abramov"
+                        />
+                      ) : (
+                        <Icon
+                          as={FaReddit}
+                          fontSize={40}
+                          color="brand.100"
+                          mr={2}
+                        />
+                      )}
+                    </Flex>
+                    {selectedFile &&
+                      (imageLoading ? (
+                        <Spinner />
+                      ) : (
+                        <Text cursor="pointer" onClick={updateImage}>
+                          Save Changes
+                        </Text>
+                      ))}
+                    <input
+                      id="file-upload"
+                      type="file"
+                      accept="image/x-png,image/gif,image/jpeg"
+                      hidden
+                      ref={selectFileRef}
+                      onChange={onSelectImage}
                     />
-                  ) : (
-                    <Icon
-                      as={FaReddit}
-                      fontSize={40}
-                      color="brand.100"
-                      mr={2}
-                    />
-                  )}
-                </Flex>
-                {selectedFile &&
-                  (imageLoading ? (
-                    <Spinner />
-                  ) : (
-                    <Text cursor="pointer" onClick={updateImage}>
-                      Save Changes
-                    </Text>
-                  ))}
-                <input
-                  id="file-upload"
-                  type="file"
-                  accept="image/x-png,image/gif,image/jpeg"
-                  hidden
-                  ref={selectFileRef}
-                  onChange={onSelectImage}
-                />
-              </Stack>
+                  </Stack>
+                </>
+              )}
             </Stack>
           </>
         )}

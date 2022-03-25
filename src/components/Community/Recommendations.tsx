@@ -8,6 +8,7 @@ import {
   SkeletonCircle,
   Stack,
   Text,
+  Image,
 } from "@chakra-ui/react";
 import { FaReddit } from "react-icons/fa";
 import { Community } from "../../atoms/communitiesAtom";
@@ -106,12 +107,21 @@ const Recommendations: React.FC<RecommendationsProps> = () => {
                         <Text mr={2}>{index + 1}</Text>
                       </Flex>
                       <Flex align="center" width="80%">
-                        <Icon
-                          as={FaReddit}
-                          fontSize={30}
-                          color="brand.100"
-                          mr={2}
-                        />
+                        {item.imageURL ? (
+                          <Image
+                            borderRadius="full"
+                            boxSize="28px"
+                            src={item.imageURL}
+                            mr={2}
+                          />
+                        ) : (
+                          <Icon
+                            as={FaReddit}
+                            fontSize={30}
+                            color="brand.100"
+                            mr={2}
+                          />
+                        )}
                         <span
                           style={{
                             whiteSpace: "nowrap",
@@ -127,7 +137,7 @@ const Recommendations: React.FC<RecommendationsProps> = () => {
                         fontSize="8pt"
                         onClick={(event) => {
                           event.stopPropagation();
-                          onJoinLeaveCommunity(item.id, isJoined);
+                          onJoinLeaveCommunity(item, isJoined);
                         }}
                         variant={isJoined ? "outline" : "solid"}
                       >
