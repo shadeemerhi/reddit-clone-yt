@@ -9,7 +9,7 @@ export const createUserDocument = functions.auth
   .onCreate(async (user) => {
     db.collection("users")
       .doc(user.uid)
-      .set(JSON.parse(JSON.stringify({ ...user, karma: 1 })));
+      .set(JSON.parse(JSON.stringify(user)));
   });
 
 export const deletePostComments = functions.firestore
