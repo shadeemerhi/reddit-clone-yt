@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Flex, Icon, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Icon, Text, Image } from "@chakra-ui/react";
 import { FaReddit } from "react-icons/fa";
 import { Community } from "../../atoms/communitiesAtom";
 import useCommunityData from "../../hooks/useCommunityData";
@@ -20,144 +20,34 @@ const Header: React.FC<HeaderProps> = ({ communityData }) => {
     (item) => item.communityId === communityData.id
   );
 
-  // const onJoin = () => {
-  //   if (!user) {
-  //     setAuthModalState({ open: true, view: "login" });
-  //     return;
-  //   }
-
-  //   setLoading(true);
-  //   if (isJoined) {
-  //     leaveCommunity();
-  //     return;
-  //   }
-  //   joinCommunity();
-  // };
-
-  // const joinCommunity = async () => {
-  //   try {
-  //     const batch = writeBatch(firestore);
-
-  //     const newSnippet: CommunitySnippet = {
-  //       communityId: communityData.id!,
-  //       isModerator: communityData.creatorId === user?.uid,
-  //     };
-  //     batch.set(
-  //       doc(
-  //         firestore,
-  //         `users/${user?.uid}/communitySnippets`,
-  //         communityData.id! // will for sure have this value at this point
-  //       ),
-  //       newSnippet
-  //     );
-
-  //     batch.update(doc(firestore, "communities", communityData.id!), {
-  //       numberOfMembers: communityData.numberOfMembers + 1,
-  //     });
-
-  //     // perform batch writes
-  //     await batch.commit();
-
-  //     // Add current community to snippet
-  //     setCommunityStateValue((prev) => ({
-  //       ...prev,
-  //       mySnippets: [...prev.mySnippets, newSnippet],
-  //     }));
-  //     setLoading(false);
-  //   } catch (error) {
-  //     console.log("joinCommunity error", error);
-  //   }
-  // };
-
-  // const leaveCommunity = async () => {
-  //   try {
-  //     const batch = writeBatch(firestore);
-
-  //     batch.delete(
-  //       doc(
-  //         firestore,
-  //         `users/${user?.uid}/communitySnippets/${communityData.id}`
-  //       )
-  //     );
-
-  //     batch.update(doc(firestore, "communities", communityData.id!), {
-  //       numberOfMembers: communityData.numberOfMembers - 1,
-  //     });
-
-  //     await batch.commit();
-
-  //     setCommunityStateValue((prev) => ({
-  //       ...prev,
-  //       mySnippets: prev.mySnippets.filter(
-  //         (item) => item.communityId !== communityData.id
-  //       ),
-  //     }));
-  //     setLoading(false);
-  //   } catch (error) {
-  //     console.log("leaveCommunity error", error);
-  //   }
-  // };
-
-  /**
-   * USE THIS INITIALLY THEN CONVERT TO CUSTOM HOOK useCommunityData AFTER
-   * ALSO REUSING THE SAME LOGIC INSIDE OF HEADER
-   */
-  // useEffect(() => {
-  //   // Only fetch snippets if menu is open and we don't have them in state cache
-  //   if (!user?.uid || !menuOpen || !!currCommunitiesState.mySnippets.length)
-  //     return;
-  //   setLoading(true);
-  //   getSnippets();
-  // }, [menuOpen, user]);
-
-  // const getSnippets = async () => {
-  //   try {
-  //     const snippets = await getMySnippets(user?.uid!);
-  //     // setMySnippetsState(snippets as CommunitySnippet[]);
-  //     setCurrCommunitiesState((prev) => ({
-  //       ...prev,
-  //       mySnippets: snippets as CommunitySnippet[],
-  //     }));
-  //     setLoading(false);
-  //   } catch (error) {
-  //     console.log("Error getting user snippets", error);
-  //   }
-  // };
-  // useEffect(() => {
-  //   if (!!communityStateValue.mySnippets.length || !user?.uid) return;
-  //   setLoading(true);
-  //   console.log("GETTING SNIPPETS");
-
-  //   getSnippets();
-  // }, [user]);
-
-  // const getSnippets = async () => {
-  //   try {
-  //     const snippets = await getMySnippets(user?.uid!);
-  //     setCommunityStateValue((prev) => ({
-  //       ...prev,
-  //       mySnippets: snippets as CommunitySnippet[],
-  //     }));
-  //     setLoading(false);
-  //   } catch (error) {
-  //     console.log("Error getting user snippets", error);
-  //   }
-  // };
-
   return (
     <Flex direction="column" width="100%" height="146px">
       <Box height="50%" bg="blue.400" />
       <Flex justifyContent="center" bg="white" height="50%">
         <Flex width="95%" maxWidth="860px">
-          <Icon
-            as={FaReddit}
-            fontSize={64}
-            position="relative"
-            top={-3}
-            color="blue.500"
-            border="4px solid white"
-            borderRadius="50%"
-          />
+          {/* IMAGE URL IS ADDED AT THE VERY END BEFORE DUMMY DATA - USE ICON AT FIRST */}
+          {communityData.imageURL ? (
+            <Image
+              borderRadius="full"
+              boxSize="66px"
+              src={communityData.imageURL}
+              alt="Dan Abramov"
+              position="relative"
+              top={-3}
+              color="blue.500"
+              border="4px solid white"
+            />
+          ) : (
+            <Icon
+              as={FaReddit}
+              fontSize={64}
+              position="relative"
+              top={-3}
+              color="blue.500"
+              border="4px solid white"
+              borderRadius="50%"
+            />
+          )}
           <Flex padding="10px 16px">
             <Flex direction="column" mr={6}>
               <Text fontWeight={800} fontSize="16pt">

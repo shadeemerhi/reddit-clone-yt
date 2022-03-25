@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -9,16 +9,21 @@ import {
   SkeletonCircle,
   Stack,
   Text,
+  Image,
+  Spinner,
 } from "@chakra-ui/react";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { RiCakeLine } from "react-icons/ri";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../../firebase/clientApp";
+import { auth, firestore, storage } from "../../firebase/clientApp";
 import { Community, communityState } from "../../atoms/communitiesAtom";
 import moment from "moment";
 import { useRecoilValue } from "recoil";
+import { FaReddit } from "react-icons/fa";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import { doc, updateDoc } from "firebase/firestore";
 
 type AboutProps = {
   communityData: Community;
@@ -35,10 +40,42 @@ const About: React.FC<AboutProps> = ({
 }) => {
   const [user] = useAuthState(auth); // will revisit how 'auth' state is passed
   const router = useRouter();
+  const selectFileRef = useRef<HTMLInputElement>(null);
+  const [selectedFile, setSelectedFile] = useState<string>();
 
-  // Might add later
-  const [description, setDescription] = useState("");
-  const [editing, setEditing] = useState(false);
+  // Added last!
+  const [imageLoading, setImageLoading] = useState(false);
+
+  const onSelectImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const reader = new FileReader();
+    if (event.target.files?.[0]) {
+      reader.readAsDataURL(event.target.files[0]);
+    }
+
+    reader.onload = (readerEvent) => {
+      if (readerEvent.target?.result) {
+        setSelectedFile(readerEvent.target?.result as string);
+      }
+    };
+  };
+
+  const updateImage = async () => {
+    if (!selectedFile) return;
+    setImageLoading(true);
+    try {
+      const imageRef = ref(storage, `communities/${communityData.id}/image`);
+      await uploadString(imageRef, selectedFile, "data_url");
+      const downloadURL = await getDownloadURL(imageRef);
+      await updateDoc(doc(firestore, "communities", communityData.id), {
+        imageURL: downloadURL,
+      });
+      console.log("HERE IS DOWNLOAD URL", downloadURL);
+    } catch (error: any) {
+      console.log("updateImage error", error.message);
+    }
+    window.location.reload();
+    setImageLoading(false);
+  };
 
   return (
     <Box pt={pt}>
@@ -117,6 +154,52 @@ const About: React.FC<AboutProps> = ({
                   </Button>
                 </Link>
               )}
+              {/* // ONLY CREATOR OF COMMUNITY CAN SEE THIS */}
+              <Divider />
+              <Stack fontSize="10pt" spacing={1}>
+                <Text fontWeight={600}>Admin</Text>
+                <Flex align="center" justify="space-between">
+                  <Text
+                    color="blue.500"
+                    cursor="pointer"
+                    _hover={{ textDecoration: "underline" }}
+                    onClick={() => selectFileRef.current?.click()}
+                  >
+                    Change Image
+                  </Text>
+                  {communityData.imageURL || selectedFile ? (
+                    <Image
+                      borderRadius="full"
+                      boxSize="40px"
+                      src={selectedFile || communityData.imageURL}
+                      alt="Dan Abramov"
+                    />
+                  ) : (
+                    <Icon
+                      as={FaReddit}
+                      fontSize={40}
+                      color="brand.100"
+                      mr={2}
+                    />
+                  )}
+                </Flex>
+                {selectedFile &&
+                  (imageLoading ? (
+                    <Spinner />
+                  ) : (
+                    <Text cursor="pointer" onClick={updateImage}>
+                      Save Changes
+                    </Text>
+                  ))}
+                <input
+                  id="file-upload"
+                  type="file"
+                  accept="image/x-png,image/gif,image/jpeg"
+                  hidden
+                  ref={selectFileRef}
+                  onChange={onSelectImage}
+                />
+              </Stack>
             </Stack>
           </>
         )}
