@@ -1,9 +1,8 @@
 import React from "react";
-import { Box, MenuItem, Flex, Icon, Text, ListItem } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { FaReddit } from "react-icons/fa";
-import { GrAdd } from "react-icons/gr";
+import { CommunitySnippet } from "../../../atoms/communitiesAtom";
 import MenuListItem from "./MenuListItem";
-import { CommunitySnippet } from "../../../atoms/myCommunitySnippetsAtom";
 
 type ModeratingProps = {
   snippets: CommunitySnippet[];
@@ -20,7 +19,7 @@ const Moderating: React.FC<ModeratingProps> = ({ snippets }) => {
           key={snippet.communityId}
           displayText={`r/${snippet.communityId}`}
           link={`r/${snippet.communityId}`}
-          icon={FaReddit as typeof Icon}
+          icon={FaReddit}
           iconColor="brand.100"
         />
       ))}
