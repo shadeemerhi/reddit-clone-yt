@@ -1,42 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { Button, Flex, Icon, Text } from "@chakra-ui/react";
+import React, { useState } from "react";
+import { Button, Flex, Icon, Input, Text } from "@chakra-ui/react";
 import { useSendPasswordResetEmail } from "react-firebase-hooks/auth";
 import { BsDot, BsReddit } from "react-icons/bs";
-import { ModalView } from "../../../atoms/authModalAtom";
+import { authModalState } from "../../../atoms/authModalAtom";
 import { auth } from "../../../firebase/clientApp";
-import InputItem from "../../Layout/InputItem";
+import { useSetRecoilState } from "recoil";
 
-type ResetPasswordProps = {
-  toggleView: (view: ModalView) => void;
-};
-
-const ResetPassword: React.FC<ResetPasswordProps> = ({ toggleView }) => {
+const ResetPassword: React.FC = () => {
+  const setAuthModalState = useSetRecoilState(authModalState);
   const [email, setEmail] = useState("");
-  const [formError, setFormError] = useState("");
-  const [sendAttempt, setSendAttempt] = useState(false);
   const [success, setSuccess] = useState(false);
   const [sendPasswordResetEmail, sending, error] =
     useSendPasswordResetEmail(auth);
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (formError) setFormError("");
 
-    if (!email.includes("@")) {
-      return setFormError("Please enter a valid email");
-    }
     await sendPasswordResetEmail(email);
-    setSendAttempt(true);
-    setSendAttempt(false);
+    setSuccess(true);
   };
-
-  // Workaround to handle successful email send as hook does not gracefully handle the error
-  useEffect(() => {
-    if (sendAttempt && !error) {
-      setSuccess(true);
-    }
-  }, [error, sendAttempt]);
-
   return (
     <Flex direction="column" alignItems="center" width="100%">
       <Icon as={BsReddit} color="brand.100" fontSize={40} mb={2} />
@@ -52,15 +34,30 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ toggleView }) => {
             reset link
           </Text>
           <form onSubmit={onSubmit} style={{ width: "100%" }}>
-            <InputItem
+            <Input
+              required
               name="email"
               placeholder="email"
-              type="text"
+              type="email"
               mb={2}
               onChange={(event) => setEmail(event.target.value)}
+              fontSize="10pt"
+              _placeholder={{ color: "gray.500" }}
+              _hover={{
+                bg: "white",
+                border: "1px solid",
+                borderColor: "blue.500",
+              }}
+              _focus={{
+                outline: "none",
+                bg: "white",
+                border: "1px solid",
+                borderColor: "blue.500",
+              }}
+              bg="gray.50"
             />
             <Text textAlign="center" fontSize="10pt" color="red">
-              {formError || (error && "A user with that email does not exist")}
+              {error?.message}
             </Text>
             <Button
               width="100%"
@@ -82,9 +79,27 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ toggleView }) => {
         fontWeight={700}
         cursor="pointer"
       >
-        <Text onClick={() => toggleView("login")}>LOGIN</Text>
+        <Text
+          onClick={() =>
+            setAuthModalState((prev) => ({
+              ...prev,
+              view: "login",
+            }))
+          }
+        >
+          LOGIN
+        </Text>
         <Icon as={BsDot} />
-        <Text onClick={() => toggleView("signup")}>SIGN UP</Text>
+        <Text
+          onClick={() =>
+            setAuthModalState((prev) => ({
+              ...prev,
+              view: "signup",
+            }))
+          }
+        >
+          SIGN UP
+        </Text>
       </Flex>
     </Flex>
   );
