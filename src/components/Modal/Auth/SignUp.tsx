@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Flex, Text } from "@chakra-ui/react";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { ModalView } from "../../../atoms/authModalAtom";
-import { auth } from "../../../firebase/clientApp";
+import { auth, firestore } from "../../../firebase/clientApp";
 import { FIREBASE_ERRORS } from "../../../firebase/errors";
 import InputItem from "../../Layout/InputItem";
+import { User } from "firebase/auth";
+import { addDoc, collection } from "firebase/firestore";
 
 type SignUpProps = {
   toggleView: (view: ModalView) => void;
@@ -17,10 +19,10 @@ const SignUp: React.FC<SignUpProps> = ({ toggleView }) => {
     confirmPassword: "",
   });
   const [formError, setFormError] = useState("");
-  const [createUserWithEmailAndPassword, _, loading, authError] =
+  const [createUserWithEmailAndPassword, userCred, loading, authError] =
     useCreateUserWithEmailAndPassword(auth);
 
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (formError) setFormError("");
     if (!form.email.includes("@")) {
@@ -32,7 +34,11 @@ const SignUp: React.FC<SignUpProps> = ({ toggleView }) => {
     }
 
     // Valid form inputs
-    createUserWithEmailAndPassword(form.email, form.password);
+    const result = await createUserWithEmailAndPassword(
+      form.email,
+      form.password
+    );
+    console.log("HERE IS THE RESULT", result);
   };
 
   const onChange = ({
@@ -42,6 +48,22 @@ const SignUp: React.FC<SignUpProps> = ({ toggleView }) => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  // Non Cloud Function solution for storing users in db
+  useEffect(() => {
+    if (userCred) {
+      console.log("HERE IS USER", userCred.user);
+
+      createUserDocument(userCred.user);
+    }
+  }, [userCred]);
+
+  const createUserDocument = async (user: User) => {
+    await addDoc(
+      collection(firestore, "users"),
+      JSON.parse(JSON.stringify(user))
+    );
   };
 
   return (

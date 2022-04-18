@@ -76,25 +76,6 @@ const AuthModal: React.FC<AuthModalProps> = () => {
           ) : (
             <ResetPassword toggleView={toggleView} />
           )}
-          {/* // Will implement at end of tutorial */}
-          {/* {user && !currentUser && (
-                <>
-                  <Spinner size="lg" mt={2} mb={2} />
-                  <Text fontSize="8pt" textAlign="center" color="blue.500">
-                    You are logged in. You will be redirected soon
-                  </Text>
-                </>
-              )} */}
-          {/* {false ? (
-                <Flex
-                  direction="column"
-                  justifyContent="center"
-                  alignItems="center"
-                  height="100%"
-                >
-                </Flex>
-              ) : (
-              )} */}
         </Flex>
       </ModalBody>
     </ModalWrapper>
