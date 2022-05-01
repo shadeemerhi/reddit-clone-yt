@@ -60,11 +60,9 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ toggleView }) => {
               }}
               bg="gray.50"
             />
-            {error && (
-              <Text textAlign="center" fontSize="10pt" color="red">
-                {error.message}
-              </Text>
-            )}
+            <Text textAlign="center" fontSize="10pt" color="red">
+              {error?.message}
+            </Text>
             <Button
               width="100%"
               height="36px"
