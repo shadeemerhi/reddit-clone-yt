@@ -98,8 +98,6 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
         editedAt: serverTimestamp(),
       });
 
-      await addDoc(collection(firestore, "posts"), {});
-
       console.log("HERE IS NEW POST ID", postDocRef.id);
 
       // // check if selectedFile exists, if it does, do image processing
