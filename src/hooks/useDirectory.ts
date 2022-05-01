@@ -38,10 +38,12 @@ const useDirectory = () => {
   useEffect(() => {
     const { community } = router.query;
 
-    const existingCommunity =
-      communityStateValue.visitedCommunities[community as string];
+    // const existingCommunity =
+    //   communityStateValue.visitedCommunities[community as string];
 
-    if (existingCommunity) {
+    const existingCommunity = communityStateValue.currentCommunity;
+
+    if (existingCommunity.id) {
       setDirectoryState((prev) => ({
         ...prev,
         selectedMenuItem: {
@@ -58,7 +60,8 @@ const useDirectory = () => {
       ...prev,
       selectedMenuItem: defaultMenuItem,
     }));
-  }, [router.query?.community, communityStateValue.visitedCommunities]);
+  }, [communityStateValue.currentCommunity]);
+  //                              ^ used to be communityStateValue.vistedCommunities
 
   return { directoryState, onSelectMenuItem, toggleMenuOpen };
 };

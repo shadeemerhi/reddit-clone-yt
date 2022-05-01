@@ -23,20 +23,27 @@ const CommunityPage: NextPage<CommunityPageProps> = ({ communityData }) => {
   const [communityStateValue, setCommunityStateValue] =
     useRecoilState(communityState);
 
-  useEffect(() => {
-    // First time the user has navigated to this community page during session - add to cache
-    const firstSessionVisit =
-      !communityStateValue.visitedCommunities[communityData.id!];
+  // useEffect(() => {
+  //   // First time the user has navigated to this community page during session - add to cache
+  //   const firstSessionVisit =
+  //     !communityStateValue.visitedCommunities[communityData.id!];
 
-    if (firstSessionVisit) {
-      setCommunityStateValue((prev) => ({
-        ...prev,
-        visitedCommunities: {
-          ...prev.visitedCommunities,
-          [communityData.id!]: communityData,
-        },
-      }));
-    }
+  //   if (firstSessionVisit) {
+  //     setCommunityStateValue((prev) => ({
+  //       ...prev,
+  //       visitedCommunities: {
+  //         ...prev.visitedCommunities,
+  //         [communityData.id!]: communityData,
+  //       },
+  //     }));
+  //   }
+  // }, [communityData]);
+
+  useEffect(() => {
+    setCommunityStateValue((prev) => ({
+      ...prev,
+      currentCommunity: communityData,
+    }));
   }, [communityData]);
 
   // Community was not found in the database

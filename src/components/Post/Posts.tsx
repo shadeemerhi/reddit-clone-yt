@@ -248,6 +248,8 @@ const Posts: React.FC<PostsProps> = ({
     setLoading(false);
   };
 
+  console.log("HERE IS POST STATE", postStateValue);
+
   return (
     <>
       {loading ? (
@@ -258,7 +260,7 @@ const Posts: React.FC<PostsProps> = ({
             <PostItem
               key={post.id}
               post={post}
-              postIdx={index}
+              // postIdx={index}
               onVote={onVote}
               onDeletePost={onDeletePost}
               userVoteValue={

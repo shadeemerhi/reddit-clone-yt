@@ -13,6 +13,7 @@ import { User } from "firebase/auth";
 import {
   addDoc,
   collection,
+  doc,
   serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
@@ -96,6 +97,8 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
         createdAt: serverTimestamp(),
         editedAt: serverTimestamp(),
       });
+
+      await addDoc(collection(firestore, "posts"), {});
 
       console.log("HERE IS NEW POST ID", postDocRef.id);
 

@@ -20,7 +20,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, firestore, storage } from "../../firebase/clientApp";
 import { Community, communityState } from "../../atoms/communitiesAtom";
 import moment from "moment";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { FaReddit } from "react-icons/fa";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { doc, updateDoc } from "firebase/firestore";
@@ -41,6 +41,9 @@ const About: React.FC<AboutProps> = ({
   const [user] = useAuthState(auth); // will revisit how 'auth' state is passed
   const router = useRouter();
   const selectFileRef = useRef<HTMLInputElement>(null);
+  const setCommunityStateValue = useSetRecoilState(communityState);
+
+  // April 24 - moved this logic to custom hook in tutorial build (useSelectFile)
   const [selectedFile, setSelectedFile] = useState<string>();
 
   // Added last!
@@ -70,10 +73,21 @@ const About: React.FC<AboutProps> = ({
         imageURL: downloadURL,
       });
       console.log("HERE IS DOWNLOAD URL", downloadURL);
+
+      // April 24 - added state update
+      setCommunityStateValue((prev) => ({
+        ...prev,
+        currentCommunity: {
+          ...prev.currentCommunity,
+          imageURL: downloadURL,
+        },
+      }));
     } catch (error: any) {
       console.log("updateImage error", error.message);
     }
-    window.location.reload();
+    // April 24 - removed reload
+    // window.location.reload();
+
     setImageLoading(false);
   };
 

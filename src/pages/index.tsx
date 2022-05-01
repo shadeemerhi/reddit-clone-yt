@@ -124,7 +124,7 @@ const Home: NextPage = () => {
       const postQuery = query(
         collection(firestore, "posts"),
         orderBy("voteStatus", "desc"),
-        limit(20)
+        limit(10)
       );
       const postDocs = await getDocs(postQuery);
       const posts = postDocs.docs.map((doc) => ({

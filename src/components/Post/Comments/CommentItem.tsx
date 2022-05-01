@@ -30,44 +30,38 @@ export type Comment = {
 
 type CommentItemProps = {
   comment: Comment;
-  onDeleteComment: (comment: Comment) => Promise<boolean>;
+  onDeleteComment: (comment: Comment) => void;
+  isLoading: boolean;
   userId?: string;
 };
 
 const CommentItem: React.FC<CommentItemProps> = ({
   comment,
   onDeleteComment,
+  isLoading,
   userId,
 }) => {
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
 
-  const handleDelete = useCallback(async () => {
-    setLoading(true);
-    try {
-      const success = await onDeleteComment(comment);
+  // const handleDelete = useCallback(async () => {
+  //   setLoading(true);
+  //   try {
+  //     const success = await onDeleteComment(comment);
 
-      if (!success) {
-        throw new Error("Error deleting comment");
-      }
-    } catch (error: any) {
-      console.log(error.message);
-      // setError
-      setLoading(false);
-    }
-  }, [setLoading]);
+  //     if (!success) {
+  //       throw new Error("Error deleting comment");
+  //     }
+  //   } catch (error: any) {
+  //     console.log(error.message);
+  //     // setError
+  //     setLoading(false);
+  //   }
+  // }, [setLoading]);
 
   return (
     <Flex>
       <Box mr={2}>
-        {comment.creatorPhotoURL ? (
-          <Avatar
-            size="xs"
-            name="Kola Tioluwani"
-            src="https://bit.ly/tioluwani-kolawole"
-          />
-        ) : (
-          <Icon as={FaReddit} fontSize={30} color="gray.300" />
-        )}
+        <Icon as={FaReddit} fontSize={30} color="gray.300" />
       </Box>
       <Stack spacing={1}>
         <Stack direction="row" align="center" spacing={2} fontSize="8pt">
@@ -82,7 +76,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
               {moment(new Date(comment.createdAt?.seconds * 1000)).fromNow()}
             </Text>
           )}
-          {loading && <Spinner size="sm" />}
+          {isLoading && <Spinner size="sm" />}
         </Stack>
         <Text fontSize="10pt">{comment.text}</Text>
         <Stack
@@ -102,7 +96,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
               <Text
                 fontSize="9pt"
                 _hover={{ color: "blue.500" }}
-                onClick={handleDelete}
+                onClick={() => onDeleteComment(comment)}
               >
                 Delete
               </Text>

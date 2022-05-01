@@ -1,27 +1,28 @@
 import { Flex, Icon, Input } from "@chakra-ui/react";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { BsLink45Deg } from "react-icons/bs";
 import { FaReddit } from "react-icons/fa";
 import { IoImageOutline } from "react-icons/io5";
-import useDirectory from "../../hooks/useDirectory";
+import { useSetRecoilState } from "recoil";
+import { authModalState } from "../../atoms/authModalAtom";
+import { auth } from "../../firebase/clientApp";
 
-type CreatePostProps = {};
-
-const CreatePostLink: React.FC<CreatePostProps> = () => {
+const CreatePostLink: React.FC = () => {
   const router = useRouter();
-  const { toggleMenuOpen } = useDirectory();
+  const [user] = useAuthState(auth);
+  const setAuthModalState = useSetRecoilState(authModalState);
+
   const onClick = () => {
-    // Could check for user to open auth modal before redirecting to submit
-    const { community } = router.query;
-    if (community) {
-      router.push(`/r/${router.query.community}/submit`);
+    if (!user) {
+      setAuthModalState({ open: true, view: "login" });
       return;
     }
-    // Open directory menu to select community to post to
-    toggleMenuOpen();
+    const { communityId } = router.query;
+    router.push(`/r/${communityId}/submit`);
   };
+
   return (
     <Flex
       justify="space-evenly"

@@ -28,7 +28,7 @@ const PostPage: React.FC<PostPageProps> = () => {
     loading,
     setLoading,
     onVote,
-  } = usePosts(communityStateValue.visitedCommunities[community as string]);
+  } = usePosts(communityStateValue.currentCommunity);
 
   const fetchPost = async () => {
     console.log("FETCHING POST");
@@ -72,7 +72,7 @@ const PostPage: React.FC<PostPageProps> = () => {
               <>
                 <PostItem
                   post={postStateValue.selectedPost}
-                  postIdx={postStateValue.selectedPost.postIdx}
+                  // postIdx={postStateValue.selectedPost.postIdx}
                   onVote={onVote}
                   onDeletePost={onDeletePost}
                   userVoteValue={
@@ -99,7 +99,8 @@ const PostPage: React.FC<PostPageProps> = () => {
       <>
         <About
           communityData={
-            communityStateValue.visitedCommunities[community as string]
+            communityStateValue.currentCommunity
+            // communityStateValue.visitedCommunities[community as string]
           }
           loading={loading}
         />

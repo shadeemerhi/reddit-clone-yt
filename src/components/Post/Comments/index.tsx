@@ -41,6 +41,7 @@ const Comments: React.FC<CommentsProps> = ({
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentFetchLoading, setCommentFetchLoading] = useState(false);
   const [commentCreateLoading, setCommentCreateLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState("");
   const setAuthModalState = useSetRecoilState(authModalState);
   const setPostState = useSetRecoilState(postState);
 
@@ -108,7 +109,8 @@ const Comments: React.FC<CommentsProps> = ({
   };
 
   const onDeleteComment = useCallback(
-    async (comment: Comment): Promise<boolean> => {
+    async (comment: Comment) => {
+      setDeleteLoading(comment.id as string);
       try {
         if (!comment.id) throw "Comment has no ID";
         const batch = writeBatch(firestore);
@@ -131,11 +133,12 @@ const Comments: React.FC<CommentsProps> = ({
         }));
 
         setComments((prev) => prev.filter((item) => item.id !== comment.id));
-        return true;
+        // return true;
       } catch (error: any) {
         console.log("Error deletig comment", error.message);
-        return false;
+        // return false;
       }
+      setDeleteLoading("");
     },
     [setComments, setPostState]
   );
@@ -202,6 +205,7 @@ const Comments: React.FC<CommentsProps> = ({
                     key={item.id}
                     comment={item}
                     onDeleteComment={onDeleteComment}
+                    isLoading={deleteLoading === (item.id as string)}
                     userId={user?.uid}
                   />
                 ))}

@@ -8,6 +8,7 @@ import {
   Community,
   CommunitySnippet,
   communityState,
+  defaultCommunity,
 } from "../atoms/communitiesAtom";
 import { auth, firestore } from "../firebase/clientApp";
 import { getMySnippets } from "../helpers/firestore";
@@ -57,15 +58,22 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
         communityId as string
       );
       const communityDoc = await getDoc(communityDocRef);
+      // setCommunityStateValue((prev) => ({
+      //   ...prev,
+      //   visitedCommunities: {
+      //     ...prev.visitedCommunities,
+      //     [communityId as string]: {
+      //       id: communityDoc.id,
+      //       ...communityDoc.data(),
+      //     } as Community,
+      //   },
+      // }));
       setCommunityStateValue((prev) => ({
         ...prev,
-        visitedCommunities: {
-          ...prev.visitedCommunities,
-          [communityId as string]: {
-            id: communityDoc.id,
-            ...communityDoc.data(),
-          } as Community,
-        },
+        currentCommunity: {
+          id: communityDoc.id,
+          ...communityDoc.data(),
+        } as Community,
       }));
     } catch (error: any) {
       console.log("getCommunityData error", error.message);
@@ -151,18 +159,43 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
     setLoading(false);
   };
 
+  // useEffect(() => {
+  //   if (ssrCommunityData) return;
+  //   const { community } = router.query;
+  //   if (community) {
+  //     const communityData =
+  //       communityStateValue.visitedCommunities[community as string];
+  //     if (!communityData) {
+  //       getCommunityData(community as string);
+  //       return;
+  //     }
+  //   }
+  // }, [router.query]);
+
   useEffect(() => {
-    if (ssrCommunityData) return;
+    // if (ssrCommunityData) return;
     const { community } = router.query;
     if (community) {
-      const communityData =
-        communityStateValue.visitedCommunities[community as string];
-      if (!communityData) {
+      const communityData = communityStateValue.currentCommunity;
+
+      if (!communityData.id) {
         getCommunityData(community as string);
         return;
       }
+      // console.log("this is happening", communityStateValue);
+    } else {
+      /**
+       * JUST ADDED THIS APRIL 24
+       * FOR NEW LOGIC OF NOT USING visitedCommunities
+       */
+      setCommunityStateValue((prev) => ({
+        ...prev,
+        currentCommunity: defaultCommunity,
+      }));
     }
-  }, [router.query]);
+  }, [router.query, communityStateValue.currentCommunity]);
+
+  // console.log("LOL", communityStateValue);
 
   return {
     communityStateValue,
