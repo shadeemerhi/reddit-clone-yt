@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Flex } from "@chakra-ui/react";
 
 interface PageContentLayoutProps {
+  children: React.ReactElement[] | React.ReactElement
   maxWidth?: string;
 }
 

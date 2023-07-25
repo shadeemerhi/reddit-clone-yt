@@ -5,7 +5,11 @@ import useAuth from "../../hooks/useAuth";
 import Navbar from "../Navbar";
 import AuthModal from "../Modal/Auth";
 
-const Layout: React.FC = ({ children }) => {
+interface LayoutProps {
+  children: React.ReactElement | React.ReactElement[]
+}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   // useAuth(); // will implement later at end of tutorial
 
   return (
